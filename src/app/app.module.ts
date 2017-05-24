@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { DelegacjeComponent } from './delegacje/delegacje.component';
 import { KontaktyComponent } from './kontakty/kontakty.component';
 import { LoginComponent } from './login/login.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 const appRoutes: Routes = [
   { path: 'delegacje', component: DelegacjeComponent },
@@ -20,7 +21,8 @@ const appRoutes: Routes = [
     AppComponent,
     DelegacjeComponent,
     KontaktyComponent,
-    LoginComponent
+    LoginComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
