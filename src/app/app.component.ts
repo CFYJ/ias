@@ -22,7 +22,7 @@ export class AppComponent implements AfterViewInit {
   };
 
   ngAfterViewInit(): void {
-    let myInput: jqwidgets.jqxInput = jqwidgets.createInstance($('#input'), 'jqxInput', this.options);
+    //let myInput: jqwidgets.jqxInput = jqwidgets.createInstance($('#input'), 'jqxInput', this.options);
   };
 
 }

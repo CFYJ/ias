@@ -1,6 +1,9 @@
 import { async } from '@angular/core/testing';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Http, Headers, Response } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
 
 export class User {
   constructor(
@@ -12,12 +15,25 @@ export class User {
 export class AuthenticationService {
 
   constructor(
-    private _router: Router
+    private _router: Router,
+    private http: Http
   ) { }
 
   logout() {
     localStorage.removeItem('user');
     this._router.navigate(['Login']);
+  }
+
+  login1(user) {
+     let t = this.http.post('http://localhost:5000/api/ADAuthentication/IsAuthenticated', JSON.stringify(user))
+      .map((response: Response) => {
+        // login successful if there's a jwt token in the response
+        let user1 = response.json();
+        if (user1 && user1.token) {
+          // store user details and jwt token in local storage to keep user logged in between page refreshes
+          localStorage.setItem('currentUser', JSON.stringify(user1));
+        }
+      });
   }
 
   login(user) {

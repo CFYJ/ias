@@ -1,45 +1,22 @@
 <div class="container">
-  <div class="title">
-    Witamy
-  </div>
-  <div class="panel-body">
-    <div class="row">
-      <div class="input-field col s12">
-        <input [(ngModel)]="user.name" id="name" type="login" class="validate">
-        <label for="name">Login</label>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="input-field col s12">
-        <input [(ngModel)]="user.password" id="password" type="password" class="validate">
-        <label for="password">Hasło</label>
-      </div>
-    </div>
-
-    <span>{{errorMsg}}</span>
-    <button (click)="login()" class="btn waves-effect waves-light" type="submit" name="action">Logowanie</button>
-  </div>
-</div>
-
-<div class="container">
   <div class="card"></div>
   <div class="card">
     <h1 class="title">Logowanie</h1>
-    <form>
-      <div class="input-container">
-        <input type="#{type}" id="#{label}" required="required" />
-        <label for="#{label}">Użytkownik</label>
-        <div class="bar"></div>
-      </div>
-      <div class="input-container">
-        <input type="password" id="#{label}" required="required" />
-        <label for="#{label}">Hasło</label>
-        <div class="bar"></div>
-      </div>
-      <div class="button-container">
-        <button><span>Zaloguj</span></button>
-      </div>
-    </form>
+
+    <div class="input-container">
+      <input [(ngModel)]="user.name" id="name" type="login" required="required" />
+      <label for="#{label}">Użytkownik</label>
+      <div class="bar"></div>
+    </div>
+    <div class="input-container">
+      <input [(ngModel)]="user.password" id="password" type="password" required="required" />
+      <label for="#{label}">Hasło</label>
+      <div class="bar"></div>
+    </div>
+    <span>{{errorMsg}}</span>
+    <div class="button-container">
+      <button (click)="login()" type="submit" name="action"><span>Zaloguj</span></button>
+    </div>
+
   </div>
 </div>
