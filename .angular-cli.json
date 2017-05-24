@@ -19,9 +19,18 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "styles.scss"
+        "styles.scss",
+        "./jqwidgets/styles/jqx.base.css",
+        "./jqwidgets/styles/jqx.metro.css",
+        "./styles/login.css"
       ],
-      "scripts": [],
+      "scripts": [
+        "./scripts/jquery-1.11.1.min.js",
+        "./jqwidgets/jqxcore.js",
+        "./jqwidgets/jqxdata.js",
+        "./jqwidgets/jqxinput.js",
+        "./scripts/login.js"
+      ],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",
