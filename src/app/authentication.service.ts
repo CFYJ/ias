@@ -27,7 +27,8 @@ export class AuthenticationService {
   }
 
   loggedIn() {
-    return tokenNotExpired();
+    let token = localStorage.getItem('user');
+    return tokenNotExpired(null, token);
   }
 
   login1(user) {
