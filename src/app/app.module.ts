@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { Router, Routes, RouterModule } from '@angular/router';
+import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 
 import { AppComponent } from './app.component';
 import { DelegacjeComponent } from './delegacje/delegacje.component';
@@ -30,7 +31,7 @@ const appRoutes: Routes = [
     HttpModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [],
+  providers: [JwtHelper],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

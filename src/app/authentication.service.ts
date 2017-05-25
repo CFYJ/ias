@@ -17,7 +17,8 @@ export class AuthenticationService {
 
   constructor(
     private _router: Router,
-    private http: Http
+    private http: Http,
+    private jwtHelper: JwtHelper = new JwtHelper()
   ) { }
 
   logout() {
@@ -30,7 +31,7 @@ export class AuthenticationService {
   }
 
   login1(user) {
-    let t = this.http.post('http://localhost:5000/api/ADAuthentication/IsAuthenticated', JSON.stringify(user))
+    let t = this.http.post('http://localhost:5000/api/ADAuthentication/JwtAuthenticate', JSON.stringify(user))
       .map((response: Response) => {
         // login successful if there's a jwt token in the response
         let user1 = response.json();
@@ -81,6 +82,17 @@ export class AuthenticationService {
     let _self = this;
     let result: boolean;
     let token: any;
+
+    let t = this.http.post('http://localhost:5000/api/ADAuthentication/JwtAuthenticate', JSON.stringify(user))
+      .map((response: Response) => {
+        // login successful if there's a jwt token in the response
+        let user1 = response.json();
+        if (user1 && user1.token) {
+          // store user details and jwt token in local storage to keep user logged in between page refreshes
+          localStorage.setItem('currentUser', JSON.stringify(user1));
+        }
+      });
+
     $.ajax({
       cache: false,
       async: false,
@@ -92,6 +104,7 @@ export class AuthenticationService {
       success: function (data: any, status: any, xhr: any) {
         // update command is executed.
         if (data) {
+          let d = _self.jwtHelper.decodeToken(data);
           token = data;
           result = true;
         } else {
