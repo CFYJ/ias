@@ -31,6 +31,11 @@ export class AuthenticationService {
     return tokenNotExpired(null, token);
   }
 
+  getUser(): string {
+    return localStorage.getItem('user');
+  }
+
+
   login1(user) {
     let t = this.http.post('http://localhost:5000/api/ADAuthentication/JwtAuthenticate', JSON.stringify(user))
       .map((response: Response) => {

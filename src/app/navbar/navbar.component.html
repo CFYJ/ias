@@ -4,4 +4,7 @@
   <a [routerLink]="['/delegacje']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">delegacje</a>
   <a [routerLink]="['/kontakty']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">kontakty</a>
   <a [routerLink]="['/login']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">logowanie</a>
+  <div class="well" *ngIf="auth.getUser()">Jesteś zalogowany jako <b>{{ auth.getUser() }}</b>
+    <a href (click)="logout()">Wyloguj</a>
+  </div>
 </nav>
