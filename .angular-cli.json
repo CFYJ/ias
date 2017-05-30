@@ -8,7 +8,8 @@
     "outDir": "dist",
     "assets": [
       "assets",
-      "favicon.ico"
+      "favicon.ico",
+      "cars.json"
     ],
     "index": "index.html",
     "main": "main.ts",
@@ -21,7 +22,10 @@
       "styles.scss",
       "./jqwidgets/styles/jqx.base.css",
       "./jqwidgets/styles/jqx.metro.css",
-      "./styles/login.css"
+      "./styles/login.css",
+      "../node_modules/primeng/resources/primeng.min.css",
+      "../node_modules/primeng/resources/themes/omega/theme.css",
+      "../node_modules/font-awesome/css/font-awesome.min.css"
     ],
     "scripts": [
       "./scripts/jquery-1.11.1.min.js",
@@ -38,7 +42,6 @@
       "./jqwidgets/jqxgrid.filter.js",
       "./jqwidgets/jqxgrid.selection.js",
       "./jqwidgets/jqxgrid.pager.js",
-      "./jqwidgets/jqxdata.js",
       "./jqwidgets/jqxdatatable.js",
       "./jqwidgets/jqxscrollbar.js",
       "./jqwidgets/jqxbuttons.js",
@@ -47,15 +50,11 @@
       "./jqwidgets/jqxdropdownlist.js",
       "./jqwidgets/jqxlistbox.js",
       "./jqwidgets/jqxcheckbox.js",
-      "./jqwidgets/jqxlistbox.js",
-      "./jqwidgets/jqxdropdownlist.js",
       "./jqwidgets/jqxcalendar.js",
       "./jqwidgets/jqxdatetimeinput.js",
       "./jqwidgets/jqxnumberinput.js",
       "./jqwidgets/globalization/globalize.js",
       "./jqwidgets/jqxwindow.js",
-      "./jqwidgets/jqxinput.js",
-      
       "./scripts/login.js"
     ],
     "environmentSource": "environments/environment.ts",

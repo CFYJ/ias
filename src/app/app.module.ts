@@ -1,3 +1,4 @@
+import { KontaktyService } from './kontakty.service';
 import { AuthenticationService } from './authentication.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -23,6 +24,8 @@ import { jqxDateTimeInputComponent } from 'jqwidgets-ts/angular_jqxdatetimeinput
 import { jqxComboBoxComponent } from 'jqwidgets-ts/angular_jqxcombobox';
 import { jqxDropDownListComponent } from 'jqwidgets-ts/angular_jqxdropdownlist';
 
+import { DataTableModule, SharedModule } from 'primeng/primeng';
+
 export const appRoutes: Routes = [
   { path: 'delegacje', component: DelegacjeComponent, canActivate: [AuthGuardService] },
   { path: 'kontakty', component: KontaktyComponent, canActivate: [AuthGuardService] },
@@ -32,21 +35,27 @@ export const appRoutes: Routes = [
 
 @NgModule({
   declarations: [
+    NavbarComponent,
+    jqxGridComponent,
+    jqxWindowComponent,
+    jqxButtonComponent,
+    jqxInputComponent,
+    jqxDateTimeInputComponent,
+    jqxComboBoxComponent,
     AppComponent,
     DelegacjeComponent,
     KontaktyComponent,
     LoginComponent,
-    NavbarComponent,
-    jqxGridComponent, jqxWindowComponent, jqxButtonComponent,
-    jqxInputComponent, jqxDateTimeInputComponent, jqxComboBoxComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
+    DataTableModule,
+    SharedModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [JwtHelper, AuthGuardService, AuthenticationService],
+  providers: [JwtHelper, AuthGuardService, AuthenticationService, KontaktyService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

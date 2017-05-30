@@ -5,5 +5,13 @@
   <jqxGrid id="jqxgrid1" #jqxgrid1 [auto-create]='false' (onCellclick)='editCellclick($event)'></jqxGrid>
 </div>
 <div>
-  <input type="text" id="input" /> 
+  <input type="text" id="input" />
 </div>
+<jqxGrid #gridReference [auto-create]='false'></jqxGrid>
+
+<p-dataTable [value]="cars">
+    <p-column field="vin" header="Vin"></p-column>
+    <p-column field="year" header="Year"></p-column>
+    <p-column field="brand" header="Brand"></p-column>
+    <p-column field="color" header="Color"></p-column>
+</p-dataTable>
