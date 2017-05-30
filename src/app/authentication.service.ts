@@ -23,7 +23,7 @@ export class AuthenticationService {
 
   logout() {
     localStorage.removeItem('user');
-    this._router.navigate(['Login']);
+    //this._router.navigate(['Login']);
   }
 
   loggedIn() {
@@ -32,7 +32,15 @@ export class AuthenticationService {
   }
 
   getUser(): string {
-    return localStorage.getItem('user');
+    if (this.loggedIn) {
+      let token = localStorage.getItem('user');
+      if (token) {
+        let user = this.jwtHelper.decodeToken(token).name;
+        return user;
+      } else {
+        return '';
+      }
+    }
   }
 
 
