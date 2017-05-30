@@ -3,48 +3,73 @@
   "project": {
     "name": "ias-cli"
   },
-  "apps": [
-    {
-      "root": "src",
-      "outDir": "dist",
-      "assets": [
-        "assets",
-        "favicon.ico"
-      ],
-      "index": "index.html",
-      "main": "main.ts",
-      "polyfills": "polyfills.ts",
-      "test": "test.ts",
-      "tsconfig": "tsconfig.app.json",
-      "testTsconfig": "tsconfig.spec.json",
-      "prefix": "app",
-      "styles": [
-        "styles.scss",
-        "./jqwidgets/styles/jqx.base.css",
-        "./jqwidgets/styles/jqx.metro.css",
-        "./styles/login.css"
-      ],
-      "scripts": [
-        "./scripts/jquery-1.11.1.min.js",
-        "./jqwidgets/jqxcore.js",
-        "./jqwidgets/jqxdata.js",
-        "./jqwidgets/jqxinput.js",
-        "./scripts/login.js"
-      ],
-      "environmentSource": "environments/environment.ts",
-      "environments": {
-        "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
-      }
+  "apps": [{
+    "root": "src",
+    "outDir": "dist",
+    "assets": [
+      "assets",
+      "favicon.ico"
+    ],
+    "index": "index.html",
+    "main": "main.ts",
+    "polyfills": "polyfills.ts",
+    "test": "test.ts",
+    "tsconfig": "tsconfig.app.json",
+    "testTsconfig": "tsconfig.spec.json",
+    "prefix": "app",
+    "styles": [
+      "styles.scss",
+      "./jqwidgets/styles/jqx.base.css",
+      "./jqwidgets/styles/jqx.metro.css",
+      "./styles/login.css"
+    ],
+    "scripts": [
+      "./scripts/jquery-1.11.1.min.js",
+      "./jqwidgets/jqxcore.js",
+      "./jqwidgets/jqxdata.js",
+      "./jqwidgets/jqxinput.js",
+      "./jqwidgets/jqxangular.js",
+      "./jqwidgets/jqxdraw.js",
+      "./jqwidgets/jqxbargauge.js",
+      "./jqwidgets/jqxtooltip.js",
+      "./jqwidgets/jqxgrid.js",
+      "./jqwidgets/jqxgrid.edit.js",
+      "./jqwidgets/jqxgrid.sort.js",
+      "./jqwidgets/jqxgrid.filter.js",
+      "./jqwidgets/jqxgrid.selection.js",
+      "./jqwidgets/jqxgrid.pager.js",
+      "./jqwidgets/jqxdata.js",
+      "./jqwidgets/jqxdatatable.js",
+      "./jqwidgets/jqxscrollbar.js",
+      "./jqwidgets/jqxbuttons.js",
+      "./jqwidgets/jqxgrid.columnsresize.js",
+      "./jqwidgets/jqxmenu.js",
+      "./jqwidgets/jqxdropdownlist.js",
+      "./jqwidgets/jqxlistbox.js",
+      "./jqwidgets/jqxcheckbox.js",
+      "./jqwidgets/jqxlistbox.js",
+      "./jqwidgets/jqxdropdownlist.js",
+      "./jqwidgets/jqxcalendar.js",
+      "./jqwidgets/jqxdatetimeinput.js",
+      "./jqwidgets/jqxnumberinput.js",
+      "./jqwidgets/globalization/globalize.js",
+      "./jqwidgets/jqxwindow.js",
+      "./jqwidgets/jqxinput.js",
+      
+      "./scripts/login.js"
+    ],
+    "environmentSource": "environments/environment.ts",
+    "environments": {
+      "dev": "environments/environment.ts",
+      "prod": "environments/environment.prod.ts"
     }
-  ],
+  }],
   "e2e": {
     "protractor": {
       "config": "./protractor.conf.js"
     }
   },
-  "lint": [
-    {
+  "lint": [{
       "project": "src/tsconfig.app.json"
     },
     {

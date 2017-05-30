@@ -15,6 +15,13 @@ import { KontaktyComponent } from './kontakty/kontakty.component';
 import { LoginComponent } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { AuthGuardService } from './auth-guard.service';
+import { jqxGridComponent } from 'jqwidgets-ts/angular_jqxgrid';
+import { jqxWindowComponent } from 'jqwidgets-ts/angular_jqxwindow';
+import { jqxButtonComponent } from 'jqwidgets-ts/angular_jqxbuttons';
+import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
+import { jqxDateTimeInputComponent } from 'jqwidgets-ts/angular_jqxdatetimeinput';
+import { jqxComboBoxComponent } from 'jqwidgets-ts/angular_jqxcombobox';
+import { jqxDropDownListComponent } from 'jqwidgets-ts/angular_jqxdropdownlist';
 
 export const appRoutes: Routes = [
   { path: 'delegacje', component: DelegacjeComponent, canActivate: [AuthGuardService] },
@@ -29,7 +36,9 @@ export const appRoutes: Routes = [
     DelegacjeComponent,
     KontaktyComponent,
     LoginComponent,
-    NavbarComponent
+    NavbarComponent,
+    jqxGridComponent, jqxWindowComponent, jqxButtonComponent,
+    jqxInputComponent, jqxDateTimeInputComponent, jqxComboBoxComponent
   ],
   imports: [
     BrowserModule,
