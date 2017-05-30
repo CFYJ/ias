@@ -7,7 +7,7 @@
 <div>
   <input type="text" id="input" />
 </div>
-<jqxGrid #gridReference [auto-create]='false'></jqxGrid>
+<jqxGrid #gridReference [auto-create]='false' (onCellclick)='editCellclick($event)'></jqxGrid>
 
 <p-dataTable [value]="cars">
     <p-column field="vin" header="Vin"></p-column>
@@ -15,3 +15,49 @@
     <p-column field="brand" header="Brand"></p-column>
     <p-column field="color" header="Color"></p-column>
 </p-dataTable>
+
+<jqxWindow #jqxwindow1 [auto-create]='false'>
+  <div>Edycja</div>
+  <div style="overflow: hidden;">
+    <table>
+      <tr>
+        <td align="right">Numer</td>
+        <td align="left"><input id='nr' /></td>
+      </tr>
+      <tr>
+        <td align="right">Data od</td>
+        <td align="left"><input id='czasOd' /></td>
+      </tr>
+      <tr>
+        <td align="right">Data do</td>
+        <td align="left"><input id='czasDo' /></td>
+      </tr>
+      <tr>
+        <td align="right">Miejscowość</td>
+        <td align="left"><input id='miejscowosc' /></td>
+      </tr>
+      <tr>
+        <td align="right">Cel</td>
+        <td align="left"><input id='cel' /></td>
+      </tr>
+      <tr>
+        <td align="right">Środek</td>
+        <td align="left"><input id='srodek' /></td>
+      </tr>
+      <tr>
+        <td align="right">Delegowany</td>
+        <td align="left"><input id='delegowany' /></td>
+        <!--td align="left"><jqxInput #jqxdelegowany1></jqxInput></td-->
+      </tr>
+      <tr>
+        <td align="right">Test</td>
+        <td align="left"><jqxDateTimeInput #dateInput [auto-create]='false'></jqxDateTimeInput><br /></td>
+      </tr>      
+      <tr>
+        <td align="right"></td>
+        <td style="padding-top: 10px;" align="right"><input style="margin-right: 5px;" type="button" id="Save" value="Zapisz" /><input id="Cancel" type="button" value="Anuluj"
+          /></td>
+      </tr>
+    </table>
+  </div>
+</jqxWindow>
