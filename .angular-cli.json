@@ -55,6 +55,7 @@
       "./jqwidgets/jqxnumberinput.js",
       "./jqwidgets/globalization/globalize.js",
       "./jqwidgets/jqxwindow.js",
+      "./jqwidgets/jqxnotification.js",
       "./scripts/login.js"
     ],
     "environmentSource": "environments/environment.ts",

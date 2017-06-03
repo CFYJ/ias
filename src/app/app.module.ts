@@ -1,3 +1,4 @@
+import { MessageService } from './message.service';
 import { KontaktyService } from './kontakty.service';
 import { AuthenticationService } from './authentication.service';
 import { BrowserModule } from '@angular/platform-browser';
@@ -23,6 +24,7 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
 import { jqxDateTimeInputComponent } from 'jqwidgets-ts/angular_jqxdatetimeinput';
 import { jqxComboBoxComponent } from 'jqwidgets-ts/angular_jqxcombobox';
 import { jqxDropDownListComponent } from 'jqwidgets-ts/angular_jqxdropdownlist';
+import { jqxNotificationComponent } from 'jqwidgets-ts/angular_jqxnotification';
 
 import { DataTableModule, SharedModule } from 'primeng/primeng';
 
@@ -42,6 +44,7 @@ export const appRoutes: Routes = [
     jqxInputComponent,
     jqxDateTimeInputComponent,
     jqxComboBoxComponent,
+    jqxNotificationComponent,
     AppComponent,
     DelegacjeComponent,
     KontaktyComponent,
@@ -55,7 +58,7 @@ export const appRoutes: Routes = [
     SharedModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [JwtHelper, AuthGuardService, AuthenticationService, KontaktyService],
+  providers: [JwtHelper, AuthGuardService, AuthenticationService, KontaktyService, MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

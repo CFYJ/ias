@@ -1,3 +1,4 @@
+import { MessageService } from './../message.service';
 import { AuthenticationService, User } from './../authentication.service';
 import { Component, OnInit, ElementRef } from '@angular/core';
 
@@ -13,7 +14,8 @@ export class LoginComponent implements OnInit {
   public errorMsg = '';
 
   constructor(
-    private _service: AuthenticationService) {}
+    private _service: AuthenticationService,
+    private messageService: MessageService) {}
 
   ngOnInit() {
   }
@@ -23,6 +25,16 @@ export class LoginComponent implements OnInit {
     if (!this._service.login(this.user)){
       this.errorMsg = 'Błąd logowania';
     }
+    //this.sendMessage('logged in');
+  }
+  sendMessage(msg: string): void {
+    // send message to subscribers via observable subject
+    this.messageService.sendMessage(msg);
+  }
+
+  clearMessage(): void {
+    // clear message
+    this.messageService.clearMessage();
   }
 
 }

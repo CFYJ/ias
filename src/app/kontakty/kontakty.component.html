@@ -7,13 +7,13 @@
 <div>
   <input type="text" id="input" />
 </div>
-<jqxGrid #gridReference [auto-create]='false' (onCellclick)='editCellclick($event)'></jqxGrid>
+<jqxGrid #gridReference id="jqxgrid" [auto-create]='false' (onCellclick)='editCellclick($event)'></jqxGrid>
 
 <p-dataTable [value]="cars">
-    <p-column field="vin" header="Vin"></p-column>
-    <p-column field="year" header="Year"></p-column>
-    <p-column field="brand" header="Brand"></p-column>
-    <p-column field="color" header="Color"></p-column>
+  <p-column field="vin" header="Vin"></p-column>
+  <p-column field="year" header="Year"></p-column>
+  <p-column field="brand" header="Brand"></p-column>
+  <p-column field="color" header="Color"></p-column>
 </p-dataTable>
 
 <jqxWindow #jqxwindow1 [auto-create]='false'>
@@ -51,8 +51,9 @@
       </tr>
       <tr>
         <td align="right">Test</td>
-        <td align="left"><jqxDateTimeInput #dateInput [auto-create]='false'></jqxDateTimeInput><br /></td>
-      </tr>      
+        <td align="left">
+          <jqxDateTimeInput #dateInput [auto-create]='false'></jqxDateTimeInput><br /></td>
+      </tr>
       <tr>
         <td align="right"></td>
         <td style="padding-top: 10px;" align="right"><input style="margin-right: 5px;" type="button" id="Save" value="Zapisz" /><input id="Cancel" type="button" value="Anuluj"
@@ -61,3 +62,7 @@
     </table>
   </div>
 </jqxWindow>
+<jqxNotification #msgNotification [width]='300' [position]='"top-right"' [opacity]='0.9' [autoOpen]='false' [autoClose]='true'
+  [animationOpenDelay]='800' [autoCloseDelay]='3000' [template]='"info"' [theme]='"metro"'>
+  <div *ngIf="message">{{message}}</div>
+</jqxNotification>

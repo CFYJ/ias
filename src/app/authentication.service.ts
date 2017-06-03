@@ -1,3 +1,4 @@
+//import { MessageService } from './message.service';
 import { async } from '@angular/core/testing';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
@@ -5,6 +6,7 @@ import { Http, Headers, Response } from '@angular/http';
 import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
+import { Subject } from 'rxjs/Rx';
 
 export class User {
   constructor(
@@ -18,11 +20,13 @@ export class AuthenticationService {
   constructor(
     private _router: Router,
     private http: Http,
-    private jwtHelper: JwtHelper = new JwtHelper()
-  ) { }
+    private jwtHelper: JwtHelper = new JwtHelper(),
+    //private messageService: MessageService,
+  ) { this.logout(); }
 
   logout() {
     localStorage.removeItem('user');
+    //this.sendMessage('Aby móc edytować dane należy się zalogować');
     //this._router.navigate(['Login']);
   }
 
@@ -131,8 +135,11 @@ export class AuthenticationService {
       }
     });
 
+ //   result = true;
+
     if (result === true) {
       localStorage.setItem('user', token);
+      //_self.sendMessage('Nie masz uprawnień do edycji tego rekordu. Możesz edytować jedynie swoje dane.');
       _self._router.navigate(['delegacje']);
       return true;
     } else {
@@ -145,6 +152,6 @@ export class AuthenticationService {
       this._router.navigate(['Login']);
     }
   }
-
+  
 
 }
