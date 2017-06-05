@@ -51,6 +51,7 @@
       "./jqwidgets/jqxlistbox.js",
       "./jqwidgets/jqxcheckbox.js",
       "./jqwidgets/jqxcalendar.js",
+      "./jqwidgets/jqxcombobox.js",
       "./jqwidgets/jqxdatetimeinput.js",
       "./jqwidgets/jqxnumberinput.js",
       "./jqwidgets/globalization/globalize.js",

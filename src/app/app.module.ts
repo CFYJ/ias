@@ -30,7 +30,7 @@ import { DataTableModule, SharedModule } from 'primeng/primeng';
 
 export const appRoutes: Routes = [
   { path: 'delegacje', component: DelegacjeComponent, canActivate: [AuthGuardService] },
-  { path: 'kontakty', component: KontaktyComponent, canActivate: [AuthGuardService] },
+  { path: 'kontakty', component: KontaktyComponent },
   { path: 'login', component: LoginComponent },
   { path: 'about', component: KontaktyComponent },
 ];

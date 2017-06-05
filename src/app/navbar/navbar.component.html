@@ -1,9 +1,9 @@
 <nav>
-  <a [routerLink]="['/']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">HOME</a>
+  <!--a [routerLink]="['/']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">HOME</a>
   <a [routerLink]="['/about']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">ABOUT</a>
-  <a [routerLink]="['/delegacje']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">delegacje</a>
-  <a [routerLink]="['/kontakty']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">kontakty</a>
-  <a [routerLink]="['/login']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">logowanie</a>
+  <a [routerLink]="['/delegacje']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">delegacje</a-->
+  <a [routerLink]="['/kontakty']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Kontakty</a>
+  <a [routerLink]="['/login']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Logowanie</a>
   <div class="well" *ngIf="auth.getUser()">Jesteś zalogowany jako <b>{{ auth.getUser() }}</b>
     <a href (click)="logout()">Wyloguj</a>
   </div>

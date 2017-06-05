@@ -2,6 +2,7 @@ import { KontaktyService } from './../kontakty.service';
 import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
+import { jqxComboBoxComponent } from 'jqwidgets-ts/angular_jqxcombobox';
 import { DataTableModule, SharedModule } from 'primeng/primeng';
 import { Car } from '../car';
 import { jqxGridComponent } from 'jqwidgets-ts/angular_jqxgrid';
@@ -19,44 +20,33 @@ import { Subscription } from 'rxjs/Subscription';
   styleUrls: ['./kontakty.component.scss']
 })
 
-export class KontaktyComponent implements AfterViewInit, OnDestroy {
-  cars: Car[];
+export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
   message: any;
   subscription: Subscription;
+  jednostki: string[];
 
-  countries = new Array("Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antarctica", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burma", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo, Democratic Republic", "Congo, Republic of the", "Costa Rica", "Cote d'Ivoire", "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "East Timor", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Greenland", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Korea, North", "Korea, South", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macedonia", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Mongolia", "Morocco", "Monaco", "Mozambique", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Norway", "Oman", "Pakistan", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Samoa", "San Marino", " Sao Tome", "Saudi Arabia", "Senegal", "Serbia and Montenegro", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "Spain", "Sri Lanka", "Sudan", "Suriname", "Swaziland", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe");
-  ioptions: jqwidgets.InputOptions = {
-    placeHolder: 'Wprowadź kraj',
-    height: 25,
-    width: 200,
-    minLength: 1,
-    source: this.countries,
-    theme: 'metro'
-  };
-
-  url = 'http://localhost:5000/api/Delegacja';
+  url = 'http://localhost:5000/api/Kontakties/GetKontakty';
   source =
   {
     datatype: 'json',
     datafields: [
       { name: 'id' },
-      { name: 'idWystawcy' },
-      { name: 'idDelegowanego' },
-      { name: 'nr' },
-      { name: 'czasOd', type: 'date' },
-      { name: 'czasDo', type: 'date' },
-      { name: 'miejscowosc' },
-      { name: 'cel' },
-      { name: 'srodek' },
-      { name: 'dataWystawienia', type: 'date' },
-      { name: 'wystawil' },
-      { name: 'delegowany' },
-      { name: 'wydzial' }
+      { name: 'imie', type: 'string' },
+      { name: 'nazwisko', type: 'string' },
+      { name: 'jednostka', type: 'string' },
+      { name: 'wydzial', type: 'string' },
+      { name: 'stanowisko', type: 'string' },
+      { name: 'pokoj', type: 'string' },
+      { name: 'email', type: 'string' },
+      { name: 'telefon', type: 'string' },
+      { name: 'komorka', type: 'string' },
+      { name: 'login', type: 'string' },
+      { name: 'wewnetrzny', type: 'string' }
     ],
     id: 'id',
     url: this.url,
     updaterow: function (rowid: any, rowdata: any, commit: any) {
-      let url = 'http://localhost:5000/api/Delegacja/' + rowdata.id;
+      let url = 'http://localhost:5000/api/Kontakties/PutKontakty/' + rowdata.id;
       let t = JSON.stringify(rowdata);
       $.ajax({
         cache: false,
@@ -99,23 +89,20 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     source: this.dataAdapter,
     columnsresize: true,
     columns: [
-      { text: 'Nr', datafield: 'nr', width: 100 },
-      { text: 'Data od', datafield: 'czasOd', width: 100, columntype: 'date', cellsformat: 'yyyy-MM-dd' },
-      { text: 'Data do', datafield: 'czasDo', width: 100, cellsformat: 'yyyy-MM-dd' },
-      { text: 'Miejscowość', datafield: 'miejscowosc', width: 250 },
-      { text: 'Cel', datafield: 'cel', width: 250 },
-      { text: 'Środek', datafield: 'srodek' },
-      { text: 'Data wystawienia', datafield: 'dataWystawienia', width: 125, cellsformat: 'yyyy-MM-dd' },
-      { text: 'Wystawił', datafield: 'wystawil', width: 250, hidden: true },
-      { text: 'Delegowany', datafield: 'delegowany', width: 250 },
-      { text: 'Wydział', datafield: 'wydzial', width: 100 },
+      { text: 'Login', datafield: 'login', width: 100 },
+      { text: 'Imię', datafield: 'imie', width: 100 },
+      { text: 'Nazwisko', datafield: 'nazwisko', width: 100 },
+      { text: 'Jednostka', datafield: 'jednostka', width: 150 },
+      { text: 'Wydział', datafield: 'wydzial', width: 150 },
+      { text: 'Pokój', datafield: 'pokoj' },
+      { text: 'Stanowisko', datafield: 'stanowisko', width: 250 },
+      { text: 'Email', datafield: 'email', width: 125 },
+      { text: 'Telefon', datafield: 'telefon', width: 150 },
+      { text: 'Wewnętrzny', datafield: 'wewnetrzny', width: 100 },
+      { text: 'Komórka', datafield: 'komorka', width: 150 },
       {
         text: 'Edycja', datafield: 'edycja', width: 50, columntype: 'button',
         cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
-          if (rowdata.delegowany === 'SZEREJKO ANDRZEJ') {
-            return 'Edycja';
-            //$('#jqxgrid').jqxGrid('setcolumnproperty', columnfield, 'hidden', 'true');
-          }
           return 'Edycja';
         }
       }
@@ -124,64 +111,77 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('gridReference') myGrid: jqxGridComponent;
   @ViewChild('jqxwindow1') editWindow: jqxWindowComponent;
-  @ViewChild('jqxdelegowany1') jqxdelegowany: jqxInputComponent;
-  @ViewChild('dateInput') myDateInput: jqxDateTimeInputComponent;
   @ViewChild('msgNotification') msgNotification: jqxNotificationComponent;
+  @ViewChild('cbJednostka') myJednostka: jqxComboBoxComponent;
+  @ViewChild('cbWydzial') myWydzial: jqxComboBoxComponent;
+  @ViewChild('cbStanowisko') myStanowisko: jqxComboBoxComponent;
+
 
   constructor(private kontaktyService: KontaktyService, private authSAervice: AuthenticationService,
     private messageService: MessageService) {
-      //this.subscription = this.messageService.getMessage().subscribe(message => { this.message = message; });
-     }
+
+
+  }
+
+  ngOnInit(): void {
+    //this.getJednostki();
+
+
+  }
+
+  getJednostki() {
+
+  }
 
   ngAfterViewInit(): void {
-    let dateInputSettings: jqwidgets.DateTimeInputOptions = { width: '300px', height: '25px', theme: 'metro' };
+    let _self = this;
+
     let inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro' };
-    let czasOd: jqwidgets.jqxInput = jqwidgets.createInstance($('#czasOd'), 'jqxDateTimeInput', { width: '300px', height: '25px', theme: 'metro', formatString: 'yyyy-MM-dd' });
-    let czasDo: jqwidgets.jqxInput = jqwidgets.createInstance($('#czasDo'), 'jqxDateTimeInput', { width: '300px', height: '25px', theme: 'metro', formatString: 'yyyy-MM-dd' });
-
-    let myInput: jqwidgets.jqxInput = jqwidgets.createInstance($('#input'), 'jqxInput', this.ioptions);
-    this.kontaktyService.getCarsSmall().then(cars => this.cars = cars);
-
+    let disabledSettings: jqwidgets.InputOptions = {
+      width: '300px', height: '25px',
+      theme: 'metro', disabled: true
+    };
     this.myGrid.createComponent(this.options);
     this.editWindow.createWidget({
       width: 500, height: 400, theme: 'metro',
       resizable: false, isModal: true, autoOpen: false, cancelButton: $('#Cancel'), modalOpacity: 0.5
     });
-    this.myDateInput.createComponent(dateInputSettings);
-    let t: jqwidgets.jqxInput = jqwidgets.createInstance($('#delegowany'), 'jqxInput', inputSettings);
 
-    //this.jqxdelegowany.createComponent({theme: 'metro'});
     let buttonOptions: jqwidgets.ButtonOptions = { theme: 'metro' };
-
     let mySaveButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Save'), 'jqxButton', buttonOptions);
     let myCancelButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Cancel'), 'jqxButton', buttonOptions);
 
+    this.kontaktyService.getJednostki().subscribe(jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); });
+    this.kontaktyService.getStanowiska().subscribe(jed => { this.myStanowisko.createComponent({ source: jed, width: '300px' }); });
+    this.kontaktyService.getWydzialy().subscribe(jed => { this.myWydzial.createComponent({ source: jed, width: '300px' }); });
+    $('#login').jqxInput(disabledSettings);
+    $('#imie').jqxInput(inputSettings);
+    $('#nazwisko').jqxInput(inputSettings);
+    $('#pokoj').jqxInput(inputSettings);
+    $('#email').jqxInput(inputSettings);
+    $('#telefon').jqxInput(inputSettings);
+    $('#wewnetrzny').jqxInput(inputSettings);
+    $('#komorka').jqxInput(inputSettings);
+
+
+
     mySaveButton.addEventHandler('click', (event: any) => {
       var data = this.myGrid.getrowdata(this.myGrid.getselectedrowindex());
-      //data.miejscowosc = $('#miejscowosc').val();
 
-      var czasOd: Date = new Date($('#czasOd').val());
-      var czasDo: Date = new Date($('#czasDo').val());
-
-      var row = {
-        id: data.id, idWystawcy: data.idWystawcy, idDelegowanego: data.idDelegowanego,
-        nr: data.nr, czasOd: czasOd, czasDo: czasDo,
-        miejscowosc: $('#miejscowosc').val(),
-        cel: $('#cel').val(), srodek: $('#srodek').val(), dataWystawienia: data.dataWystawienia,
-        wystawil: '', delegowany: $('#delegowany').val(), wydzial: data.wydzial
-        //            quantity: parseInt($("#quantity").jqxNumberInput('decimal')),
-        //price: parseFloat($("#price").jqxNumberInput('decimal'))
+      let row = {
+        id: data.id, imie: $('#imie').val(), nazwisko: $('#nazwisko').val(),
+        jednostka: this.myJednostka.getSelectedItem().value, wydzial: this.myWydzial.getSelectedItem().value,
+        stanowisko: this.myStanowisko.getSelectedItem().value,
+        pokoj: $('#pokoj').val(), email: $('#email').val(), telefon: $('#telefon').val(), komorka: $('#komorka').val(),
+        wewnetrzny: $('#wewnetrzny').val(), login: data.login
       };
-      //var t = JSON.stringify(row);
       this.myGrid.updaterow(this.myGrid.getrowid(this.myGrid.getselectedrowindex()), row);
       this.editWindow.close();
-      //alert('saved! ' + $('#miejscowosc').val());
     });
   };
 
   ngOnDestroy() {
-    // unsubscribe to ensure no memory leaks
-    //this.subscription.unsubscribe();
+
   }
   editCellclick(event: any): void {
     if (event.args.datafield === 'edycja') {
@@ -191,17 +191,24 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       //this.delegowany.val(datarow.delegowany);
       //this.myDateInput.value(datarow.czasDo);
       $('#id').val(datarow.id);
-      $('#nr').val(datarow.nr);
-      $('#czasOd').val(datarow.czasOd);
-      $('#czasDo').val(datarow.czasDo);
-      $('#miejscowosc').val(datarow.miejscowosc);
-      $('#cel').val(datarow.cel);
-      $('#srodek').val(datarow.srodek);
-      $('#dataWystawienia').val(datarow.dataWystawienia);
-      $('#delegowany').val(datarow.delegowany);
+      $('#imie').val(datarow.imie);
+      $('#nazwisko').val(datarow.nazwisko);
+      this.myJednostka.val(datarow.jednostka);
+      this.myWydzial.val(datarow.wydzial);
+      this.myStanowisko.val(datarow.stanowisko);
+      $('#pokoj').val(datarow.pokoj);
+      $('#email').val(datarow.email);
+      $('#telefon').val(datarow.telefon);
+      $('#komorka').val(datarow.komorka);
+      $('#login').val(datarow.login);
+      $('#wewnetrzny').val(datarow.wewnetrzny);
+
+      this.editWindow.open();
+
       //let m = this.messageService.getMessage();
       //let w = m.subscribe();
-      let lin = this.authSAervice.loggedIn();
+
+      /*let lin = this.authSAervice.loggedIn();
       if (datarow.delegowany === 'SZEREJKO ANDRZEJ') {
         this.editWindow.open();
       } else if (lin) {
@@ -211,7 +218,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       } else {
         //this.message = 'Aby móc edytować dane należy się zalogować';
         this.msgNotification.open();
-      }
+      }*/
       //+this.myGrid.getrowdata(this.myGrid.getselectedrowindex()));
     }
   }

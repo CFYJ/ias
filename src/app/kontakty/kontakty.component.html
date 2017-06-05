@@ -1,59 +1,54 @@
-<p>
-  kontakty works!
-</p>
-<div id='jqxWidget' style="font-size: 10px; margin: 10px; font-family: Verdana; float: left;">
-  <jqxGrid id="jqxgrid1" #jqxgrid1 [auto-create]='false' (onCellclick)='editCellclick($event)'></jqxGrid>
-</div>
-<div>
-  <input type="text" id="input" />
-</div>
-<jqxGrid #gridReference id="jqxgrid" [auto-create]='false' (onCellclick)='editCellclick($event)'></jqxGrid>
 
-<p-dataTable [value]="cars">
-  <p-column field="vin" header="Vin"></p-column>
-  <p-column field="year" header="Year"></p-column>
-  <p-column field="brand" header="Brand"></p-column>
-  <p-column field="color" header="Color"></p-column>
-</p-dataTable>
+<jqxGrid #gridReference id="jqxgrid" [auto-create]='false' (onCellclick)='editCellclick($event)'></jqxGrid>
 
 <jqxWindow #jqxwindow1 [auto-create]='false'>
   <div>Edycja</div>
   <div style="overflow: hidden;">
     <table>
       <tr>
-        <td align="right">Numer</td>
-        <td align="left"><input id='nr' /></td>
+        <td align="right">Login</td>
+        <td align="left"><input id='login' disabled="disabled" /></td>
       </tr>
       <tr>
-        <td align="right">Data od</td>
-        <td align="left"><input id='czasOd' /></td>
+        <td align="right">Imię</td>
+        <td align="left"><input id='imie' /></td>
       </tr>
       <tr>
-        <td align="right">Data do</td>
-        <td align="left"><input id='czasDo' /></td>
+        <td align="right">Nazwisko</td>
+        <td align="left"><input id='nazwisko' /></td>
       </tr>
       <tr>
-        <td align="right">Miejscowość</td>
-        <td align="left"><input id='miejscowosc' /></td>
+        <td align="right">Jednostka</td>
+        <td align="left"><jqxComboBox #cbJednostka [auto-create]='false' [theme]='"metro"'></jqxComboBox></td>        
       </tr>
       <tr>
-        <td align="right">Cel</td>
-        <td align="left"><input id='cel' /></td>
+        <td align="right">Wydział</td>
+        <td align="left"><jqxComboBox #cbWydzial [auto-create]='false' [theme]='"metro"'></jqxComboBox></td>
       </tr>
       <tr>
-        <td align="right">Środek</td>
-        <td align="left"><input id='srodek' /></td>
+        <td align="right">Stanowisko</td>
+        <td align="left"><jqxComboBox #cbStanowisko [auto-create]='false' [theme]='"metro"'></jqxComboBox></td>
       </tr>
       <tr>
-        <td align="right">Delegowany</td>
-        <td align="left"><input id='delegowany' /></td>
-        <!--td align="left"><jqxInput #jqxdelegowany1></jqxInput></td-->
+        <td align="right">Pokój</td>
+        <td align="left"><input id='pokoj' /></td>
       </tr>
       <tr>
-        <td align="right">Test</td>
-        <td align="left">
-          <jqxDateTimeInput #dateInput [auto-create]='false'></jqxDateTimeInput><br /></td>
+        <td align="right">Email</td>
+        <td align="left"><input id='email' /></td>        
       </tr>
+      <tr>
+        <td align="right">Telefon</td>
+        <td align="left"><input id='telefon' /></td>
+      </tr>
+      <tr>
+        <td align="right">Komórka</td>
+        <td align="left"><input id='komorka' /></td>
+      </tr>
+      <tr>
+        <td align="right">Wewnętrzny</td>
+        <td align="left"><input id='wewnetrzny' /></td>
+      </tr>      
       <tr>
         <td align="right"></td>
         <td style="padding-top: 10px;" align="right"><input style="margin-right: 5px;" type="button" id="Save" value="Zapisz" /><input id="Cancel" type="button" value="Anuluj"
