@@ -3,6 +3,7 @@ import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy } from '@angular
 import { FormsModule } from '@angular/forms';
 import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
 import { jqxComboBoxComponent } from 'jqwidgets-ts/angular_jqxcombobox';
+import { jqxButtonComponent } from 'jqwidgets-ts/angular_jqxbuttons';
 import { DataTableModule, SharedModule } from 'primeng/primeng';
 import { Car } from '../car';
 import { jqxGridComponent } from 'jqwidgets-ts/angular_jqxgrid';
@@ -115,6 +116,16 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('cbJednostka') myJednostka: jqxComboBoxComponent;
   @ViewChild('cbWydzial') myWydzial: jqxComboBoxComponent;
   @ViewChild('cbStanowisko') myStanowisko: jqxComboBoxComponent;
+  @ViewChild('nazwisko') myNazwisko: jqxInputComponent;
+  @ViewChild('imie') myImie: jqxInputComponent;
+  @ViewChild('pokoj') myPokoj: jqxInputComponent;
+  @ViewChild('email') myEmail: jqxInputComponent;
+  @ViewChild('telefon') myTelefon: jqxInputComponent;
+  @ViewChild('komorka') myKomorka: jqxInputComponent;
+  @ViewChild('wewnetrzny') myWewnetrzny: jqxInputComponent;
+  @ViewChild('login') myLogin: jqxInputComponent;
+  @ViewChild('buttonReference') mySaveButton1: jqxButtonComponent;
+  @ViewChild('buttonReference1') myCancelButton1: jqxButtonComponent;
 
 
   constructor(private kontaktyService: KontaktyService, private authSAervice: AuthenticationService,
@@ -124,84 +135,97 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    //this.getJednostki();
-
-
   }
 
   getJednostki() {
 
   }
 
+  buttonClicked() {
+    var data = this.myGrid.getrowdata(this.myGrid.getselectedrowindex());
+
+    let row = {
+      id: data.id, imie: this.myImie.val(), nazwisko: this.myNazwisko.val(),
+      jednostka: this.myJednostka.getSelectedItem().value, wydzial: this.myWydzial.getSelectedItem().value,
+      stanowisko: this.myStanowisko.getSelectedItem().value,
+      pokoj: this.myPokoj.val(), email: this.myEmail.val(), telefon: this.myTelefon.val(), komorka: this.myKomorka.val(),
+      wewnetrzny: this.myWewnetrzny.val(), login: data.login
+    };
+    this.myGrid.updaterow(this.myGrid.getrowid(this.myGrid.getselectedrowindex()), row);
+    this.editWindow.close();
+  }
+  button1Clicked() {
+    this.editWindow.close();
+  }
   ngAfterViewInit(): void {
     let _self = this;
-
     let inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro' };
-    let disabledSettings: jqwidgets.InputOptions = {
-      width: '300px', height: '25px',
-      theme: 'metro', disabled: true
-    };
+    let disabledSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro', disabled: true };
     this.myGrid.createComponent(this.options);
     this.editWindow.createWidget({
       width: 500, height: 400, theme: 'metro',
-      resizable: false, isModal: true, autoOpen: false, cancelButton: $('#Cancel'), modalOpacity: 0.5
+      resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5
     });
 
     let buttonOptions: jqwidgets.ButtonOptions = { theme: 'metro' };
-    let mySaveButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Save'), 'jqxButton', buttonOptions);
-    let myCancelButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Cancel'), 'jqxButton', buttonOptions);
+    //let mySaveButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Save'), 'jqxButton', buttonOptions);
+    //let myCancelButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Cancel'), 'jqxButton', buttonOptions);
 
     this.kontaktyService.getJednostki().subscribe(jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); });
     this.kontaktyService.getStanowiska().subscribe(jed => { this.myStanowisko.createComponent({ source: jed, width: '300px' }); });
     this.kontaktyService.getWydzialy().subscribe(jed => { this.myWydzial.createComponent({ source: jed, width: '300px' }); });
-    $('#login').jqxInput(disabledSettings);
-    $('#imie').jqxInput(inputSettings);
-    $('#nazwisko').jqxInput(inputSettings);
-    $('#pokoj').jqxInput(inputSettings);
-    $('#email').jqxInput(inputSettings);
-    $('#telefon').jqxInput(inputSettings);
-    $('#wewnetrzny').jqxInput(inputSettings);
-    $('#komorka').jqxInput(inputSettings);
+    this.myNazwisko.createComponent(inputSettings);
+    this.myImie.createComponent(inputSettings);
+    this.myLogin.createComponent(disabledSettings);
+    this.myTelefon.createComponent(inputSettings);
+    this.myPokoj.createComponent(inputSettings);
+    this.myWewnetrzny.createComponent(inputSettings);
+    this.myKomorka.createComponent(inputSettings);
+    this.myEmail.createComponent(inputSettings);
+
+    this.mySaveButton1.createComponent(buttonOptions);
+    this.myCancelButton1.createComponent(buttonOptions);
 
 
 
-    mySaveButton.addEventHandler('click', (event: any) => {
+    /*mySaveButton.addEventHandler('click', (event: any) => {
       var data = this.myGrid.getrowdata(this.myGrid.getselectedrowindex());
 
       let row = {
-        id: data.id, imie: $('#imie').val(), nazwisko: $('#nazwisko').val(),
+        id: data.id, imie: this.myImie.val(), nazwisko: this.myNazwisko.val(),
         jednostka: this.myJednostka.getSelectedItem().value, wydzial: this.myWydzial.getSelectedItem().value,
         stanowisko: this.myStanowisko.getSelectedItem().value,
-        pokoj: $('#pokoj').val(), email: $('#email').val(), telefon: $('#telefon').val(), komorka: $('#komorka').val(),
-        wewnetrzny: $('#wewnetrzny').val(), login: data.login
+        pokoj: this.myPokoj.val(), email: this.myEmail.val(), telefon: this.myTelefon.val(), komorka: this.myKomorka.val(),
+        wewnetrzny: this.myWewnetrzny.val(), login: data.login
       };
       this.myGrid.updaterow(this.myGrid.getrowid(this.myGrid.getselectedrowindex()), row);
       this.editWindow.close();
-    });
+    });*/
   };
 
   ngOnDestroy() {
-
   }
   editCellclick(event: any): void {
     if (event.args.datafield === 'edycja') {
       console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
       var datarow = event.args.row.bounddata;
+
       //$('#delegowany').jqxInput({theme: 'metro', width: 200});
       //this.delegowany.val(datarow.delegowany);
       //this.myDateInput.value(datarow.czasDo);
-      $('#id').val(datarow.id);
-      $('#imie').val(datarow.imie);
-      $('#nazwisko').val(datarow.nazwisko);
+
+      this.myImie.val(datarow.imie);
+      //$('#nazwisko').val(datarow.nazwisko);
+      this.myNazwisko.val(datarow.nazwisko);
       this.myJednostka.val(datarow.jednostka);
       this.myWydzial.val(datarow.wydzial);
       this.myStanowisko.val(datarow.stanowisko);
-      $('#pokoj').val(datarow.pokoj);
-      $('#email').val(datarow.email);
-      $('#telefon').val(datarow.telefon);
-      $('#komorka').val(datarow.komorka);
-      $('#login').val(datarow.login);
-      $('#wewnetrzny').val(datarow.wewnetrzny);
+      this.myPokoj.val(datarow.pokoj);
+      this.myEmail.val(datarow.email);
+      this.myTelefon.val(datarow.telefon);
+      this.myKomorka.val(datarow.komorka);
+      this.myLogin.val(datarow.login);
+      this.myWewnetrzny.val(datarow.wewnetrzny);
 
       this.editWindow.open();
 

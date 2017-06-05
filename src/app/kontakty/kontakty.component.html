@@ -7,15 +7,15 @@
     <table>
       <tr>
         <td align="right">Login</td>
-        <td align="left"><input id='login' disabled="disabled" /></td>
+        <td align="left"><jqxInput #login [auto-create]='false'></jqxInput></td>
       </tr>
       <tr>
         <td align="right">Imię</td>
-        <td align="left"><input id='imie' /></td>
+        <td align="left"><jqxInput #imie [auto-create]='false'></jqxInput></td>
       </tr>
       <tr>
         <td align="right">Nazwisko</td>
-        <td align="left"><input id='nazwisko' /></td>
+        <td align="left"><jqxInput #nazwisko [auto-create]='false'></jqxInput></td>
       </tr>
       <tr>
         <td align="right">Jednostka</td>
@@ -31,28 +31,27 @@
       </tr>
       <tr>
         <td align="right">Pokój</td>
-        <td align="left"><input id='pokoj' /></td>
+        <td align="left"><jqxInput #pokoj [auto-create]='false'></jqxInput></td>
       </tr>
       <tr>
         <td align="right">Email</td>
-        <td align="left"><input id='email' /></td>        
+        <td align="left"><jqxInput #email [auto-create]='false'></jqxInput></td>        
       </tr>
       <tr>
         <td align="right">Telefon</td>
-        <td align="left"><input id='telefon' /></td>
+        <td align="left"><jqxInput #telefon [auto-create]='false'></jqxInput></td>
       </tr>
       <tr>
         <td align="right">Komórka</td>
-        <td align="left"><input id='komorka' /></td>
+        <td align="left"><jqxInput #komorka [auto-create]='false'></jqxInput></td>
       </tr>
       <tr>
         <td align="right">Wewnętrzny</td>
-        <td align="left"><input id='wewnetrzny' /></td>
+        <td align="left"><jqxInput #wewnetrzny [auto-create]='false'></jqxInput></td>
       </tr>      
       <tr>
         <td align="right"></td>
-        <td style="padding-top: 10px;" align="right"><input style="margin-right: 5px;" type="button" id="Save" value="Zapisz" /><input id="Cancel" type="button" value="Anuluj"
-          /></td>
+        <td style="padding-top: 10px;" align="right"><jqxButton #buttonReference [auto-create]='false' (onClick)="buttonClicked()">Zapisz</jqxButton><jqxButton #buttonReference1 [auto-create]='false' (onClick)="button1Clicked()">Anuluj</jqxButton></td>
       </tr>
     </table>
   </div>
