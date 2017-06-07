@@ -1,3 +1,7 @@
+<div>
+  <!--div>{{message}}</div-->
+</div>
+
 
 <jqxGrid #gridReference id="jqxgrid" [auto-create]='false' (onCellclick)='editCellclick($event)'></jqxGrid>
 
@@ -7,56 +11,82 @@
     <table>
       <tr>
         <td align="right">Login</td>
-        <td align="left"><jqxInput #login [auto-create]='false'></jqxInput></td>
+        <td align="left">
+          <jqxInput #login [auto-create]='false'></jqxInput>
+        </td>
       </tr>
       <tr>
         <td align="right">Imię</td>
-        <td align="left"><jqxInput #imie [auto-create]='false'></jqxInput></td>
+        <td align="left">
+          <jqxInput #imie [auto-create]='false'></jqxInput>
+        </td>
       </tr>
       <tr>
         <td align="right">Nazwisko</td>
-        <td align="left"><jqxInput #nazwisko [auto-create]='false'></jqxInput></td>
+        <td align="left">
+          <jqxInput #nazwisko [auto-create]='false'></jqxInput>
+        </td>
       </tr>
       <tr>
         <td align="right">Jednostka</td>
-        <td align="left"><jqxComboBox #cbJednostka [auto-create]='false' [theme]='"metro"'></jqxComboBox></td>        
+        <td align="left">
+          <jqxComboBox #cbJednostka [auto-create]='false' [theme]='"metro"'></jqxComboBox>
+        </td>
       </tr>
       <tr>
         <td align="right">Wydział</td>
-        <td align="left"><jqxComboBox #cbWydzial [auto-create]='false' [theme]='"metro"'></jqxComboBox></td>
+        <td align="left">
+          <jqxComboBox #cbWydzial [auto-create]='false' [theme]='"metro"'></jqxComboBox>
+        </td>
       </tr>
       <tr>
         <td align="right">Stanowisko</td>
-        <td align="left"><jqxComboBox #cbStanowisko [auto-create]='false' [theme]='"metro"'></jqxComboBox></td>
+        <td align="left">
+          <jqxComboBox #cbStanowisko [auto-create]='false' [theme]='"metro"'></jqxComboBox>
+        </td>
       </tr>
       <tr>
         <td align="right">Pokój</td>
-        <td align="left"><jqxInput #pokoj [auto-create]='false'></jqxInput></td>
+        <td align="left">
+          <jqxInput #pokoj [auto-create]='false'></jqxInput>
+        </td>
       </tr>
       <tr>
         <td align="right">Email</td>
-        <td align="left"><jqxInput #email [auto-create]='false'></jqxInput></td>        
+        <td align="left">
+          <jqxInput #email [auto-create]='false'></jqxInput>
+        </td>
       </tr>
       <tr>
         <td align="right">Telefon</td>
-        <td align="left"><jqxInput #telefon [auto-create]='false'></jqxInput></td>
+        <td align="left">
+          <jqxInput #telefon [auto-create]='false'></jqxInput>
+        </td>
       </tr>
       <tr>
         <td align="right">Komórka</td>
-        <td align="left"><jqxInput #komorka [auto-create]='false'></jqxInput></td>
+        <td align="left">
+          <jqxInput #komorka [auto-create]='false'></jqxInput>
+        </td>
       </tr>
       <tr>
         <td align="right">Wewnętrzny</td>
-        <td align="left"><jqxInput #wewnetrzny [auto-create]='false'></jqxInput></td>
-      </tr>      
+        <td align="left">
+          <jqxInput #wewnetrzny [auto-create]='false'></jqxInput>
+        </td>
+      </tr>
       <tr>
         <td align="right"></td>
-        <td style="padding-top: 10px;" align="right"><jqxButton #buttonReference [auto-create]='false' (onClick)="buttonClicked()">Zapisz</jqxButton><jqxButton #buttonReference1 [auto-create]='false' (onClick)="button1Clicked()">Anuluj</jqxButton></td>
+        <td style="padding-top: 10px;" align="right">
+          <jqxButton #buttonReference [auto-create]='false' (onClick)="buttonClicked()">Zapisz</jqxButton>
+          <jqxButton #buttonReference1 [auto-create]='false' (onClick)="button1Clicked()">Anuluj</jqxButton>
+        </td>
       </tr>
     </table>
   </div>
 </jqxWindow>
 <jqxNotification #msgNotification [width]='300' [position]='"top-right"' [opacity]='0.9' [autoOpen]='false' [autoClose]='true'
-  [animationOpenDelay]='800' [autoCloseDelay]='3000' [template]='"info"' [theme]='"metro"'>
-  <div *ngIf="message">{{message}}</div>
+  [animationOpenDelay]='800' [autoCloseDelay]='3000' [template]='"info"' [theme]='"metro"' [auto-create]='false'>
+  <!--div *ngIf="message">{{message}}</div-->
+  <div id="notificationContent"></div>
 </jqxNotification>

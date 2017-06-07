@@ -22,7 +22,7 @@ export class AuthenticationService {
     private http: Http,
     private jwtHelper: JwtHelper = new JwtHelper(),
     //private messageService: MessageService,
-  ) { this.logout(); }
+  ) { }
 
   logout() {
     localStorage.removeItem('user');

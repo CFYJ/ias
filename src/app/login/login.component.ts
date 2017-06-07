@@ -1,6 +1,7 @@
 import { MessageService } from './../message.service';
 import { AuthenticationService, User } from './../authentication.service';
 import { Component, OnInit, ElementRef } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,21 +13,29 @@ export class LoginComponent implements OnInit {
 
   public user = new User('', '');
   public errorMsg = '';
+  returnUrl: string;
 
   constructor(
+    private route: ActivatedRoute,
+    private router: Router,
     private _service: AuthenticationService,
-    private messageService: MessageService) {}
+    private messageService: MessageService) { }
 
   ngOnInit() {
+    this._service.logout();
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/kontakty';
   }
 
   login() {
     this.errorMsg = '';
-    if (!this._service.login(this.user)){
+    this.user.name = this.user.name.toUpperCase();
+    if (!this._service.login(this.user)) {
       this.errorMsg = 'Błąd logowania';
+    } else {
+      this.router.navigate([this.returnUrl]);
     }
-    //this.sendMessage('logged in');
   }
+
   sendMessage(msg: string): void {
     // send message to subscribers via observable subject
     this.messageService.sendMessage(msg);
