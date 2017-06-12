@@ -12,7 +12,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MdButtonModule, MdCardModule, MdMenuModule, MdToolbarModule, MdIconModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
-import { DelegacjeComponent } from './delegacje/delegacje.component';
+//import { DelegacjeComponent } from './delegacje/delegacje.component';
 import { KontaktyComponent } from './kontakty/kontakty.component';
 import { LoginComponent } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -29,7 +29,7 @@ import { jqxNotificationComponent } from 'jqwidgets-ts/angular_jqxnotification';
 import { DataTableModule, SharedModule } from 'primeng/primeng';
 
 export const appRoutes: Routes = [
-  { path: 'delegacje', component: DelegacjeComponent, canActivate: [AuthGuardService] },
+ // { path: 'delegacje', component: DelegacjeComponent, canActivate: [AuthGuardService] },
   { path: 'kontakty', component: KontaktyComponent },
   { path: 'login', component: LoginComponent },
   { path: 'about', component: KontaktyComponent },
@@ -46,7 +46,7 @@ export const appRoutes: Routes = [
     jqxComboBoxComponent,
     jqxNotificationComponent,
     AppComponent,
-    DelegacjeComponent,
+//    DelegacjeComponent,
     KontaktyComponent,
     LoginComponent,
   ],

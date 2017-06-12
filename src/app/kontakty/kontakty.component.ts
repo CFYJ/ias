@@ -3,8 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
 import { jqxComboBoxComponent } from 'jqwidgets-ts/angular_jqxcombobox';
 import { jqxButtonComponent } from 'jqwidgets-ts/angular_jqxbuttons';
-//import { DataTableModule, SharedModule } from 'primeng/primeng';
-//import { Car } from '../car';
 import { jqxGridComponent } from 'jqwidgets-ts/angular_jqxgrid';
 import { jqxWindowComponent } from 'jqwidgets-ts/angular_jqxwindow';
 import { jqxDateTimeInputComponent } from 'jqwidgets-ts/angular_jqxdatetimeinput';
@@ -21,7 +19,7 @@ import { Subscription } from 'rxjs/Subscription';
   styleUrls: ['./kontakty.component.scss']
 })
 
-export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
+export class KontaktyComponent implements AfterViewInit, OnDestroy {
   message: any = 'message';
   subscription: Subscription;
   jednostki: string[];
@@ -74,7 +72,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
   filtergroup = new $.jqx.filter();
   options: jqwidgets.GridOptions =
   {
-    localization: { pagergotopagestring: 'Idź do', pagerrangestring: 'z', pagershowrowsstring: 'Liczba wierszy' },
+    localization: { pagergotopagestring: 'Idź do', pagerrangestring: 'z', pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...' },
     autoheight: true,
     theme: 'metro',
     width: '100%',
@@ -132,17 +130,10 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
     private messageService: MessageService) {
   }
 
-  ngOnInit(): void {
-  }
-
-  getJednostki() {
-
-  }
-
   buttonClicked() {
-    let data = this.myGrid.getrowdata(this.myGrid.getselectedrowindex());
+    const data = this.myGrid.getrowdata(this.myGrid.getselectedrowindex());
 
-    let row = {
+    const row = {
       id: data.id, imie: this.myImie.val(), nazwisko: this.myNazwisko.val(),
       jednostka: this.myJednostka.getSelectedItem().value, wydzial: this.myWydzial.getSelectedItem().value,
       stanowisko: this.myStanowisko.getSelectedItem().value,
@@ -156,12 +147,12 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
     this.editWindow.close();
   }
   ngAfterViewInit(): void {
-    let _self = this;
-    let inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro' };
-    let disabledSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro', disabled: true };
+    const _self = this;
+    const inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro' };
+    const disabledSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro', disabled: true };
     this.myGrid.createComponent(this.options);
     this.editWindow.createWidget({
-      width: 400, height: 400, theme: 'metro',
+      width: 400, height: 430, theme: 'metro',
       resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5
     });
 
@@ -169,9 +160,6 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
     //let mySaveButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Save'), 'jqxButton', buttonOptions);
     //let myCancelButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Cancel'), 'jqxButton', buttonOptions);
 
-    this.kontaktyService.getJednostki().subscribe(jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); });
-    this.kontaktyService.getStanowiska().subscribe(jed => { this.myStanowisko.createComponent({ source: jed, width: '300px' }); });
-    this.kontaktyService.getWydzialy().subscribe(jed => { this.myWydzial.createComponent({ source: jed, width: '300px' }); });
     this.myNazwisko.createComponent(inputSettings);
     this.myImie.createComponent(inputSettings);
     this.myLogin.createComponent(disabledSettings);
@@ -192,14 +180,15 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
     if (event.args.datafield === 'edycja') {
       console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
       if (this.authSAervice.loggedIn()) {
-        let datarow = event.args.row.bounddata;
-        let user = this.authSAervice.getUser();
+        const datarow = event.args.row.bounddata;
+        const user = this.authSAervice.getUser();
         if (datarow.login === user) {
+          this.kontaktyService.getJednostki().subscribe(jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); this.myJednostka.val(datarow.jednostka); });
+          this.kontaktyService.getStanowiska().subscribe(jed => { this.myStanowisko.createComponent({ source: jed, width: '300px' }); this.myStanowisko.val(datarow.stanowisko); });
+          this.kontaktyService.getWydzialy().subscribe(jed => { this.myWydzial.createComponent({ source: jed, width: '300px' }); this.myWydzial.val(datarow.wydzial); });
+
           this.myImie.val(datarow.imie);
           this.myNazwisko.val(datarow.nazwisko);
-          this.myJednostka.val(datarow.jednostka);
-          this.myWydzial.val(datarow.wydzial);
-          this.myStanowisko.val(datarow.stanowisko);
           this.myPokoj.val(datarow.pokoj);
           this.myEmail.val(datarow.email);
           this.myTelefon.val(datarow.telefon);
@@ -214,25 +203,8 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
         }
       } else {
         $('#notificationContent').html('W celu edycji danych należy się zalogować');
-        //this.message = 'W celu edycji danych należy się zalogować';
         this.msgNotification.open();
-        //alert('W celu edycji danych należy się zalogować');
       }
-      //let m = this.messageService.getMessage();
-      //let w = m.subscribe();
-
-      /*let lin = this.authSAervice.loggedIn();
-      if (datarow.delegowany === 'SZEREJKO ANDRZEJ') {
-        this.editWindow.open();
-      } else if (lin) {
-        //this.message = this.messageService.getMessage();
-        //this.message.text = 'Nie masz uprawnień do edycji tego rekordu. Możesz edytować jedynie swoje dane.';
-        this.msgNotification.open();
-      } else {
-        //this.message = 'Aby móc edytować dane należy się zalogować';
-        this.msgNotification.open();
-      }*/
-      //+this.myGrid.getrowdata(this.myGrid.getselectedrowindex()));
     }
   }
 
