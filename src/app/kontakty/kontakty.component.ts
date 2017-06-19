@@ -11,6 +11,7 @@ import { AuthenticationService } from './../authentication.service';
 import { KontaktyService } from './../kontakty.service';
 import { MessageService } from './../message.service';
 import { Subscription } from 'rxjs/Subscription';
+import { GlobalVariable } from 'app/global';
 
 
 @Component({
@@ -24,7 +25,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   subscription: Subscription;
   jednostki: string[];
 
-  url = 'http://localhost:5000/api/Kontakties/GetKontakty';
+  url = GlobalVariable.SERVICE_URL + 'Kontakties/GetKontakty';
   source =
   {
     datatype: 'json',
@@ -33,7 +34,10 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       { name: 'imie', type: 'string' },
       { name: 'nazwisko', type: 'string' },
       { name: 'jednostka', type: 'string' },
+      { name: 'miejsce_pracy', type: 'string' },
+      { name: 'pion', type: 'string' },
       { name: 'wydzial', type: 'string' },
+      { name: 'wydzial_podlegly', type: 'string' },
       { name: 'stanowisko', type: 'string' },
       { name: 'pokoj', type: 'string' },
       { name: 'email', type: 'string' },
@@ -45,8 +49,8 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     id: 'id',
     url: this.url,
     updaterow: function (rowid: any, rowdata: any, commit: any) {
-      let url = 'http://localhost:5000/api/Kontakties/PutKontakty/' + rowdata.id;
-      let t = JSON.stringify(rowdata);
+      const url = GlobalVariable.SERVICE_URL + 'Kontakties/PutKontakty/' + rowdata.id;
+       let t = JSON.stringify(rowdata);
       $.ajax({
         cache: false,
         dataType: 'json',
@@ -72,7 +76,10 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   filtergroup = new $.jqx.filter();
   options: jqwidgets.GridOptions =
   {
-    localization: { pagergotopagestring: 'Idź do', pagerrangestring: 'z', pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...' },
+    localization: {
+      pagergotopagestring: 'Idź do', pagerrangestring: 'z',
+      pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...'
+    },
     autoheight: true,
     theme: 'metro',
     width: '100%',
@@ -91,14 +98,17 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       { text: 'Login', datafield: 'login', width: 100 },
       { text: 'Imię', datafield: 'imie', width: 100 },
       { text: 'Nazwisko', datafield: 'nazwisko', width: 100 },
+      { text: 'Telefon', datafield: 'telefon', width: 100 },
+      { text: 'Wewn.', datafield: 'wewnetrzny', width: 50 },
+      { text: 'Tel. kom.', datafield: 'komorka', width: 100 },
       { text: 'Jednostka', datafield: 'jednostka', width: 150 },
+      { text: 'Miejsce pracy', datafield: 'miejsce_pracy', width: 150 },
+      { text: 'Pion', datafield: 'pion', width: 150 },
       { text: 'Wydział', datafield: 'wydzial', width: 150 },
+      { text: 'Wydział podległy', datafield: 'wydzial_podlegly', width: 150 },
       { text: 'Pokój', datafield: 'pokoj' },
       { text: 'Stanowisko', datafield: 'stanowisko', width: 250 },
       { text: 'Email', datafield: 'email', width: 125 },
-      { text: 'Telefon', datafield: 'telefon', width: 150 },
-      { text: 'Wewnętrzny', datafield: 'wewnetrzny', width: 100 },
-      { text: 'Komórka', datafield: 'komorka', width: 150 },
       {
         text: 'Edycja', datafield: 'edycja', width: 50, columntype: 'button',
         cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
@@ -114,6 +124,9 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   @ViewChild('cbJednostka') myJednostka: jqxComboBoxComponent;
   @ViewChild('cbWydzial') myWydzial: jqxComboBoxComponent;
   @ViewChild('cbStanowisko') myStanowisko: jqxComboBoxComponent;
+  @ViewChild('cbWydzialPodlegly') myWydzialPodlegly: jqxComboBoxComponent;
+  @ViewChild('cbPion') myPion: jqxComboBoxComponent;
+  @ViewChild('cbMiejscePracy') myMiejscePracy: jqxComboBoxComponent;
   @ViewChild('nazwisko') myNazwisko: jqxInputComponent;
   @ViewChild('imie') myImie: jqxInputComponent;
   @ViewChild('pokoj') myPokoj: jqxInputComponent;
@@ -135,8 +148,9 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
 
     const row = {
       id: data.id, imie: this.myImie.val(), nazwisko: this.myNazwisko.val(),
-      jednostka: this.myJednostka.getSelectedItem().value, wydzial: this.myWydzial.getSelectedItem().value,
-      stanowisko: this.myStanowisko.getSelectedItem().value,
+      jednostka: this.myJednostka.getSelectedItem().value, wydzial_podlegly: this.myWydzialPodlegly.getSelectedItem().value,
+      pion: this.myPion.getSelectedItem().value, wydzial: this.myWydzial.getSelectedItem().value,
+      stanowisko: this.myStanowisko.getSelectedItem().value, miejsce_pracy: this.myMiejscePracy.getSelectedItem().value,
       pokoj: this.myPokoj.val(), email: this.myEmail.val(), telefon: this.myTelefon.val(), komorka: this.myKomorka.val(),
       wewnetrzny: this.myWewnetrzny.val(), login: data.login
     };
@@ -152,13 +166,13 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     const disabledSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro', disabled: true };
     this.myGrid.createComponent(this.options);
     this.editWindow.createWidget({
-      width: 400, height: 430, theme: 'metro',
+      width: 450, height: 530, theme: 'metro',
       resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5
     });
 
-    let buttonOptions: jqwidgets.ButtonOptions = { theme: 'metro' };
-    //let mySaveButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Save'), 'jqxButton', buttonOptions);
-    //let myCancelButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Cancel'), 'jqxButton', buttonOptions);
+    const buttonOptions: jqwidgets.ButtonOptions = { theme: 'metro' };
+    // let mySaveButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Save'), 'jqxButton', buttonOptions);
+    // let myCancelButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Cancel'), 'jqxButton', buttonOptions);
 
     this.myNazwisko.createComponent(inputSettings);
     this.myImie.createComponent(inputSettings);
@@ -183,9 +197,28 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
         const datarow = event.args.row.bounddata;
         const user = this.authSAervice.getUser();
         if (datarow.login === user) {
-          this.kontaktyService.getJednostki().subscribe(jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); this.myJednostka.val(datarow.jednostka); });
-          this.kontaktyService.getStanowiska().subscribe(jed => { this.myStanowisko.createComponent({ source: jed, width: '300px' }); this.myStanowisko.val(datarow.stanowisko); });
-          this.kontaktyService.getWydzialy().subscribe(jed => { this.myWydzial.createComponent({ source: jed, width: '300px' }); this.myWydzial.val(datarow.wydzial); });
+          this.kontaktyService.getJednostki().subscribe(
+            jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); this.myJednostka.val(datarow.jednostka); });
+          this.kontaktyService.getStanowiska().subscribe(
+            jed => { this.myStanowisko.createComponent({ source: jed, width: '300px' }); this.myStanowisko.val(datarow.stanowisko); });
+          this.kontaktyService.getWydzialy().subscribe(
+            jed => { this.myWydzial.createComponent({ source: jed, width: '300px' }); this.myWydzial.val(datarow.wydzial); });
+          this.kontaktyService.getWydzialyPodlegle().subscribe(
+            jed => {
+              this.myWydzialPodlegly.createComponent({ source: jed, width: '300px' });
+              this.myWydzialPodlegly.val(datarow.wydzial_podlegly);
+            });
+          this.kontaktyService.getPiony().subscribe(
+            jed => {
+              this.myPion.createComponent({ source: jed, width: '300px' });
+              this.myPion.val(datarow.pion);
+            });
+          this.kontaktyService.getMiejscaPracy().subscribe(
+            jed => {
+              this.myMiejscePracy.createComponent({ source: jed, width: '300px' });
+              this.myMiejscePracy.val(datarow.miejsce_pracy);
+            });
+
 
           this.myImie.val(datarow.imie);
           this.myNazwisko.val(datarow.nazwisko);

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
+import { GlobalVariable } from 'app/global';
 
 @Injectable()
 export class KontaktyService {
@@ -19,13 +20,13 @@ export class KontaktyService {
   }
 
   getJednostki() {
-    let result = this.http.get('http://localhost:5000/api/Kontakties/GetJednostka')
+    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetJednostka')
       .map(this.extractData)
       .catch(this.handleError);
     return result;
 
     /*let jed: any;
-    let result = this.http.get('http://localhost:5000/api/Kontakties/GetJednostka')
+    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetJednostka')
       .toPromise()
       .then(res => <string[]>res.json().data)
       .then(data => { return data; }).catch(this.handleError);
@@ -35,13 +36,31 @@ export class KontaktyService {
   }
 
   getStanowiska() {
-    let result = this.http.get('http://localhost:5000/api/Kontakties/GetStanowisko')
+    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetStanowisko')
       .map(this.extractData)
       .catch(this.handleError);
     return result;
   }
   getWydzialy() {
-    let result = this.http.get('http://localhost:5000/api/Kontakties/GetWydzial')
+    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetWydzial')
+      .map(this.extractData)
+      .catch(this.handleError);
+    return result;
+  }
+  getWydzialyPodlegle() {
+    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetWydzialPodlegly')
+      .map(this.extractData)
+      .catch(this.handleError);
+    return result;
+  }
+  getMiejscaPracy() {
+    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetMiejscePracy')
+      .map(this.extractData)
+      .catch(this.handleError);
+    return result;
+  }
+  getPiony() {
+    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetPion')
       .map(this.extractData)
       .catch(this.handleError);
     return result;

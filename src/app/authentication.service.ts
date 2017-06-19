@@ -1,4 +1,4 @@
-//import { MessageService } from './message.service';
+import { GlobalVariable } from './global';
 import { async } from '@angular/core/testing';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
@@ -21,25 +21,25 @@ export class AuthenticationService {
     private _router: Router,
     private http: Http,
     private jwtHelper: JwtHelper = new JwtHelper(),
-    //private messageService: MessageService,
+    // private messageService: MessageService,
   ) { }
 
   logout() {
     localStorage.removeItem('user');
-    //this.sendMessage('Aby móc edytować dane należy się zalogować');
-    //this._router.navigate(['Login']);
+    // this.sendMessage('Aby móc edytować dane należy się zalogować');
+    // this._router.navigate(['Login']);
   }
 
   loggedIn() {
-    let token = localStorage.getItem('user');
+    const token = localStorage.getItem('user');
     return tokenNotExpired(null, token);
   }
 
   getUser(): string {
     if (this.loggedIn) {
-      let token = localStorage.getItem('user');
+      const token = localStorage.getItem('user');
       if (token) {
-        let user = this.jwtHelper.decodeToken(token).name;
+        const user = this.jwtHelper.decodeToken(token).name;
         return user;
       } else {
         return '';
@@ -49,7 +49,7 @@ export class AuthenticationService {
 
 
   login1(user) {
-    let t = this.http.post('http://localhost:5000/api/ADAuthentication/JwtAuthenticate', JSON.stringify(user))
+    const t = this.http.post(GlobalVariable.SERVICE_URL + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
       .map((response: Response) => {
         // login successful if there's a jwt token in the response
         let user1 = response.json();
@@ -69,7 +69,7 @@ export class AuthenticationService {
       async: false,
       dataType: 'json',
       contentType: 'application/json',
-      url: 'http://localhost:5000/api/ADAuthentication/IsAuthenticated',
+      url: GlobalVariable.SERVICE_URL + 'ADAuthentication/IsAuthenticated',
       data: JSON.stringify(user),
       type: 'PUT',
       success: function (data: any, status: any, xhr: any) {
@@ -101,7 +101,7 @@ export class AuthenticationService {
     let result: boolean;
     let token: any;
 
-    let t = this.http.post('http://localhost:5000/api/ADAuthentication/JwtAuthenticate', JSON.stringify(user))
+    let t = this.http.post(GlobalVariable.SERVICE_URL + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
       .map((response: Response) => {
         // login successful if there's a jwt token in the response
         let user1 = response.json();
@@ -116,7 +116,7 @@ export class AuthenticationService {
       async: false,
       dataType: 'text',
       contentType: 'application/json',
-      url: 'http://localhost:5000/api/ADAuthentication/JwtAuthenticate',
+      url: GlobalVariable.SERVICE_URL + 'ADAuthentication/JwtAuthenticate',
       data: JSON.stringify(user),
       type: 'PUT',
       success: function (data: any, status: any, xhr: any) {
@@ -135,11 +135,11 @@ export class AuthenticationService {
       }
     });
 
- //   result = true;
+    //   result = true;
 
     if (result === true) {
       localStorage.setItem('user', token);
-      //_self.sendMessage('Nie masz uprawnień do edycji tego rekordu. Możesz edytować jedynie swoje dane.');
+      // _self.sendMessage('Nie masz uprawnień do edycji tego rekordu. Możesz edytować jedynie swoje dane.');
       _self._router.navigate(['delegacje']);
       return true;
     } else {
@@ -152,6 +152,6 @@ export class AuthenticationService {
       this._router.navigate(['Login']);
     }
   }
-  
+
 
 }
