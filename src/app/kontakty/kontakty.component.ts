@@ -113,13 +113,13 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       { text: 'Wewn.', datafield: 'wewnetrzny', width: 50 },
       { text: 'Tel. kom.', datafield: 'komorka', width: 100 },
       { text: 'Email', datafield: 'email', width: 225 },
+      { text: 'Stanowisko', datafield: 'stanowisko', width: 250 },
       { text: 'Jednostka', datafield: 'jednostka', width: 150 },
       { text: 'Miejsce pracy', datafield: 'miejsce_pracy', width: 150 },
       { text: 'Pion', datafield: 'pion', width: 150 },
       { text: 'Wydział', datafield: 'wydzial', width: 150 },
       { text: 'Wydział podległy', datafield: 'wydzial_podlegly', width: 150 },
-      { text: 'Pokój', datafield: 'pokoj' },
-      { text: 'Stanowisko', datafield: 'stanowisko', width: 250 }
+      { text: 'Pokój', datafield: 'pokoj' }
     ]
   };
 
@@ -144,7 +144,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   @ViewChild('buttonReference1') myCancelButton1: jqxButtonComponent;
 
 
-  constructor(private kontaktyService: KontaktyService, private authSAervice: AuthenticationService,
+  constructor(private kontaktyService: KontaktyService, private authService: AuthenticationService,
     private messageService: MessageService) {
   }
 
@@ -198,10 +198,13 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   editCellclick(event: any): void {
     if (event.args.datafield === 'edycja') {
       console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
-      // if (this.authSAervice.loggedIn()) {
+      if (this.authService.loggedIn()) {
         const datarow = event.args.row.bounddata;
-        const user = this.authSAervice.getUser();
+        const user = this.authService.getUser();
+        const userData = this.authService.getUserData();
+        // alert(userData.Pion);
         // if (datarow.login === user) {
+        if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {
           this.kontaktyService.getJednostki().subscribe(
             jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); this.myJednostka.val(datarow.jednostka); });
           this.kontaktyService.getStanowiska().subscribe(
@@ -235,14 +238,14 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
           this.myWewnetrzny.val(datarow.wewnetrzny);
 
           this.editWindow.open();
-      //   } else {
-      //     $('#notificationContent').html('Możesz edytować jedynie swoje dane');
-      //     this.msgNotification.open();
-      //   }
-      // } else {
-      //   $('#notificationContent').html('W celu edycji danych należy się zalogować');
-      //   this.msgNotification.open();
-      // }
+        } else {
+          $('#notificationContent').html('Możesz edytować jedynie swoje dane');
+          this.msgNotification.open();
+        }
+      } else {
+        $('#notificationContent').html('W celu edycji danych należy się zalogować');
+        this.msgNotification.open();
+      }
     }
   }
 

@@ -47,6 +47,44 @@ export class AuthenticationService {
     }
   }
 
+  getUserData(): any {
+    if (this.loggedIn) {
+      const token = localStorage.getItem('user');
+      if (token) {
+        const userData = this.jwtHelper.decodeToken(token).userData;
+        return userData;
+      } else {
+        return '';
+      }
+    }
+  }
+
+  getUserRole(): string {
+    if (this.loggedIn) {
+      const token = localStorage.getItem('user');
+      if (token) {
+        const role = this.jwtHelper.decodeToken(token).role;
+        return role;
+      } else {
+        return '';
+      }
+    }
+  }
+
+  checkIfUserHasPermissionToEdit(dataRow: any): boolean {
+    const user = this.getUser();
+    const userData = this.getUserData();
+    const role = this.getUserRole();
+
+    if (dataRow.pion === userData.Pion && dataRow.wydzial === userData.Wydzial
+      && (role === 'Supervisor' || dataRow.login === user)) {
+      return true;
+    }
+    if (role === 'Admin' || dataRow.login === user) {
+      return true;
+    }
+    return false;
+  }
 
   login1(user) {
     const t = this.http.post(GlobalVariable.HTTPS_SERVICE_URL + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
@@ -140,7 +178,7 @@ export class AuthenticationService {
     if (result === true) {
       localStorage.setItem('user', token);
       // _self.sendMessage('Nie masz uprawnień do edycji tego rekordu. Możesz edytować jedynie swoje dane.');
-      //_self._router.navigate(['delegacje']);
+      // _self._router.navigate(['delegacje']);
       return true;
     } else {
       return false;
@@ -154,7 +192,9 @@ export class AuthenticationService {
   }
 
   isEditAllowed(data: any) {
-    
+    let user = localStorage.getItem('user');
+    //if (user.role === 'kierownik' && data.)
+
 
   }
 
