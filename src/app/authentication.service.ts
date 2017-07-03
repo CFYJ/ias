@@ -27,7 +27,7 @@ export class AuthenticationService {
   logout() {
     localStorage.removeItem('user');
     // this.sendMessage('Aby móc edytować dane należy się zalogować');
-    // this._router.navigate(['Login']);
+    //this._router.navigate(['/login']);
   }
 
   loggedIn() {
@@ -49,7 +49,7 @@ export class AuthenticationService {
 
 
   login1(user) {
-    const t = this.http.post(GlobalVariable.SERVICE_URL + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
+    const t = this.http.post(GlobalVariable.HTTPS_SERVICE_URL + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
       .map((response: Response) => {
         // login successful if there's a jwt token in the response
         let user1 = response.json();
@@ -69,7 +69,7 @@ export class AuthenticationService {
       async: false,
       dataType: 'json',
       contentType: 'application/json',
-      url: GlobalVariable.SERVICE_URL + 'ADAuthentication/IsAuthenticated',
+      url: GlobalVariable.HTTPS_SERVICE_URL + 'ADAuthentication/IsAuthenticated',
       data: JSON.stringify(user),
       type: 'PUT',
       success: function (data: any, status: any, xhr: any) {
@@ -101,7 +101,7 @@ export class AuthenticationService {
     let result: boolean;
     let token: any;
 
-    let t = this.http.post(GlobalVariable.SERVICE_URL + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
+    let t = this.http.post(GlobalVariable.HTTPS_SERVICE_URL + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
       .map((response: Response) => {
         // login successful if there's a jwt token in the response
         let user1 = response.json();
@@ -116,7 +116,7 @@ export class AuthenticationService {
       async: false,
       dataType: 'text',
       contentType: 'application/json',
-      url: GlobalVariable.SERVICE_URL + 'ADAuthentication/JwtAuthenticate',
+      url: GlobalVariable.HTTPS_SERVICE_URL + 'ADAuthentication/JwtAuthenticate',
       data: JSON.stringify(user),
       type: 'PUT',
       success: function (data: any, status: any, xhr: any) {
@@ -140,7 +140,7 @@ export class AuthenticationService {
     if (result === true) {
       localStorage.setItem('user', token);
       // _self.sendMessage('Nie masz uprawnień do edycji tego rekordu. Możesz edytować jedynie swoje dane.');
-      _self._router.navigate(['delegacje']);
+      //_self._router.navigate(['delegacje']);
       return true;
     } else {
       return false;
@@ -151,6 +151,11 @@ export class AuthenticationService {
     if (localStorage.getItem('user') === null) {
       this._router.navigate(['Login']);
     }
+  }
+
+  isEditAllowed(data: any) {
+    
+
   }
 
 

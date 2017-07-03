@@ -48,9 +48,10 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     ],
     id: 'id',
     url: this.url,
+    //url: '/api/Kontakties/GetKontakty',
     updaterow: function (rowid: any, rowdata: any, commit: any) {
       const url = GlobalVariable.SERVICE_URL + 'Kontakties/PutKontakty/' + rowdata.id;
-       let t = JSON.stringify(rowdata);
+      let t = JSON.stringify(rowdata);
       $.ajax({
         cache: false,
         dataType: 'json',
@@ -78,8 +79,11 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   {
     localization: {
       pagergotopagestring: 'Idź do', pagerrangestring: 'z',
-      pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...'
+      pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
+      sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
+      sortremovestring: 'Wyczyść sortowanie'
     },
+    // enablebrowserselection: true,
     autoheight: true,
     theme: 'metro',
     width: '100%',
@@ -90,31 +94,32 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     filtermode: 'excel',
     showfilterrow: true,
     editable: false,
-    selectionmode: 'singlerow',
+    // selectionmode: 'singlerow',
+    selectionmode: 'multiplecellsadvanced',
     sortable: true,
     source: this.dataAdapter,
     columnsresize: true,
     columns: [
-      { text: 'Login', datafield: 'login', width: 100 },
-      { text: 'Imię', datafield: 'imie', width: 100 },
+      {
+        text: '', datafield: 'edycja', width: 50, columntype: 'button', filterable: false,
+        cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
+          return 'Edycja';
+        },
+      },
+      { text: 'Login', datafield: 'login', width: 100, hidden: true },
       { text: 'Nazwisko', datafield: 'nazwisko', width: 100 },
+      { text: 'Imię', datafield: 'imie', width: 100 },
       { text: 'Telefon', datafield: 'telefon', width: 100 },
       { text: 'Wewn.', datafield: 'wewnetrzny', width: 50 },
       { text: 'Tel. kom.', datafield: 'komorka', width: 100 },
+      { text: 'Email', datafield: 'email', width: 225 },
       { text: 'Jednostka', datafield: 'jednostka', width: 150 },
       { text: 'Miejsce pracy', datafield: 'miejsce_pracy', width: 150 },
       { text: 'Pion', datafield: 'pion', width: 150 },
       { text: 'Wydział', datafield: 'wydzial', width: 150 },
       { text: 'Wydział podległy', datafield: 'wydzial_podlegly', width: 150 },
       { text: 'Pokój', datafield: 'pokoj' },
-      { text: 'Stanowisko', datafield: 'stanowisko', width: 250 },
-      { text: 'Email', datafield: 'email', width: 125 },
-      {
-        text: 'Edycja', datafield: 'edycja', width: 50, columntype: 'button',
-        cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
-          return 'Edycja';
-        }
-      }
+      { text: 'Stanowisko', datafield: 'stanowisko', width: 250 }
     ]
   };
 
@@ -193,10 +198,10 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   editCellclick(event: any): void {
     if (event.args.datafield === 'edycja') {
       console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
-      if (this.authSAervice.loggedIn()) {
+      // if (this.authSAervice.loggedIn()) {
         const datarow = event.args.row.bounddata;
         const user = this.authSAervice.getUser();
-        if (datarow.login === user) {
+        // if (datarow.login === user) {
           this.kontaktyService.getJednostki().subscribe(
             jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); this.myJednostka.val(datarow.jednostka); });
           this.kontaktyService.getStanowiska().subscribe(
@@ -230,14 +235,14 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
           this.myWewnetrzny.val(datarow.wewnetrzny);
 
           this.editWindow.open();
-        } else {
-          $('#notificationContent').html('Możesz edytować jedynie swoje dane');
-          this.msgNotification.open();
-        }
-      } else {
-        $('#notificationContent').html('W celu edycji danych należy się zalogować');
-        this.msgNotification.open();
-      }
+      //   } else {
+      //     $('#notificationContent').html('Możesz edytować jedynie swoje dane');
+      //     this.msgNotification.open();
+      //   }
+      // } else {
+      //   $('#notificationContent').html('W celu edycji danych należy się zalogować');
+      //   this.msgNotification.open();
+      // }
     }
   }
 

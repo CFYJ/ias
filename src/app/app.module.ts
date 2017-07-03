@@ -28,7 +28,9 @@ import { jqxNotificationComponent } from 'jqwidgets-ts/angular_jqxnotification';
 import { DataTableModule, SharedModule } from 'primeng/primeng';
 
 export const appRoutes: Routes = [
- // { path: 'delegacje', component: DelegacjeComponent, canActivate: [AuthGuardService] },
+  // { path: 'delegacje', component: DelegacjeComponent, canActivate: [AuthGuardService] },
+  { path: '', redirectTo: '/kontakty', pathMatch: 'full' },
+  // { path: '', component: LoginComponent },
   { path: 'kontakty', component: KontaktyComponent },
   { path: 'login', component: LoginComponent },
   { path: 'about', component: KontaktyComponent },
