@@ -48,10 +48,10 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     ],
     id: 'id',
     url: this.url,
-    //url: '/api/Kontakties/GetKontakty',
+    // url: '/api/Kontakties/GetKontakty',
     updaterow: function (rowid: any, rowdata: any, commit: any) {
       const url = GlobalVariable.SERVICE_URL + 'Kontakties/PutKontakty/' + rowdata.id;
-      let t = JSON.stringify(rowdata);
+      const t = JSON.stringify(rowdata);
       $.ajax({
         cache: false,
         dataType: 'json',
@@ -149,7 +149,9 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   }
 
   buttonClicked() {
-    const data = this.myGrid.getrowdata(this.myGrid.getselectedrowindex());
+    const rowindex = this.myGrid.getselectedcell().rowindex;
+    // const data = this.myGrid.getrowdata(this.myGrid.getselectedrowindex());
+    const data = this.myGrid.getrowdata(rowindex);
 
     const row = {
       id: data.id, imie: this.myImie.val(), nazwisko: this.myNazwisko.val(),
@@ -159,12 +161,11 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       pokoj: this.myPokoj.val(), email: this.myEmail.val(), telefon: this.myTelefon.val(), komorka: this.myKomorka.val(),
       wewnetrzny: this.myWewnetrzny.val(), login: data.login
     };
-    this.myGrid.updaterow(this.myGrid.getrowid(this.myGrid.getselectedrowindex()), row);
+    // this.myGrid.updaterow(this.myGrid.getrowid(this.myGrid.getselectedrowindex()), row);
+    this.myGrid.updaterow(this.myGrid.getrowid(rowindex), row);
     this.editWindow.close();
   }
-  button1Clicked() {
-    this.editWindow.close();
-  }
+
   ngAfterViewInit(): void {
     const _self = this;
     const inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro' };
@@ -200,10 +201,8 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
       if (this.authService.loggedIn()) {
         const datarow = event.args.row.bounddata;
-        const user = this.authService.getUser();
-        const userData = this.authService.getUserData();
-        // alert(userData.Pion);
-        // if (datarow.login === user) {
+        // const user = this.authService.getUser();
+        // const userData = this.authService.getUserData();
         if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {
           this.kontaktyService.getJednostki().subscribe(
             jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); this.myJednostka.val(datarow.jednostka); });
@@ -226,7 +225,6 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
               this.myMiejscePracy.createComponent({ source: jed, width: '300px' });
               this.myMiejscePracy.val(datarow.miejsce_pracy);
             });
-
 
           this.myImie.val(datarow.imie);
           this.myNazwisko.val(datarow.nazwisko);
