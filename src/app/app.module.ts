@@ -25,7 +25,7 @@ import { jqxDateTimeInputComponent } from 'jqwidgets-ts/angular_jqxdatetimeinput
 import { jqxComboBoxComponent } from 'jqwidgets-ts/angular_jqxcombobox';
 import { jqxNotificationComponent } from 'jqwidgets-ts/angular_jqxnotification';
 
-import { DataTableModule, SharedModule } from 'primeng/primeng';
+import {SimpleGlobal} from 'ng2-simple-global'
 
 export const appRoutes: Routes = [
   // { path: 'delegacje', component: DelegacjeComponent, canActivate: [AuthGuardService] },
@@ -55,11 +55,11 @@ export const appRoutes: Routes = [
     BrowserModule,
     FormsModule,
     HttpModule,
-    DataTableModule,
-    SharedModule,
+ //   DataTableModule,
+ //   SharedModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [JwtHelper, AuthGuardService, AuthenticationService, KontaktyService, MessageService],
+  providers: [JwtHelper, AuthGuardService, AuthenticationService, KontaktyService, MessageService, SimpleGlobal],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

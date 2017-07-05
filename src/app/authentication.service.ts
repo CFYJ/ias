@@ -1,6 +1,6 @@
-import { GlobalVariable } from './global';
+import { SimpleGlobal } from 'ng2-simple-global';
 import { async } from '@angular/core/testing';
-import { Injectable } from '@angular/core';
+import { Injectable, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { Http, Headers, Response } from '@angular/http';
 import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
@@ -21,13 +21,14 @@ export class AuthenticationService {
     private _router: Router,
     private http: Http,
     private jwtHelper: JwtHelper = new JwtHelper(),
+    private sg: SimpleGlobal
     // private messageService: MessageService,
   ) { }
 
   logout() {
     localStorage.removeItem('user');
     // this.sendMessage('Aby móc edytować dane należy się zalogować');
-    //this._router.navigate(['/login']);
+    // this._router.navigate(['/login']);
   }
 
   loggedIn() {
@@ -87,10 +88,10 @@ export class AuthenticationService {
   }
 
   login1(user) {
-    const t = this.http.post(GlobalVariable.HTTPS_SERVICE_URL + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
+    const t = this.http.post(this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
       .map((response: Response) => {
         // login successful if there's a jwt token in the response
-        let user1 = response.json();
+        const user1 = response.json();
         if (user1 && user1.token) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
           localStorage.setItem('currentUser', JSON.stringify(user1));
@@ -99,7 +100,7 @@ export class AuthenticationService {
   }
 
   login2(user) {
-    let _self = this;
+    const _self = this;
     let result: boolean;
     let token: any;
     $.ajax({
@@ -107,7 +108,7 @@ export class AuthenticationService {
       async: false,
       dataType: 'json',
       contentType: 'application/json',
-      url: GlobalVariable.HTTPS_SERVICE_URL + 'ADAuthentication/IsAuthenticated',
+      url: this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/IsAuthenticated',
       data: JSON.stringify(user),
       type: 'PUT',
       success: function (data: any, status: any, xhr: any) {
@@ -135,14 +136,14 @@ export class AuthenticationService {
   }
 
   login(user) {
-    let _self = this;
+    const _self = this;
     let result: boolean;
     let token: any;
 
-    let t = this.http.post(GlobalVariable.HTTPS_SERVICE_URL + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
+    const t = this.http.post(this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
       .map((response: Response) => {
         // login successful if there's a jwt token in the response
-        let user1 = response.json();
+        const user1 = response.json();
         if (user1 && user1.token) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
           localStorage.setItem('currentUser', JSON.stringify(user1));
@@ -154,13 +155,13 @@ export class AuthenticationService {
       async: false,
       dataType: 'text',
       contentType: 'application/json',
-      url: GlobalVariable.HTTPS_SERVICE_URL + 'ADAuthentication/JwtAuthenticate',
+      url: this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate',
       data: JSON.stringify(user),
       type: 'PUT',
       success: function (data: any, status: any, xhr: any) {
         // update command is executed.
         if (data) {
-          let d = _self.jwtHelper.decodeToken(data);
+          const d = _self.jwtHelper.decodeToken(data);
           token = data;
           result = true;
         } else {
@@ -192,8 +193,8 @@ export class AuthenticationService {
   }
 
   isEditAllowed(data: any) {
-    let user = localStorage.getItem('user');
-    //if (user.role === 'kierownik' && data.)
+    const user = localStorage.getItem('user');
+    // if (user.role === 'kierownik' && data.)
 
 
   }

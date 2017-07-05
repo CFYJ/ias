@@ -1,3 +1,4 @@
+import { SimpleGlobal } from 'ng2-simple-global';
 import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
@@ -11,8 +12,6 @@ import { AuthenticationService } from './../authentication.service';
 import { KontaktyService } from './../kontakty.service';
 import { MessageService } from './../message.service';
 import { Subscription } from 'rxjs/Subscription';
-import { GlobalVariable } from 'app/global';
-
 
 @Component({
   selector: 'app-kontakty',
@@ -25,7 +24,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   subscription: Subscription;
   jednostki: string[];
 
-  url = GlobalVariable.SERVICE_URL + 'Kontakties/GetKontakty';
+  url = this.sg['SERVICE_URL'] + 'Kontakties/GetKontakty';
   source =
   {
     datatype: 'json',
@@ -50,7 +49,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     url: this.url,
     // url: '/api/Kontakties/GetKontakty',
     updaterow: function (rowid: any, rowdata: any, commit: any) {
-      const url = GlobalVariable.SERVICE_URL + 'Kontakties/PutKontakty/' + rowdata.id;
+      const url = this.sg['SERVICE_URL'] + 'Kontakties/PutKontakty/' + rowdata.id;
       const t = JSON.stringify(rowdata);
       $.ajax({
         cache: false,
@@ -112,7 +111,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       { text: 'Telefon', datafield: 'telefon', width: 100 },
       { text: 'Wewn.', datafield: 'wewnetrzny', width: 50 },
       { text: 'Tel. kom.', datafield: 'komorka', width: 100 },
-      { text: 'Email', datafield: 'email', width: 225 },
+      { text: 'Email', datafield: 'email', width: 275 },
       { text: 'Stanowisko', datafield: 'stanowisko', width: 250 },
       { text: 'Jednostka', datafield: 'jednostka', width: 150 },
       { text: 'Miejsce pracy', datafield: 'miejsce_pracy', width: 150 },
@@ -145,7 +144,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
 
 
   constructor(private kontaktyService: KontaktyService, private authService: AuthenticationService,
-    private messageService: MessageService) {
+    private messageService: MessageService, private sg: SimpleGlobal) {
   }
 
   buttonClicked() {
@@ -165,6 +164,11 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     this.myGrid.updaterow(this.myGrid.getrowid(rowindex), row);
     this.editWindow.close();
   }
+
+  button1Clicked() {
+    this.editWindow.close();
+  }
+
 
   ngAfterViewInit(): void {
     const _self = this;

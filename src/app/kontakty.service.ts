@@ -1,3 +1,4 @@
+import { SimpleGlobal } from 'ng2-simple-global';
 import { Http, Response } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { Car } from './car';
@@ -5,12 +6,12 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import { GlobalVariable } from 'app/global';
+
 
 @Injectable()
 export class KontaktyService {
 
-  constructor(private http: Http) { }
+  constructor(private http: Http, private sg: SimpleGlobal) { }
 
   getCarsSmall() {
     return this.http.get('cars.json')
@@ -20,7 +21,7 @@ export class KontaktyService {
   }
 
   getJednostki() {
-    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetJednostka')
+    const result = this.http.get(this.sg['SERVICE_URL'] + 'Kontakties/GetJednostka')
       .map(this.extractData)
       .catch(this.handleError);
     return result;
@@ -36,39 +37,39 @@ export class KontaktyService {
   }
 
   getStanowiska() {
-    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetStanowisko')
+    const result = this.http.get(this.sg['SERVICE_URL'] + 'Kontakties/GetStanowisko')
       .map(this.extractData)
       .catch(this.handleError);
     return result;
   }
   getWydzialy() {
-    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetWydzial')
+    const result = this.http.get(this.sg['SERVICE_URL'] + 'Kontakties/GetWydzial')
       .map(this.extractData)
       .catch(this.handleError);
     return result;
   }
   getWydzialyPodlegle() {
-    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetWydzialPodlegly')
+    const result = this.http.get(this.sg['SERVICE_URL'] + 'Kontakties/GetWydzialPodlegly')
       .map(this.extractData)
       .catch(this.handleError);
     return result;
   }
   getMiejscaPracy() {
-    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetMiejscePracy')
+    const result = this.http.get(this.sg['SERVICE_URL'] + 'Kontakties/GetMiejscePracy')
       .map(this.extractData)
       .catch(this.handleError);
     return result;
   }
   getPiony() {
-    let result = this.http.get(GlobalVariable.SERVICE_URL + 'Kontakties/GetPion')
+    const result = this.http.get(this.sg['SERVICE_URL'] + 'Kontakties/GetPion')
       .map(this.extractData)
       .catch(this.handleError);
     return result;
   }
 
   private extractData(res: Response) {
-    let body = res.json();
-    //alert(body);
+    const body = res.json();
+    // alert(body);
     return body;
   }
 
