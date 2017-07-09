@@ -24,7 +24,8 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   subscription: Subscription;
   jednostki: string[];
 
-  url = this.sg['SERVICE_URL'] + 'Kontakties/GetKontakty';
+  url: string = this.sg['SERVICE_URL'] + 'Kontakties/GetKontakty';
+
   source =
   {
     datatype: 'json',
@@ -47,15 +48,14 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     ],
     id: 'id',
     url: this.url,
-    // url: '/api/Kontakties/GetKontakty',
-    updaterow: function (rowid: any, rowdata: any, commit: any) {
-      const url = this.sg['SERVICE_URL'] + 'Kontakties/PutKontakty/' + rowdata.id;
+    // url1: 'ala ma kota',
+    updaterow: (rowid: any, rowdata: any, commit: any) => {
       const t = JSON.stringify(rowdata);
       $.ajax({
         cache: false,
         dataType: 'json',
         contentType: 'application/json',
-        url: url,
+        url: this.sg['SERVICE_URL'] + 'Kontakties/PutKontakty/' + rowdata.id,
         data: t,
         type: 'PUT',
         success: function (data: any, status: any, xhr: any) {
@@ -68,11 +68,33 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       });
     }
   };
+
   dataAdapter = new $.jqx.dataAdapter(this.source, {
     formatData: function (data: any) {
       return data;
     }
   });
+  hidden = !this.authService.checkIfUserBelongsToITStaff();
+  columns = [{
+    text: '', datafield: 'edycja', width: 50, columntype: 'button', filterable: false,
+    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
+      return 'Edycja';
+    },
+  },
+  { text: 'Login', datafield: 'login', width: 100, hidden: this.hidden },
+  { text: 'Nazwisko', datafield: 'nazwisko', width: 100 },
+  { text: 'Imię', datafield: 'imie', width: 100 },
+  { text: 'Telefon', datafield: 'telefon', width: 100 },
+  { text: 'Wewn.', datafield: 'wewnetrzny', width: 50 },
+  { text: 'Tel. kom.', datafield: 'komorka', width: 100 },
+  { text: 'Email', datafield: 'email', width: 275 },
+  { text: 'Stanowisko', datafield: 'stanowisko', width: 250 },
+  { text: 'Jednostka', datafield: 'jednostka', width: 150 },
+  { text: 'Miejsce pracy', datafield: 'miejsce_pracy', width: 150 },
+  { text: 'Pion', datafield: 'pion', width: 150 },
+  { text: 'Wydział', datafield: 'wydzial', width: 150 },
+  { text: 'Wydział podległy', datafield: 'wydzial_podlegly', width: 150 },
+  { text: 'Pokój', datafield: 'pokoj' }];
   filtergroup = new $.jqx.filter();
   options: jqwidgets.GridOptions =
   {
@@ -98,28 +120,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     sortable: true,
     source: this.dataAdapter,
     columnsresize: true,
-    columns: [
-      {
-        text: '', datafield: 'edycja', width: 50, columntype: 'button', filterable: false,
-        cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
-          return 'Edycja';
-        },
-      },
-      { text: 'Login', datafield: 'login', width: 100, hidden: true },
-      { text: 'Nazwisko', datafield: 'nazwisko', width: 100 },
-      { text: 'Imię', datafield: 'imie', width: 100 },
-      { text: 'Telefon', datafield: 'telefon', width: 100 },
-      { text: 'Wewn.', datafield: 'wewnetrzny', width: 50 },
-      { text: 'Tel. kom.', datafield: 'komorka', width: 100 },
-      { text: 'Email', datafield: 'email', width: 275 },
-      { text: 'Stanowisko', datafield: 'stanowisko', width: 250 },
-      { text: 'Jednostka', datafield: 'jednostka', width: 150 },
-      { text: 'Miejsce pracy', datafield: 'miejsce_pracy', width: 150 },
-      { text: 'Pion', datafield: 'pion', width: 150 },
-      { text: 'Wydział', datafield: 'wydzial', width: 150 },
-      { text: 'Wydział podległy', datafield: 'wydzial_podlegly', width: 150 },
-      { text: 'Pokój', datafield: 'pokoj' }
-    ]
+    columns: this.columns
   };
 
   @ViewChild('gridReference') myGrid: jqxGridComponent;
@@ -145,7 +146,9 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
 
   constructor(private kontaktyService: KontaktyService, private authService: AuthenticationService,
     private messageService: MessageService, private sg: SimpleGlobal) {
+    // this.url1 = sg['SERVICE_URL'] + 'Kontakties/PutKontakty/';
   }
+
 
   buttonClicked() {
     const rowindex = this.myGrid.getselectedcell().rowindex;
@@ -161,6 +164,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       wewnetrzny: this.myWewnetrzny.val(), login: data.login
     };
     // this.myGrid.updaterow(this.myGrid.getrowid(this.myGrid.getselectedrowindex()), row);
+    // let c = this.sg['SERVICE_URL'] + 'Kontakties/PutKontakty/'
     this.myGrid.updaterow(this.myGrid.getrowid(rowindex), row);
     this.editWindow.close();
   }
@@ -203,51 +207,51 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   editCellclick(event: any): void {
     if (event.args.datafield === 'edycja') {
       console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
-      if (this.authService.loggedIn()) {
-        const datarow = event.args.row.bounddata;
-        // const user = this.authService.getUser();
-        // const userData = this.authService.getUserData();
-        if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {
-          this.kontaktyService.getJednostki().subscribe(
-            jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); this.myJednostka.val(datarow.jednostka); });
-          this.kontaktyService.getStanowiska().subscribe(
-            jed => { this.myStanowisko.createComponent({ source: jed, width: '300px' }); this.myStanowisko.val(datarow.stanowisko); });
-          this.kontaktyService.getWydzialy().subscribe(
-            jed => { this.myWydzial.createComponent({ source: jed, width: '300px' }); this.myWydzial.val(datarow.wydzial); });
-          this.kontaktyService.getWydzialyPodlegle().subscribe(
-            jed => {
-              this.myWydzialPodlegly.createComponent({ source: jed, width: '300px' });
-              this.myWydzialPodlegly.val(datarow.wydzial_podlegly);
-            });
-          this.kontaktyService.getPiony().subscribe(
-            jed => {
-              this.myPion.createComponent({ source: jed, width: '300px' });
-              this.myPion.val(datarow.pion);
-            });
-          this.kontaktyService.getMiejscaPracy().subscribe(
-            jed => {
-              this.myMiejscePracy.createComponent({ source: jed, width: '300px' });
-              this.myMiejscePracy.val(datarow.miejsce_pracy);
-            });
+      // if (this.authService.loggedIn()) {
+      const datarow = event.args.row.bounddata;
+      // const user = this.authService.getUser();
+      // const userData = this.authService.getUserData();
+      // if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {
+      this.kontaktyService.getJednostki().subscribe(
+        jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); this.myJednostka.val(datarow.jednostka); });
+      this.kontaktyService.getStanowiska().subscribe(
+        jed => { this.myStanowisko.createComponent({ source: jed, width: '300px' }); this.myStanowisko.val(datarow.stanowisko); });
+      this.kontaktyService.getWydzialy().subscribe(
+        jed => { this.myWydzial.createComponent({ source: jed, width: '300px' }); this.myWydzial.val(datarow.wydzial); });
+      this.kontaktyService.getWydzialyPodlegle().subscribe(
+        jed => {
+          this.myWydzialPodlegly.createComponent({ source: jed, width: '300px' });
+          this.myWydzialPodlegly.val(datarow.wydzial_podlegly);
+        });
+      this.kontaktyService.getPiony().subscribe(
+        jed => {
+          this.myPion.createComponent({ source: jed, width: '300px' });
+          this.myPion.val(datarow.pion);
+        });
+      this.kontaktyService.getMiejscaPracy().subscribe(
+        jed => {
+          this.myMiejscePracy.createComponent({ source: jed, width: '300px' });
+          this.myMiejscePracy.val(datarow.miejsce_pracy);
+        });
 
-          this.myImie.val(datarow.imie);
-          this.myNazwisko.val(datarow.nazwisko);
-          this.myPokoj.val(datarow.pokoj);
-          this.myEmail.val(datarow.email);
-          this.myTelefon.val(datarow.telefon);
-          this.myKomorka.val(datarow.komorka);
-          this.myLogin.val(datarow.login);
-          this.myWewnetrzny.val(datarow.wewnetrzny);
+      this.myImie.val(datarow.imie);
+      this.myNazwisko.val(datarow.nazwisko);
+      this.myPokoj.val(datarow.pokoj);
+      this.myEmail.val(datarow.email);
+      this.myTelefon.val(datarow.telefon);
+      this.myKomorka.val(datarow.komorka);
+      this.myLogin.val(datarow.login);
+      this.myWewnetrzny.val(datarow.wewnetrzny);
 
-          this.editWindow.open();
-        } else {
-          $('#notificationContent').html('Możesz edytować jedynie swoje dane');
-          this.msgNotification.open();
-        }
-      } else {
-        $('#notificationContent').html('W celu edycji danych należy się zalogować');
-        this.msgNotification.open();
-      }
+      this.editWindow.open();
+      //   } else {
+      //     $('#notificationContent').html('Możesz edytować jedynie swoje dane');
+      //     this.msgNotification.open();
+      //   }
+      // } else {
+      //   $('#notificationContent').html('W celu edycji danych należy się zalogować');
+      //   this.msgNotification.open();
+      // }
     }
   }
 

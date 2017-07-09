@@ -87,6 +87,16 @@ export class AuthenticationService {
     return false;
   }
 
+  checkIfUserBelongsToITStaff(): boolean {
+    const userData = this.getUserData();
+    if (userData) {
+      if (userData.Pion === 'P Informatyki' && userData.Wydzial === 'Wydział Informatyki') {
+        return true;
+      }
+    }
+    return false;
+  }
+
   login1(user) {
     const t = this.http.post(this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
       .map((response: Response) => {
