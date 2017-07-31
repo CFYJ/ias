@@ -29,11 +29,16 @@ export class LoginComponent implements OnInit {
   login() {
     this.errorMsg = '';
     this.user.name = this.user.name.toUpperCase();
-    if (!this._service.login(this.user)) {
-      this.errorMsg = 'Błąd logowania';
-    } else {
+    this._service.login(this.user).subscribe(data => {
       this.router.navigate([this.returnUrl]);
-    }
+    }, error => {
+      this.errorMsg = 'Błąd logowania';
+    })
+    // if (!this._service.login(this.user)) {
+    //   this.errorMsg = 'Błąd logowania';
+    // } else {
+    //   this.router.navigate([this.returnUrl]);
+    // }
   }
 
   sendMessage(msg: string): void {

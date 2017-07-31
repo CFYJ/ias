@@ -3,6 +3,7 @@ import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy } from '@angular
 import { FormsModule } from '@angular/forms';
 import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
 import { jqxComboBoxComponent } from 'jqwidgets-ts/angular_jqxcombobox';
+import { jqxDropDownListComponent } from 'jqwidgets-ts/angular_jqxdropdownlist';
 import { jqxButtonComponent } from 'jqwidgets-ts/angular_jqxbuttons';
 import { jqxGridComponent } from 'jqwidgets-ts/angular_jqxgrid';
 import { jqxWindowComponent } from 'jqwidgets-ts/angular_jqxwindow';
@@ -123,12 +124,12 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   @ViewChild('gridReference') myGrid: jqxGridComponent;
   @ViewChild('jqxwindow1') editWindow: jqxWindowComponent;
   @ViewChild('msgNotification') msgNotification: jqxNotificationComponent;
-  @ViewChild('cbJednostka') myJednostka: jqxComboBoxComponent;
-  @ViewChild('cbWydzial') myWydzial: jqxComboBoxComponent;
-  @ViewChild('cbStanowisko') myStanowisko: jqxComboBoxComponent;
-  @ViewChild('cbWydzialPodlegly') myWydzialPodlegly: jqxComboBoxComponent;
-  @ViewChild('cbPion') myPion: jqxComboBoxComponent;
-  @ViewChild('cbMiejscePracy') myMiejscePracy: jqxComboBoxComponent;
+  @ViewChild('cbJednostka') myJednostka: jqxDropDownListComponent; // jqxComboBoxComponent;
+  @ViewChild('cbWydzial') myWydzial: jqxDropDownListComponent;
+  @ViewChild('cbStanowisko') myStanowisko: jqxDropDownListComponent;
+  @ViewChild('cbWydzialPodlegly') myWydzialPodlegly: jqxDropDownListComponent;
+  @ViewChild('cbPion') myPion: jqxDropDownListComponent;
+  @ViewChild('cbMiejscePracy') myMiejscePracy: jqxDropDownListComponent;
   @ViewChild('nazwisko') myNazwisko: jqxInputComponent;
   @ViewChild('imie') myImie: jqxInputComponent;
   @ViewChild('pokoj') myPokoj: jqxInputComponent;
@@ -204,8 +205,6 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
       if (this.authService.loggedIn()) {
         const datarow = event.args.row.bounddata;
-        // const user = this.authService.getUser();
-        // const userData = this.authService.getUserData();
         if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {
           this.kontaktyService.getJednostki().subscribe(
             jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); this.myJednostka.val(datarow.jednostka); });

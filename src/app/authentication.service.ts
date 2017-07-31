@@ -147,53 +147,69 @@ export class AuthenticationService {
 
   login(user) {
     const _self = this;
-    let result: boolean;
+    // let result: boolean;
     let token: any;
 
-    const t = this.http.post(this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
+    // const t = this.http.post(this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
+    //   .map((response: Response) => {
+    //     // login successful if there's a jwt token in the response
+    //     const user1 = response.json();
+    //     if (user1 && user1.token) {
+    //       // store user details and jwt token in local storage to keep user logged in between page refreshes
+    //       localStorage.setItem('currentUser', JSON.stringify(user1));
+    //     }
+    //   });
+
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json')
+    return this.http.put(this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate1', JSON.stringify(user), { headers: headers })
       .map((response: Response) => {
-        // login successful if there's a jwt token in the response
-        const user1 = response.json();
-        if (user1 && user1.token) {
-          // store user details and jwt token in local storage to keep user logged in between page refreshes
-          localStorage.setItem('currentUser', JSON.stringify(user1));
+        user = response.json();
+        if (user && user.token) {
+          localStorage.setItem('user', user.token);
         }
       });
+    // .subscribe(data => {
+    //   token = data['results']
+    //   result = true;
+    // });
 
-    $.ajax({
-      cache: false,
-      async: false,
-      dataType: 'text',
-      contentType: 'application/json',
-      url: this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate',
-      data: JSON.stringify(user),
-      type: 'PUT',
-      success: function (data: any, status: any, xhr: any) {
-        // update command is executed.
-        if (data) {
-          const d = _self.jwtHelper.decodeToken(data);
-          token = data;
-          result = true;
-        } else {
-          result = false;
-        }
-      },
-      error: function (jqXHR: any, textStatus: any, errorThrown: any) {
-        alert(textStatus + ' - ' + errorThrown);
-        return false;
-      }
-    });
+    // $.ajax({
+    //   cache: false,
+    //   async: false,
+    //   dataType: 'text',
+    //   contentType: 'application/json',
+    //   url: this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate',
+    //   data: JSON.stringify(user),
+    //   type: 'PUT',
+    //   success: function (data: any, status: any, xhr: any) {
+    //     // update command is executed.
+    //     if (data) {
+    //       const d = _self.jwtHelper.decodeToken(data);
+    //       token = data;
+    //       result = true;
+    //     } else {
+    //       result = false;
+    //     }
+    //   },
+    //   error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+    //     alert(textStatus + ' - ' + errorThrown);
+    //     return false;
+    //   }
+    // });
 
     //   result = true;
 
-    if (result === true) {
-      localStorage.setItem('user', token);
-      // _self.sendMessage('Nie masz uprawnień do edycji tego rekordu. Możesz edytować jedynie swoje dane.');
-      // _self._router.navigate(['delegacje']);
-      return true;
-    } else {
-      return false;
-    }
+
+
+    // if (result === true) {
+    //   localStorage.setItem('user', token);
+    //   // _self.sendMessage('Nie masz uprawnień do edycji tego rekordu. Możesz edytować jedynie swoje dane.');
+    //   // _self._router.navigate(['delegacje']);
+    //   return true;
+    // } else {
+    //   return false;
+    // }
   }
 
   checkCredential() {

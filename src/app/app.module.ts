@@ -24,6 +24,7 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
 import { jqxDateTimeInputComponent } from 'jqwidgets-ts/angular_jqxdatetimeinput';
 import { jqxComboBoxComponent } from 'jqwidgets-ts/angular_jqxcombobox';
 import { jqxNotificationComponent } from 'jqwidgets-ts/angular_jqxnotification';
+import { jqxDropDownListComponent } from 'jqwidgets-ts/angular_jqxdropdownlist';
 
 import {SimpleGlobal} from 'ng2-simple-global'
 
@@ -46,6 +47,7 @@ export const appRoutes: Routes = [
     jqxDateTimeInputComponent,
     jqxComboBoxComponent,
     jqxNotificationComponent,
+    jqxDropDownListComponent,
     AppComponent,
     DelegacjeComponent,
     KontaktyComponent,
