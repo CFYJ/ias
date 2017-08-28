@@ -22,18 +22,21 @@ export class AuthenticationService {
     private http: Http,
     private jwtHelper: JwtHelper = new JwtHelper(),
     private sg: SimpleGlobal
-    // private messageService: MessageService,
   ) { }
 
   logout() {
     localStorage.removeItem('user');
-    // this.sendMessage('Aby móc edytować dane należy się zalogować');
-    // this._router.navigate(['/login']);
   }
 
-  loggedIn() {
+  loggedIn(): boolean {
     const token = localStorage.getItem('user');
-    return tokenNotExpired(null, token);
+    if (tokenNotExpired(null, token)) {
+        return true;
+      } else {
+        this.logout();
+        return false;
+      }
+    // return tokenNotExpired(null, token);
   }
 
   getUser(): string {
@@ -97,69 +100,7 @@ export class AuthenticationService {
     return false;
   }
 
-  login1(user) {
-    const t = this.http.post(this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
-      .map((response: Response) => {
-        // login successful if there's a jwt token in the response
-        const user1 = response.json();
-        if (user1 && user1.token) {
-          // store user details and jwt token in local storage to keep user logged in between page refreshes
-          localStorage.setItem('currentUser', JSON.stringify(user1));
-        }
-      });
-  }
-
-  login2(user) {
-    const _self = this;
-    let result: boolean;
-    let token: any;
-    $.ajax({
-      cache: false,
-      async: false,
-      dataType: 'json',
-      contentType: 'application/json',
-      url: this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/IsAuthenticated',
-      data: JSON.stringify(user),
-      type: 'PUT',
-      success: function (data: any, status: any, xhr: any) {
-        // update command is executed.
-        if (data === true) {
-          token = data;
-          result = true;
-        } else if (data === false) {
-          result = false;
-        }
-      },
-      error: function (jqXHR: any, textStatus: any, errorThrown: any) {
-        alert(textStatus + ' - ' + errorThrown);
-        return false;
-      }
-    });
-
-    if (result === true) {
-      localStorage.setItem('user', token);
-      _self._router.navigate(['delegacje']);
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   login(user) {
-    const _self = this;
-    // let result: boolean;
-    let token: any;
-
-    // const t = this.http.post(this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate', JSON.stringify(user))
-    //   .map((response: Response) => {
-    //     // login successful if there's a jwt token in the response
-    //     const user1 = response.json();
-    //     if (user1 && user1.token) {
-    //       // store user details and jwt token in local storage to keep user logged in between page refreshes
-    //       localStorage.setItem('currentUser', JSON.stringify(user1));
-    //     }
-    //   });
-
     const headers = new Headers();
     headers.append('Content-Type', 'application/json')
     return this.http.put(this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate1', JSON.stringify(user), { headers: headers })
@@ -169,47 +110,6 @@ export class AuthenticationService {
           localStorage.setItem('user', user.token);
         }
       });
-    // .subscribe(data => {
-    //   token = data['results']
-    //   result = true;
-    // });
-
-    // $.ajax({
-    //   cache: false,
-    //   async: false,
-    //   dataType: 'text',
-    //   contentType: 'application/json',
-    //   url: this.sg['HTTPS_SERVICE_URL'] + 'ADAuthentication/JwtAuthenticate',
-    //   data: JSON.stringify(user),
-    //   type: 'PUT',
-    //   success: function (data: any, status: any, xhr: any) {
-    //     // update command is executed.
-    //     if (data) {
-    //       const d = _self.jwtHelper.decodeToken(data);
-    //       token = data;
-    //       result = true;
-    //     } else {
-    //       result = false;
-    //     }
-    //   },
-    //   error: function (jqXHR: any, textStatus: any, errorThrown: any) {
-    //     alert(textStatus + ' - ' + errorThrown);
-    //     return false;
-    //   }
-    // });
-
-    //   result = true;
-
-
-
-    // if (result === true) {
-    //   localStorage.setItem('user', token);
-    //   // _self.sendMessage('Nie masz uprawnień do edycji tego rekordu. Możesz edytować jedynie swoje dane.');
-    //   // _self._router.navigate(['delegacje']);
-    //   return true;
-    // } else {
-    //   return false;
-    // }
   }
 
   checkCredential() {
@@ -220,9 +120,6 @@ export class AuthenticationService {
 
   isEditAllowed(data: any) {
     const user = localStorage.getItem('user');
-    // if (user.role === 'kierownik' && data.)
-
-
   }
 
 

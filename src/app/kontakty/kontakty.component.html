@@ -12,7 +12,7 @@
       <tr>
         <td align="right">Login</td>
         <td align="left">
-          <jqxInput #login [auto-create]='false'></jqxInput>
+          <jqxInput #login [auto-create]='false' [disabled]="!authService.checkIfUserBelongsToITStaff()"></jqxInput>
         </td>
       </tr>
       <tr>
@@ -108,3 +108,5 @@
   <!--div *ngIf="message">{{message}}</div-->
   <div id="notificationContent"></div>
 </jqxNotification>
+
+<jqxButton *ngIf="authService.checkIfUserBelongsToITStaff()" #buttonReference2 [auto-create]='false' (onClick)="button2Clicked()">Wstaw nowy rekord</jqxButton>

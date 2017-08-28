@@ -24,6 +24,8 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   message: any = 'message';
   subscription: Subscription;
   jednostki: string[];
+  initialLoad = true;
+  isInsertOperation = false;
 
   source =
   {
@@ -47,6 +49,25 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     ],
     id: 'id',
     url: this.sg['SERVICE_URL'] + 'Kontakties/GetKontakty',
+    addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
+      const t = JSON.stringify(rowdata);
+      $.ajax({
+        cache: false,
+        dataType: 'json',
+        contentType: 'application/json',
+        url: this.sg['SERVICE_URL'] + 'Kontakties/PostKontakty',
+        data: t,
+        type: 'POST',
+        success: function (data: any, status: any, xhr: any) {
+          alert('Wstawiono nowy rekord - id: ' + data.id);
+          commit(true);
+        },
+        error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+          alert(textStatus + ' - ' + errorThrown);
+          commit(false);
+        }
+      })
+    },
     updaterow: (rowid: any, rowdata: any, commit: any) => {
       const t = JSON.stringify(rowdata);
       $.ajax({
@@ -72,14 +93,14 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       return data;
     }
   });
-  hidden = !this.authService.checkIfUserBelongsToITStaff();
+  // hidden = !this.authService.checkIfUserBelongsToITStaff();
   columns = [{
     text: '', datafield: 'edycja', width: 50, columntype: 'button', filterable: false,
     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
       return 'Edycja';
     },
   },
-  { text: 'Login', datafield: 'login', width: 100, hidden: this.hidden },
+  { text: 'Login', datafield: 'login', width: 100, hidden: !this.authService.checkIfUserBelongsToITStaff() },
   { text: 'Nazwisko', datafield: 'nazwisko', width: 100 },
   { text: 'Imię', datafield: 'imie', width: 100 },
   { text: 'Telefon', datafield: 'telefon', width: 100 },
@@ -113,6 +134,8 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     filtermode: 'excel',
     showfilterrow: true,
     editable: false,
+    //showstatusbar: this.authService.checkIfUserBelongsToITStaff(),
+    //renderstatusbar: this.createInsertButtonContainer,
     // selectionmode: 'singlerow',
     selectionmode: 'multiplecellsadvanced',
     sortable: true,
@@ -140,18 +163,33 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   @ViewChild('login') myLogin: jqxInputComponent;
   @ViewChild('buttonReference') mySaveButton1: jqxButtonComponent;
   @ViewChild('buttonReference1') myCancelButton1: jqxButtonComponent;
+  @ViewChild('buttonReference2') myInsertButton1: jqxButtonComponent;
 
 
   constructor(private kontaktyService: KontaktyService, private authService: AuthenticationService,
     private messageService: MessageService, private sg: SimpleGlobal) {
   }
 
+  // createInsertButtonContainer(statusbar: any): void {
+  //   const buttonsContainer = document.createElement('div');
+  //   buttonsContainer.style.cssText = 'overflow: hidden; position: relative; margin: 5px;';
+  //   const addButtonContainer = document.createElement('div');
+  //   addButtonContainer.id = 'buttonReference2';
+  //   addButtonContainer.style.cssText = 'float: left; margin-left: 5px;';
+  //   buttonsContainer.appendChild(addButtonContainer);
+  //   statusbar[0].appendChild(buttonsContainer);
+  // }
+
+
 
   buttonClicked() {
-    const rowindex = this.myGrid.getselectedcell().rowindex;
-    // const data = this.myGrid.getrowdata(this.myGrid.getselectedrowindex());
-    const data = this.myGrid.getrowdata(rowindex);
-
+    let data = { id: null, login: null };
+    let rowindex: number;
+    if (!this.isInsertOperation) {
+      rowindex = this.myGrid.getselectedcell().rowindex;
+      // const data = this.myGrid.getrowdata(this.myGrid.getselectedrowindex());
+      data = this.myGrid.getrowdata(rowindex);
+    }
     const row = {
       id: data.id, imie: this.myImie.val(), nazwisko: this.myNazwisko.val(),
       jednostka: this.myJednostka.getSelectedItem().value, wydzial_podlegly: this.myWydzialPodlegly.getSelectedItem().value,
@@ -161,19 +199,46 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       wewnetrzny: this.myWewnetrzny.val(), login: data.login
     };
     // this.myGrid.updaterow(this.myGrid.getrowid(this.myGrid.getselectedrowindex()), row);
-    this.myGrid.updaterow(this.myGrid.getrowid(rowindex), row);
+
+    if (this.isInsertOperation) {
+      row.id = 0;
+      row.login = this.myLogin.val();
+      this.myGrid.addrow(null, row, 'top');
+    } else {
+      this.myGrid.updaterow(this.myGrid.getrowid(rowindex), row);
+    }
+
+    this.isInsertOperation = false;
     this.editWindow.close();
   }
 
   button1Clicked() {
+    this.isInsertOperation = false;
     this.editWindow.close();
+  }
+
+  button2Clicked() {
+    const datarow: any = {
+      jednostka: null, stanowisko: null, wydzial: '', wydzial_podlegly: '', pion: '', miejsce_pracy: null,
+      imie: '', nazwisko: '', pokoj: '', telefon: '', komorka: '', wewnetrzny: '', login: '', email: ''
+    }
+      ;
+    // if (this.initialLoad) { this.loadDropDownValues(); }
+    this.isInsertOperation = true;
+    // this.myLogin.disabled(!this.authService.checkIfUserBelongsToITStaff());
+    this.setDropDownValues(datarow);
+    this.editWindow.title('Dodawanie');
+    this.editWindow.open();
   }
 
 
   ngAfterViewInit(): void {
     const _self = this;
     const inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro' };
-    const disabledSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro', disabled: true };
+    const disabledSettings: jqwidgets.InputOptions = {
+      width: '300px', height: '25px', theme: 'metro' // , disabled: true
+      // disabled: !this.authService.checkIfUserBelongsToITStaff()
+    };
     this.myGrid.createComponent(this.options);
     this.editWindow.createWidget({
       width: 450, height: 530, theme: 'metro',
@@ -195,7 +260,12 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
 
     this.mySaveButton1.createComponent(buttonOptions);
     this.myCancelButton1.createComponent(buttonOptions);
+    if (this.authService.checkIfUserBelongsToITStaff()) { this.myInsertButton1.createComponent(buttonOptions); }
+
     this.msgNotification.createComponent();
+
+    if (this.initialLoad) { this.loadDropDownValues(); }
+    // this.createInsertButton();
   };
 
   ngOnDestroy() {
@@ -206,37 +276,8 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       if (this.authService.loggedIn()) {
         const datarow = event.args.row.bounddata;
         if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {
-          this.kontaktyService.getJednostki().subscribe(
-            jed => { this.myJednostka.createComponent({ source: jed, width: '300px' }); this.myJednostka.val(datarow.jednostka); });
-          this.kontaktyService.getStanowiska().subscribe(
-            jed => { this.myStanowisko.createComponent({ source: jed, width: '300px' }); this.myStanowisko.val(datarow.stanowisko); });
-          this.kontaktyService.getWydzialy().subscribe(
-            jed => { this.myWydzial.createComponent({ source: jed, width: '300px' }); this.myWydzial.val(datarow.wydzial); });
-          this.kontaktyService.getWydzialyPodlegle().subscribe(
-            jed => {
-              this.myWydzialPodlegly.createComponent({ source: jed, width: '300px' });
-              this.myWydzialPodlegly.val(datarow.wydzial_podlegly);
-            });
-          this.kontaktyService.getPiony().subscribe(
-            jed => {
-              this.myPion.createComponent({ source: jed, width: '300px' });
-              this.myPion.val(datarow.pion);
-            });
-          this.kontaktyService.getMiejscaPracy().subscribe(
-            jed => {
-              this.myMiejscePracy.createComponent({ source: jed, width: '300px' });
-              this.myMiejscePracy.val(datarow.miejsce_pracy);
-            });
-
-          this.myImie.val(datarow.imie);
-          this.myNazwisko.val(datarow.nazwisko);
-          this.myPokoj.val(datarow.pokoj);
-          this.myEmail.val(datarow.email);
-          this.myTelefon.val(datarow.telefon);
-          this.myKomorka.val(datarow.komorka);
-          this.myLogin.val(datarow.login);
-          this.myWewnetrzny.val(datarow.wewnetrzny);
-
+          this.setDropDownValues(datarow);
+          this.editWindow.title('Edycja');
           this.editWindow.open();
         } else {
           $('#notificationContent').html('Możesz edytować jedynie swoje dane');
@@ -249,6 +290,64 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+
+  loadDropDownValues(): void {
+    this.kontaktyService.getJednostki().subscribe(
+      jed => {
+        // jed.push('');
+        this.myJednostka.createComponent({ source: jed, width: '300px', placeHolder: 'Wybierz wartość', selectedIndex: 0 });
+
+      });
+    this.kontaktyService.getStanowiska().subscribe(
+      jed => {
+        // jed.push('');
+        this.myStanowisko.createComponent({ source: jed, width: '300px', placeHolder: 'Wybierz wartość', selectedIndex: 0 });
+
+      });
+    this.kontaktyService.getWydzialy().subscribe(
+      jed => {
+        // jed.push('');
+        this.myWydzial.createComponent({ source: jed, width: '300px', placeHolder: 'Wybierz wartość', selectedIndex: 0 });
+
+      });
+    this.kontaktyService.getWydzialyPodlegle().subscribe(
+      jed => {
+        this.myWydzialPodlegly.createComponent({ source: jed, width: '300px', placeHolder: 'Wybierz wartość' });
+
+      });
+    this.kontaktyService.getPiony().subscribe(
+      jed => {
+        // jed.push('');
+        this.myPion.createComponent({ source: jed, width: '300px', placeHolder: 'Wybierz wartość', selectedIndex: 0 });
+
+      });
+    this.kontaktyService.getMiejscaPracy().subscribe(
+      jed => {
+        // jed.push('');
+        this.myMiejscePracy.createComponent({ source: jed, width: '300px', placeHolder: 'Wybierz wartość', selectedIndex: 16 });
+
+      });
+    this.initialLoad = false;
+
+  }
+
+  setDropDownValues(datarow: any): any {
+    this.myJednostka.val(datarow.jednostka);
+    this.myStanowisko.val(datarow.stanowisko);
+    this.myWydzial.val(datarow.wydzial);
+    this.myWydzialPodlegly.val(datarow.wydzial_podlegly);
+    this.myPion.val(datarow.pion);
+    this.myMiejscePracy.val(datarow.miejsce_pracy);
+
+    this.myImie.val(datarow.imie);
+    this.myNazwisko.val(datarow.nazwisko);
+    this.myPokoj.val(datarow.pokoj);
+    this.myEmail.val(datarow.email);
+    this.myTelefon.val(datarow.telefon);
+    this.myKomorka.val(datarow.komorka);
+    this.myLogin.val(datarow.login);
+    this.myWewnetrzny.val(datarow.wewnetrzny);
+  }
 }
 
 

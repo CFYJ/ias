@@ -13,12 +13,12 @@ export class KontaktyService {
 
   constructor(private http: Http, private sg: SimpleGlobal) { }
 
-  getCarsSmall() {
-    return this.http.get('cars.json')
-      .toPromise()
-      .then(res => <Car[]>res.json().data)
-      .then(data => { return data; });
-  }
+  // getCarsSmall() {
+  //   return this.http.get('cars.json')
+  //     .toPromise()
+  //     .then(res => <Car[]>res.json().data)
+  //     .then(data => { return data; });
+  // }
 
   getJednostki() {
     const result = this.http.get(this.sg['SERVICE_URL'] + 'Kontakties/GetJednostka')
