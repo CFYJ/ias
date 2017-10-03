@@ -134,8 +134,8 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
     filtermode: 'excel',
     showfilterrow: true,
     editable: false,
-    //showstatusbar: this.authService.checkIfUserBelongsToITStaff(),
-    //renderstatusbar: this.createInsertButtonContainer,
+    // showstatusbar: this.authService.checkIfUserBelongsToITStaff(),
+    // renderstatusbar: this.createInsertButtonContainer,
     // selectionmode: 'singlerow',
     selectionmode: 'multiplecellsadvanced',
     sortable: true,
@@ -196,7 +196,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
       pion: this.myPion.getSelectedItem().value, wydzial: this.myWydzial.getSelectedItem().value,
       stanowisko: this.myStanowisko.getSelectedItem().value, miejsce_pracy: this.myMiejscePracy.getSelectedItem().value,
       pokoj: this.myPokoj.val(), email: this.myEmail.val(), telefon: this.myTelefon.val(), komorka: this.myKomorka.val(),
-      wewnetrzny: this.myWewnetrzny.val(), login: data.login
+      wewnetrzny: this.myWewnetrzny.val(), login: this.myLogin.val()
     };
     // this.myGrid.updaterow(this.myGrid.getrowid(this.myGrid.getselectedrowindex()), row);
 
