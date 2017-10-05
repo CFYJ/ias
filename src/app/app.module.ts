@@ -26,7 +26,8 @@ import { jqxComboBoxComponent } from 'jqwidgets-ts/angular_jqxcombobox';
 import { jqxNotificationComponent } from 'jqwidgets-ts/angular_jqxnotification';
 import { jqxDropDownListComponent } from 'jqwidgets-ts/angular_jqxdropdownlist';
 
-import {SimpleGlobal} from 'ng2-simple-global'
+import {SimpleGlobal} from 'ng2-simple-global';
+import { UpowaznieniaComponent } from './upowaznienia/upowaznienia.component'
 
 export const appRoutes: Routes = [
   // { path: 'delegacje', component: DelegacjeComponent, canActivate: [AuthGuardService] },
@@ -52,6 +53,7 @@ export const appRoutes: Routes = [
     DelegacjeComponent,
     KontaktyComponent,
     LoginComponent,
+    UpowaznieniaComponent,
   ],
   imports: [
     BrowserModule,
