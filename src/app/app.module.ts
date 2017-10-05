@@ -65,7 +65,7 @@ export const appRoutes: Routes = [
  //   SharedModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [JwtHelper, AuthGuardService, AuthenticationService, KontaktyService, MessageService, SimpleGlobal],
+  providers: [JwtHelper, AuthGuardService, AuthenticationService, KontaktyService, MessageService, SimpleGlobal,UpowaznieniaService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
