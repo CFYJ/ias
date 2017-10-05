@@ -1,6 +1,7 @@
 import { MessageService } from './message.service';
 import { KontaktyService } from './kontakty.service';
 import { AuthenticationService } from './authentication.service';
+import { UpowaznieniaService } from './upowaznienia.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -36,6 +37,7 @@ export const appRoutes: Routes = [
   { path: 'kontakty', component: KontaktyComponent },
   { path: 'login', component: LoginComponent },
   { path: 'about', component: KontaktyComponent },
+  { path: 'upowaznienia', component: UpowaznieniaComponent },
 ];
 
 @NgModule({
