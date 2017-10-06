@@ -45,20 +45,23 @@ import { AuthenticationService } from './../authentication.service';
     },
     width:'100%',
     columnsresize: true,
+    
     filterable: true,
     autoshowfiltericon: true,
     filtermode: 'excel',
     showfilterrow: true,
+    pagesize:5,
 
     autorowheight: true,
     autoheight: true,
     altrows: true,
     
+ 
   };
 
   ngAfterViewInit(): void {
-    const _self = this;
-  this.myGrid.createComponent(this.options);
+    // const _self = this;
+    // this.myGrid.createComponent(this.options);
 
   }
 
@@ -136,14 +139,14 @@ import { AuthenticationService } from './../authentication.service';
 
       { text: 'Nazwa', datafield: 'nazwa', width: 200,  },
       { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', width: 100},
-      { text: 'Wniosek o nadanie uprawnień', datafield: 'nwniosek_nadania_upr', width: 200 },
+      { text: 'Wniosek o nadanie<br> uprawnień', datafield: 'wniosek_nadania_upr', width: 200 },
       { text: 'Nadający uprawnienia', datafield: 'nadajacy_upr', width: 200 },
       { text: 'Prowadzący rejestr użytkowników', datafield: 'prowadzacy_rejestr_uzyt', width: 200 },
       { text: 'Wniosek o odebranie uprawnień', datafield: 'wniosek_odebrania_upr', width: 200 },
       { text: 'Odbierający uprawnienia', datafield: 'odbierajacy_upr', width: 200 },
       { text: 'Opiekun', datafield: 'opiekun', width: 200 },
       { text: 'Adres email', datafield: 'adres_email', width: 200 },
-      { text: 'Dezycja', datafield: 'decyzja', width: 200 },
+      { text: 'Decyzja', datafield: 'decyzja', width: 200 },
       { text: 'Uwagi', datafield: 'uwagi', width: 200 },
      
   ];
