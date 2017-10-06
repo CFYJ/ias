@@ -1,6 +1,6 @@
-<jqxGrid
-[width]="850" [source]="dataAdapter" [columns]="columns"
+<jqxGrid id="jqxgrid" #gridReference
+[source]="dataAdapter" [columns]="columns"
 [pageable]="true" [autoheight]="true" [sortable]="true" 
-[altrows]="true"  [enabletooltips]="true"  [editable]="true" 
+[altrows]="true"  [enabletooltips]="true"  [editable]="false" 
 [selectionmode]="'multiplecellsadvanced'" [columngroups]="columngroups">
 </jqxGrid>
