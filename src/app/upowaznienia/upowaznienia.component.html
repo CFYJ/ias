@@ -2,5 +2,100 @@
 [source]="dataAdapter" [columns]="columns"  [auto-create]='false'
 [pageable]="true" [autoheight]="true" [sortable]="true" 
 [altrows]="true"  [enabletooltips]="true"  [editable]="false" 
-[selectionmode]="'multiplecellsadvanced'" [columngroups]="columngroups">
-</jqxGrid>
+[selectionmode]="'multiplecellsadvanced'" 
+(onCellclick)='editCellclick($event)'
+></jqxGrid>
+
+
+
+
+
+<jqxWindow #jqxwindow1 [auto-create]='false'>
+    <div>Edycja</div>
+    <div style="overflow: hidden;">
+      <table>
+        <tr>
+          <td align="right">Nazwa</td>
+          <td align="left">
+            <jqxInput #nazwa [auto-create]='false'></jqxInput>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Nazwa skrócona</td>
+          <td align="left">
+            <jqxInput #nazwa_skrocona [auto-create]='false'></jqxInput>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Wniosek nadania uprawnień</td>
+          <td align="left">
+            <jqxInput #wniosek_nadania_upr [auto-create]='false'></jqxInput>
+          </td>
+        </tr>
+        <!-- <tr>
+          <td align="right">Jednostka</td>
+          <td align="left">
+            <jqxDropDownList #cbJednostka [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+          </td>
+        </tr> -->
+        <tr>
+            <td align="right">Nadający uprawnienia</td>
+            <td align="left">
+              <jqxInput #nadajacy_upr [auto-create]='false'></jqxInput>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">Prowadzący rejestr użytkowników</td>
+            <td align="left">
+              <jqxInput #prowadzacy_rejestr_uzyt [auto-create]='false'></jqxInput>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">Wniosek odebrania uprawnień</td>
+            <td align="left">
+              <jqxInput #wniosek_odebrania_upr [auto-create]='false'></jqxInput>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">Odbierający uprawnienia</td>
+            <td align="left">
+              <jqxInput #odbierajacy_upr [auto-create]='false'></jqxInput>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">Opiekun</td>
+            <td align="left">
+              <jqxInput #opiekun [auto-create]='false'></jqxInput>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">Adres email</td>
+            <td align="left">
+              <jqxInput #adres_email [auto-create]='false'></jqxInput>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">Decyzja</td>
+            <td align="left">
+              <jqxInput #decyzja [auto-create]='false'></jqxInput>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">Uwagi</td>
+            <td align="left">
+              <jqxInput #uwagi [auto-create]='false'></jqxInput>
+            </td>
+          </tr>
+        <tr>
+          <td align="right"></td>
+          <td style="padding-top: 10px;" align="right">
+            <jqxButton #buttonReference [auto-create]='false' (onClick)="buttonSaveClicked()">Zapisz</jqxButton>
+            <jqxButton #buttonReference1 [auto-create]='false' (onClick)="buttonCancelClicked()">Anuluj</jqxButton>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </jqxWindow>
+
+  <jqxButton  #buttonReference2 [auto-create]='false' (onClick)="button2Clicked()">Wstaw nowy rekord</jqxButton>
+  
