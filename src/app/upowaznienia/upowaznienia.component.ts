@@ -233,6 +233,7 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
     // if (this.initialLoad) { this.loadDropDownValues(); }
     this.isInsertOperation = true;
     // this.myLogin.disabled(!this.authService.checkIfUserBelongsToITStaff());
+    this.setEditValues(datarow);
     this.editWindow.title('Dodawanie');
     this.editWindow.open();
   }
