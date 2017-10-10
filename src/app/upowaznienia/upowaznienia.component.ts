@@ -23,6 +23,8 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
 //export class UpowaznieniaComponent implements OnInit {
   export class UpowaznieniaComponent implements OnInit, AfterViewInit{
 
+
+
   constructor(private upowaznieniaService: UpowaznieniaService,
     private authService: AuthenticationService,private messageService: MessageService,
     private sg: SimpleGlobal) { }
@@ -33,6 +35,7 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
     initialLoad = true;
     isInsertOperation = false;
   
+
 
   ngOnInit() {
     // const _self = this;
@@ -61,7 +64,7 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
     autoheight: true,
     altrows: true,
     
- 
+    columnsheight:50,
   };
 
   ngAfterViewInit(): void {
@@ -69,17 +72,29 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
      this.myGrid.createComponent(this.options);
      const inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro' };
 
+     
      this.editWindow.createWidget({
       width: 450, height: 530, theme: 'metro',
       resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5
     });
 
+    this.deleteWindow.createWidget({
+      width: 450, height:130, theme: 'metro',
+      resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5
+    });
+
     const buttonOptions: jqwidgets.ButtonOptions = { theme: 'metro' };
+
     this.mySaveButton1.createComponent(buttonOptions);
     this.myCancelButton1.createComponent(buttonOptions);
     this.myInsertButton1.createComponent(buttonOptions);
-
-    this.fNazwa.createComponent(inputSettings);
+    this.myEditButton.createComponent(buttonOptions);
+   
+    this.myDelButton.createComponent();
+    this.myDelYesButton.createComponent(buttonOptions);
+    this.myDelNoButton.createComponent(buttonOptions);
+  
+    // this.fNazwa.createComponent(inputSettings);
     this.fNazwa_skrocona.createComponent(inputSettings);
     this.fWniosek_nadania_upr.createComponent(inputSettings);
     this.fNadajacy_upr.createComponent(inputSettings);
@@ -161,7 +176,27 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
             commit(false);
           }
         });
-      }
+      },
+
+      deleterow: (rowid: any, rowdata: any, commit: any) => {
+        const t = JSON.stringify(rowdata);
+        $.ajax({
+          cache: false,
+          dataType: 'json',
+          contentType: 'application/json',
+          url: this.sg['SERVICE_URL'] + 'Upowaznienia/DelUpowaznienia/' + rowdata.id,
+          data: t,
+          type: 'PUT',
+          success: function (data: any, status: any, xhr: any) {
+            commit(true);
+          },
+          error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+            alert(textStatus + ' - ' + errorThrown);
+            commit(false);
+          }
+        });
+      },
+
 
   };
 
@@ -174,7 +209,8 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
 
   @ViewChild('gridReference') myGrid: jqxGridComponent;
   @ViewChild('jqxwindow1') editWindow: jqxWindowComponent;
-  @ViewChild('nazwa') fNazwa: jqxInputComponent;
+  @ViewChild('jqxwindowDelete') deleteWindow: jqxWindowComponent;
+ // @ViewChild('nazwa') fNazwa:  jqxInputComponent;
   @ViewChild('nazwa_skrocona') fNazwa_skrocona: jqxInputComponent;
   @ViewChild('wniosek_nadania_upr') fWniosek_nadania_upr: jqxInputComponent;
   @ViewChild('nadajacy_upr') fNadajacy_upr: jqxInputComponent;
@@ -189,17 +225,25 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
   @ViewChild('buttonReference') mySaveButton1: jqxButtonComponent;
   @ViewChild('buttonReference1') myCancelButton1: jqxButtonComponent;
   @ViewChild('buttonReference2') myInsertButton1: jqxButtonComponent;
+  @ViewChild('buttonReference3') myEditButton: jqxButtonComponent;
+  @ViewChild('buttonDelReference') myDelButton: jqxButtonComponent;
+  @ViewChild('buttonDelYesReference') myDelYesButton: jqxButtonComponent;
+  @ViewChild('buttonDelNoReference') myDelNoButton: jqxButtonComponent;
 
 
   buttonSaveClicked(){
+    // alert($('#nazwa').val());
     let data = { id: null };
     let rowindex: number;
     if (!this.isInsertOperation) {
-      rowindex = this.myGrid.getselectedcell().rowindex;  
-      data = this.myGrid.getrowdata(rowindex);
+      rowindex =this.selectedRowId; //this.myGrid.getselectedcell().rowindex;  
+      data =this.selectedRowData; //this.myGrid.getrowdata(rowindex);
     }
     const row = {
-      id: data.id, nazwa: this.fNazwa.val(), nazw_skrocona: this.fNazwa_skrocona.val(),
+      id: data.id, 
+      nazwa: $('#nazwa').val(),
+      // nazwa: this.fNazwa.val(),      
+      nazwa_skrocona: this.fNazwa_skrocona.val(),
       wniosek_nadania_upr: this.fWniosek_nadania_upr.val(), nadajacy_upr: this.fNadajacy_upr.val(),
       prowadzacy_rejestr_uzyt: this.fProwadzacy_rejstr_uzyt.val(), wniosek_odebrania_upr: this.fWniosek_odebrania_upr.val(),
       odbierajacy_upr: this.fOdbierajacy_upr.val(), opiekun: this.fOpiekun.val(),
@@ -224,6 +268,7 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
     this.editWindow.close();
   }
 
+
   button2Clicked() {
     const datarow: any = {
       nazwa: '', nazwa_skrocona: '', wniosek_nadania_upr: '', nadajacy_upr: '', prowadzacy_rejestr_uzyt: '', wniosek_odebrania_upr: '',
@@ -238,11 +283,15 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
     this.editWindow.open();
   }
 
+
+
   editCellclick(event: any): void {
-    if (event.args.datafield === 'edycja') {
-      console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
-     // if (this.authService.loggedIn()) {
-        const datarow = event.args.row.bounddata;
+  //  if (event.args.datafield === 'edycja') {
+  //    console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
+    
+  // if (this.authService.loggedIn()) {
+// const datarow = event.args.row.bounddata;
+const datarow=this.selectedRowData;
         //if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {
           this.setEditValues(datarow);
           this.editWindow.title('Edycja');
@@ -255,10 +304,39 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
       //   $('#notificationContent').html('W celu edycji danych należy się zalogować');
       //   this.msgNotification.open();
       // }
-    }
+  //  }
   }
 
+private selectedRowData = null;
+private selectedRowId = null;
+Cellselect(event: any): void 
+  {
+    //alert( event.args.rowindex);
+    this.selectedRowId = event.args.rowindex;
+    this.selectedRowData = event.args.row.bounddata;   
+  }
 
+buttonDelClicked(){
+    //this.isInsertOperation = false;
+    if(this.selectedRowId != null)
+    {
+      $('#questionTagWindow').html("Czy skasować "+this.selectedRowData.nazwa+"?");
+      this.deleteWindow.title("Kasowanie rekordu");
+      this.deleteWindow.open();
+    }
+  }
+  
+buttondelnoClicked()
+  {
+
+    this.deleteWindow.close();
+  }
+
+  buttondelyesClicked()
+  {
+    this.myGrid.deleterow(this.selectedRowData);
+    this.deleteWindow.close();
+  }
 
   // cellsrenderer = (row: number, columnfield: string, value: string | number, defaulthtml: string, columnproperties: any, rowdata: any): string => {
   //     if (value < 20) {
@@ -286,18 +364,18 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
   columns: any[] =
   [
 
-    {
-      text: '', datafield: 'edycja', width: 50, columntype: 'button', filterable: false,
-      cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
-        return 'Edycja';
-      },
-    },
+    // {
+    //   text: '', datafield: 'edycja', width: 50, columntype: 'button', filterable: false,
+    //   cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
+    //     return 'Edycja';
+    //   },
+    // },
       { text: 'Nazwa', datafield: 'nazwa', width: 200,  },
       { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', width: 100},
       { text: 'Wniosek o nadanie<br> uprawnień', datafield: 'wniosek_nadania_upr', width: 200 },
       { text: 'Nadający uprawnienia', datafield: 'nadajacy_upr', width: 200 },
-      { text: 'Prowadzący rejestr użytkowników', datafield: 'prowadzacy_rejestr_uzyt', width: 200 },
-      { text: 'Wniosek o odebranie uprawnień', datafield: 'wniosek_odebrania_upr', width: 200 },
+      { text: 'Prowadzący rejestr<br> użytkowników', datafield: 'prowadzacy_rejestr_uzyt', width: 200 },
+      { text: 'Wniosek o odebranie<br> uprawnień', datafield: 'wniosek_odebrania_upr', width: 200 },
       { text: 'Odbierający uprawnienia', datafield: 'odbierajacy_upr', width: 200 },
       { text: 'Opiekun', datafield: 'opiekun', width: 200 },
       { text: 'Adres email', datafield: 'adres_email', width: 200 },
@@ -307,8 +385,9 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
   ];
 
   setEditValues(datarow: any): any{
-    this.fNazwa.val(datarow.nazwa);
-    this.fNazwa_skrocona.val(datarow.nazw_skrocona);
+    //this.fNazwa.val(datarow.nazwa);
+    $('#nazwa').val(datarow.nazwa) ;
+    this.fNazwa_skrocona.val(datarow.nazwa_skrocona);
     this.fWniosek_nadania_upr.val(datarow.wniosek_nadania_upr);
     this.fNadajacy_upr.val(datarow.nadajacy_upr);
     this.fProwadzacy_rejstr_uzyt.val(datarow.prowadzacy_rejestr_uzyt);
