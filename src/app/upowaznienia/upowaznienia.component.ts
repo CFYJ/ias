@@ -64,7 +64,7 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
     autoheight: true,
     altrows: true,
     
-    columnsheight:50,
+    columnsheight:60,
   };
 
   ngAfterViewInit(): void {
@@ -83,16 +83,17 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
       resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5
     });
 
-    const buttonOptions: jqwidgets.ButtonOptions = { theme: 'metro' };
 
-    this.mySaveButton1.createComponent(buttonOptions);
-    this.myCancelButton1.createComponent(buttonOptions);
-    this.myInsertButton1.createComponent(buttonOptions);
-    this.myEditButton.createComponent(buttonOptions);
+    const buttonOptions: jqwidgets.ButtonOptions = { theme: 'metro'};
+
+    this.mySaveButton1.createComponent();
+    this.myCancelButton1.createComponent();
+    this.myInsertButton1.createComponent();
+    this.myEditButton.createComponent();
    
     this.myDelButton.createComponent();
-    this.myDelYesButton.createComponent(buttonOptions);
-    this.myDelNoButton.createComponent(buttonOptions);
+    this.myDelYesButton.createComponent();
+    this.myDelNoButton.createComponent();
   
     // this.fNazwa.createComponent(inputSettings);
     this.fNazwa_skrocona.createComponent(inputSettings);
@@ -139,7 +140,7 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
       // record: 'Product',
       // id: 'ProductID',
       // url: '../sampledata/products.xml'
-
+ 
       addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
         const t = JSON.stringify(rowdata);
         $.ajax({
@@ -151,7 +152,9 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
           type: 'POST',
           success: function (data: any, status: any, xhr: any) {
             //alert('Wstawiono nowy rekord - id: ' + data.id);
+            rowdata.id = data.id;
             commit(true);
+            
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
             alert(textStatus + ' - ' + errorThrown);
@@ -168,7 +171,7 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
           url: this.sg['SERVICE_URL'] + 'Upowaznienia/PutUpowaznienia/' + rowdata.id,
           data: t,
           type: 'PUT',
-          success: function (data: any, status: any, xhr: any) {
+          success: function (data: any, status: any, xhr: any) {            
             commit(true);
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
@@ -178,16 +181,17 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
         });
       },
 
-      deleterow: (rowid: any, rowdata: any, commit: any) => {
-        const t = JSON.stringify(rowdata);
+      deleterow: (rowindex: any, commit: any) => {
+        //const t = JSON.stringify(rowdata);
+ 
         $.ajax({
           cache: false,
           dataType: 'json',
           contentType: 'application/json',
-          url: this.sg['SERVICE_URL'] + 'Upowaznienia/DelUpowaznienia/' + rowdata.id,
-          data: t,
-          type: 'PUT',
-          success: function (data: any, status: any, xhr: any) {
+          url: this.sg['SERVICE_URL'] + 'Upowaznienia/DelUpowaznienia/' + rowindex,
+          //data: t,
+          type: 'POST',
+          success: function (data: any, status: any, xhr: any) {         
             commit(true);
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
@@ -202,8 +206,8 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
 
   // dataAdapter: any = new $.jqx.dataAdapter(this.source);
   dataAdapter = new $.jqx.dataAdapter(this.source, {
-    formatData: function (data: any) {
-      return data;
+    formatData: function (data: any) {    
+      return data;      
     }
   });
 
@@ -285,13 +289,13 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
 
 
 
-  editCellclick(event: any): void {
+editCellclick(event: any): void {
   //  if (event.args.datafield === 'edycja') {
   //    console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
     
   // if (this.authService.loggedIn()) {
-// const datarow = event.args.row.bounddata;
-const datarow=this.selectedRowData;
+  // const datarow = event.args.row.bounddata;
+  const datarow=this.selectedRowData;
         //if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {
           this.setEditValues(datarow);
           this.editWindow.title('Edycja');
@@ -305,18 +309,19 @@ const datarow=this.selectedRowData;
       //   this.msgNotification.open();
       // }
   //  }
-  }
+}
+
+
 
 private selectedRowData = null;
 private selectedRowId = null;
-Cellselect(event: any): void 
-  {
+Cellselect(event: any): void {
     //alert( event.args.rowindex);
     this.selectedRowId = event.args.rowindex;
     this.selectedRowData = event.args.row.bounddata;   
-  }
+}
 
-buttonDelClicked(){
+buttonDelClicked() {
     //this.isInsertOperation = false;
     if(this.selectedRowId != null)
     {
@@ -324,19 +329,21 @@ buttonDelClicked(){
       this.deleteWindow.title("Kasowanie rekordu");
       this.deleteWindow.open();
     }
-  }
+}
+
+
   
 buttondelnoClicked()
   {
 
     this.deleteWindow.close();
-  }
+}
 
   buttondelyesClicked()
   {
-    this.myGrid.deleterow(this.selectedRowData);
+    this.myGrid.deleterow(this.selectedRowData.id);
     this.deleteWindow.close();
-  }
+}
 
   // cellsrenderer = (row: number, columnfield: string, value: string | number, defaulthtml: string, columnproperties: any, rowdata: any): string => {
   //     if (value < 20) {
