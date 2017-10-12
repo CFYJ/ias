@@ -11,6 +11,11 @@ import { jqxDateTimeInputComponent } from 'jqwidgets-ts/angular_jqxdatetimeinput
 import { jqxNotificationComponent } from 'jqwidgets-ts/angular_jqxnotification';
 import { jqxButtonComponent } from 'jqwidgets-ts/angular_jqxbuttons';
 import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
+import { jqxPanelComponent} from 'jqwidgets-ts/angular_jqxpanel';
+import { jqxToolBarComponent} from 'jqwidgets-ts/angular_jqxtoolbar';
+
+import  'jqwidgets/styles/jqx.metro.css';
+import  'jqwidgets/styles/jqx.darkblue.css';
 
 @Component({
   selector: 'app-upowaznienia',
@@ -65,12 +70,15 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
     altrows: true,
     
     columnsheight:60,
+    theme:'darkblue',
   };
 
   ngAfterViewInit(): void {
+
+   //this.authService.checkIfUserIsInRole("Admin_upowaznienia");
      const _self = this;
      this.myGrid.createComponent(this.options);
-     const inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro' };
+     const inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'darkblue' };
 
      
      this.editWindow.createWidget({
@@ -88,12 +96,15 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
 
     this.mySaveButton1.createComponent();
     this.myCancelButton1.createComponent();
-    this.myInsertButton1.createComponent();
-    this.myEditButton.createComponent();
+    // this.myInsertButton1.createComponent();
+    // this.myEditButton.createComponent();
    
-    this.myDelButton.createComponent();
+    // this.myDelButton.createComponent();
     this.myDelYesButton.createComponent();
     this.myDelNoButton.createComponent();
+
+    //this.panelMenu.createComponent();
+    this.toolBar.createComponent();
   
     // this.fNazwa.createComponent(inputSettings);
     this.fNazwa_skrocona.createComponent(inputSettings);
@@ -228,11 +239,48 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
 
   @ViewChild('buttonReference') mySaveButton1: jqxButtonComponent;
   @ViewChild('buttonReference1') myCancelButton1: jqxButtonComponent;
-  @ViewChild('buttonReference2') myInsertButton1: jqxButtonComponent;
-  @ViewChild('buttonReference3') myEditButton: jqxButtonComponent;
-  @ViewChild('buttonDelReference') myDelButton: jqxButtonComponent;
+  // @ViewChild('buttonReference2') myInsertButton1: jqxButtonComponent;
+  // @ViewChild('buttonReference3') myEditButton: jqxButtonComponent;
+  
+  // @ViewChild('buttonDelReference') myDelButton: jqxButtonComponent;
   @ViewChild('buttonDelYesReference') myDelYesButton: jqxButtonComponent;
   @ViewChild('buttonDelNoReference') myDelNoButton: jqxButtonComponent;
+
+  //@ViewChild('upowaznieniaPanelMenu') panelMenu: jqxPanelComponent;
+  @ViewChild('upowaznieniaToolBar') toolBar: jqxPanelComponent;
+
+  tools: string ='toggleButton toggleButton toggleButton';
+  initTools: any =  (type: string, index: number, tool: any, menuToolIninitialization): void => {
+    // let icon = document.createElement('div');
+    // if (type == "toggleButton") {
+    //     icon.className = 'jqx-editor-toolbar-icon jqx-editor-toolbar-icon-arctic buttonIcon ';
+    // }
+    switch (index) {
+      case 0:
+            tool.jqxToggleButton({ width: 120, toggled:false});
+            tool.theme='darkblue';
+            tool.text("Dodaj nowy");
+            tool.on("click", ()=>{
+              this.buttonAddClicked();
+
+            });
+            break;
+      case 1:
+              tool.jqxToggleButton({ width: 120, toggled:false });
+              tool.text("Edytuj");
+              tool.on("click", ()=>{
+                this.editCellclick(event);
+              });
+              break;
+      case 2:
+              tool.jqxToggleButton({ width: 120, toggled:false});
+              tool.text("Usuń");
+              tool.on("click", ()=>{
+                this.buttonDelClicked();
+              });
+              break;
+    }
+  };
 
 
   buttonSaveClicked(){
@@ -273,7 +321,7 @@ import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
   }
 
 
-  button2Clicked() {
+  buttonAddClicked() {
     const datarow: any = {
       nazwa: '', nazwa_skrocona: '', wniosek_nadania_upr: '', nadajacy_upr: '', prowadzacy_rejestr_uzyt: '', wniosek_odebrania_upr: '',
       odbierajacy_upr: '', opiekun: '', adres_email: '', decyzja: '', uwagi: ''
@@ -378,7 +426,7 @@ buttondelnoClicked()
     //   },
     // },
       { text: 'Nazwa', datafield: 'nazwa', width: 200,  },
-      { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', width: 100},
+      { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', width: 140},
       { text: 'Wniosek o nadanie<br> uprawnień', datafield: 'wniosek_nadania_upr', width: 200 },
       { text: 'Nadający uprawnienia', datafield: 'nadajacy_upr', width: 200 },
       { text: 'Prowadzący rejestr<br> użytkowników', datafield: 'prowadzacy_rejestr_uzyt', width: 200 },

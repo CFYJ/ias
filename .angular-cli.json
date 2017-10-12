@@ -40,6 +40,7 @@
       "./jqwidgets/jqxgrid.pager.js",
       "./jqwidgets/jqxdatatable.js",
       "./jqwidgets/jqxscrollbar.js",
+      "./jqwidgets/jqxpanel.js",
       "./jqwidgets/jqxbuttons.js",
       "./jqwidgets/jqxgrid.columnsresize.js",
       "./jqwidgets/jqxmenu.js",

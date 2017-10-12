@@ -1,9 +1,14 @@
 
-<p>
-  <jqxButton  #buttonReference2 [auto-create]='false' (onClick)="button2Clicked()" >Dodaj nowy</jqxButton>
-  <jqxButton  #buttonReference3 [auto-create]='false' (onClick)="editCellclick($event)">Edytuj</jqxButton>
-  <jqxButton  #buttonDelReference [auto-create]='false' (onClick)="buttonDelClicked()">Usuń</jqxButton>
-</p>
+<jqxToolbar #upowaznieniaToolBar [height]='40'  [tools]="tools" [initTools]="initTools" [hidden]="!authService.checkIfUserIsInRole('Admin_upowaznienia')">
+</jqxToolbar>
+
+<!-- <jqxButton   #buttonReference2 [auto-create]='false' (onClick)="buttonAddClicked()" >Dodaj nowy</jqxButton>
+<jqxButton  #buttonReference3 [auto-create]='false' (onClick)="editCellclick($event)">Edytuj</jqxButton>
+<jqxButton  #buttonDelReference [auto-create]='false' (onClick)="buttonDelClicked()">Usuń</jqxButton> -->
+
+<!-- 
+  <jqxPanel #upowaznieniaPanelMenu [height]='30' [width]='100%' ></jqxPanel>
+</jqxPanel> -->
 
 <jqxGrid id="jqxgrid" #gridReference
 [source]="dataAdapter" [columns]="columns"  [auto-create]='false'

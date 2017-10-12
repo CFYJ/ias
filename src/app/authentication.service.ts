@@ -75,6 +75,25 @@ export class AuthenticationService {
     }
   }
 
+  checkIfUserIsInRole(dataRow: any): boolean{
+
+    if(this.loggedIn){
+      const token = localStorage.getItem('user');
+      if (token) {
+        var role = this.jwtHelper.decodeToken(token).securityrole.split(",");
+       // alert(role);
+        var result = role.find(function(rola){
+                            return rola.trim() === dataRow;
+                          });
+        //                  alert(result);
+        if(result!='')                  
+          return true;
+         // alert(result);
+      }
+    }
+    return false;
+  }
+
   checkIfUserHasPermissionToEdit(dataRow: any): boolean {
     const user = this.getUser();
     const userData = this.getUserData();
