@@ -103,8 +103,10 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     this.myDelYesButton.createComponent();
     this.myDelNoButton.createComponent();
 
-    //this.panelMenu.createComponent();
-    this.toolBar.createComponent();
+    //this.panelMenu.createComponent();  
+   if(this.authService.checkIfUserIsInRole('Admin_upowaznienia'))
+    {this.toolBar.createComponent();}
+    
   
     // this.fNazwa.createComponent(inputSettings);
     this.fNazwa_skrocona.createComponent(inputSettings);
@@ -246,7 +248,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   @ViewChild('buttonDelYesReference') myDelYesButton: jqxButtonComponent;
   @ViewChild('buttonDelNoReference') myDelNoButton: jqxButtonComponent;
 
-  //@ViewChild('upowaznieniaPanelMenu') panelMenu: jqxPanelComponent;
+  //@ViewChild('upowaznieniaPanelMenu') panelMenu: jqxPanelComponent;  
   @ViewChild('upowaznieniaToolBar') toolBar: jqxPanelComponent;
 
   tools: string ='toggleButton toggleButton toggleButton';
@@ -279,7 +281,8 @@ import  'jqwidgets/styles/jqx.darkblue.css';
                 this.buttonDelClicked();
               });
               break;
-    }
+    };
+    
   };
 
 

@@ -1,6 +1,10 @@
 
-<jqxToolbar #upowaznieniaToolBar [height]='40'  [tools]="tools" [initTools]="initTools" [hidden]="!authService.checkIfUserIsInRole('Admin_upowaznienia')">
+<jqxToolbar #upowaznieniaToolBar [height]='40'  [tools]="tools" 
+[initTools]="initTools"  *ngIf="authService.checkIfUserIsInRole('Admin_upowaznienia')"
+[theme]='"darkblue"'>
 </jqxToolbar>
+<!-- [hidden]="!authService.checkIfUserIsInRole('Admin_upowaznienia')" -->
+
 
 <!-- <jqxButton   #buttonReference2 [auto-create]='false' (onClick)="buttonAddClicked()" >Dodaj nowy</jqxButton>
 <jqxButton  #buttonReference3 [auto-create]='false' (onClick)="editCellclick($event)">Edytuj</jqxButton>
@@ -46,12 +50,6 @@
             <jqxInput #wniosek_nadania_upr [auto-create]='false'></jqxInput>
           </td>
         </tr>
-        <!-- <tr>
-          <td align="right">Jednostka</td>
-          <td align="left">
-            <jqxDropDownList #cbJednostka [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-          </td>
-        </tr> -->
         <tr>
             <td align="right">Nadający uprawnienia</td>
             <td align="left">
@@ -108,6 +106,7 @@
             <jqxButton #buttonReference1 [auto-create]='false' (onClick)="buttonCancelClicked()">Anuluj</jqxButton>
           </td>
         </tr>
+        
       </table>
     </div>
 </jqxWindow>

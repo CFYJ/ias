@@ -80,7 +80,10 @@ export class AuthenticationService {
     if(this.loggedIn){
       const token = localStorage.getItem('user');
       if (token) {
-        var role = this.jwtHelper.decodeToken(token).securityrole.split(",");
+        var role = this.jwtHelper.decodeToken(token).securityrole;
+        if(role===null)
+          return false;
+        var role = role.split(",");
        // alert(role);
         var result = role.find(function(rola){
                             return rola.trim() === dataRow;
