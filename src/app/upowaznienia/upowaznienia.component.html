@@ -27,25 +27,25 @@
 
 
 
-<jqxWindow #jqxwindow1 [auto-create]='false'>
+<jqxWindow #jqxwindow1 [auto-create]='false' >
     <div>Edycja</div>
     <div style="overflow: hidden;">
       <table>
         <tr>
-          <td align="right">Nazwa</td>
+          <td class="upowaznieniaTextAreaLabel">Nazwa</td>
           <td align="left">
             <!-- <jqxInput #nazwa [auto-create]='false'></jqxInput> -->
             <textarea id='nazwa' class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
           </td>
         </tr>
         <tr>
-          <td align="right">Nazwa skrócona</td>
+          <td align="right" >Nazwa skrócona</td>
           <td align="left">
             <jqxInput #nazwa_skrocona [auto-create]='false'></jqxInput>
           </td>
         </tr>
         <tr>
-          <td align="right">Wniosek nadania uprawnień</td>
+          <td class="upowaznieniaTextAreaLabel">Wniosek nadania uprawnień</td>
           <td align="left">
             <jqxInput #wniosek_nadania_upr [auto-create]='false'></jqxInput>
           </td>
@@ -97,6 +97,14 @@
             <td align="right">Uwagi</td>
             <td align="left">
               <jqxInput #uwagi [auto-create]='false'></jqxInput>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">Dodaj wniosek o uprawnienia</td>
+            <td align="left">
+              <!-- <jqxFileupload #fileuploadbutton [auto-create]='false'></jqxFileupload> -->
+              <input id="file-field" name="file-field" (change)="uploadFile($event)" type="file" >
+              <!-- accept=".png,.jpg,.jpeg" -->
             </td>
           </tr>
         <tr>

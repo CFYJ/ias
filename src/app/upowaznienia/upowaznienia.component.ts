@@ -13,6 +13,7 @@ import { jqxButtonComponent } from 'jqwidgets-ts/angular_jqxbuttons';
 import { jqxInputComponent } from 'jqwidgets-ts/angular_jqxinput';
 import { jqxPanelComponent} from 'jqwidgets-ts/angular_jqxpanel';
 import { jqxToolBarComponent} from 'jqwidgets-ts/angular_jqxtoolbar';
+import { jqxFileUploadComponent} from 'jqwidgets-ts/angular_jqxfileupload';
 
 import  'jqwidgets/styles/jqx.metro.css';
 import  'jqwidgets/styles/jqx.darkblue.css';
@@ -73,6 +74,11 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     theme:'darkblue',
   };
 
+  // fileuploadoptions: jqwidgets.FileUploadOptions={
+  //   multipleFilesUpload: false;
+    
+  // }
+
   ngAfterViewInit(): void {
 
    //this.authService.checkIfUserIsInRole("Admin_upowaznienia");
@@ -83,7 +89,8 @@ import  'jqwidgets/styles/jqx.darkblue.css';
      
      this.editWindow.createWidget({
       width: 450, height: 530, theme: 'metro',
-      resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5
+      resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5,
+      
     });
 
     this.deleteWindow.createWidget({
@@ -105,7 +112,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 
     //this.panelMenu.createComponent();  
    if(this.authService.checkIfUserIsInRole('Admin_upowaznienia'))
-    {this.toolBar.createComponent();}
+    {this.toolBar.createComponent();}    
     
   
     // this.fNazwa.createComponent(inputSettings);
@@ -119,6 +126,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     this.fAdres_email.createComponent(inputSettings);
     this.fDecyzja.createComponent(inputSettings);
     this.fUwagi.createComponent(inputSettings);
+    // this.fileupload.createComponent
   }
 
 
@@ -250,6 +258,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 
   //@ViewChild('upowaznieniaPanelMenu') panelMenu: jqxPanelComponent;  
   @ViewChild('upowaznieniaToolBar') toolBar: jqxPanelComponent;
+  // @ViewChild('fileuploadbutton') fileupload: jqxFileUploadComponent;
 
   tools: string ='toggleButton toggleButton toggleButton';
   initTools: any =  (type: string, index: number, tool: any, menuToolIninitialization): void => {
@@ -315,12 +324,14 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 
     this.isInsertOperation = false;
     this.editWindow.close();
+    $('#file-field').val('').clone(true);
 
   }
 
   buttonCancelClicked() {
     this.isInsertOperation = false;
     this.editWindow.close();
+   $('#file-field').val('').clone(true);
   }
 
 
@@ -339,27 +350,78 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   }
 
 
+  uploadFile(event) {
+    let files = event.target.files;
+    if (files.length > 0) {
+      //console.log(files); // You will see the file
+      //let formData: FormData = new FormData();
+      var formData = new FormData();
+
+//alert(files[0].name);
+      // for (var i = 0; i < files.length ; i++) {
+      //   formData.append(files[i].name, files[i]);
+      // }
+
+      //formData.append(files[0].name, files[0]);
+      $.each(files, function(key, value)
+      {
+        formData.append(key, value);
+      });
+
+   //alert(files[0].name);
+      //this.http.post(url, formData, request_options)
+      $.ajax({
+        url: this.sg['SERVICE_URL'] + 'Upowaznienia/FileUpload',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,      
+        cache: false,        
+        dataType: 'json',
+        //contentType: 'multipart/form-data',
+        
+        success: function(data, textStatus, jqXHR)
+        {
+          alert( textStatus);
+            if(typeof data.error === 'undefined')
+            {
+                // Success so call function to process the form
+                alert("sukces");
+            }
+            else
+            {
+                // Handle errors here
+                alert('success ERRORS: ' + data.error);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown)
+        {
+            // Handle errors here
+            alert('error ERRORS: ' + textStatus);
+            // STOP LOADING SPINNER
+        }
+
+    
+        // success: function (data: any, status: any, xhr: any) {         
+        //   commit(true);
+        // },
+        // error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+        //   alert(textStatus + ' - ' + errorThrown);
+        //   commit(false);
+        // }
+      });
+    }
+  }
 
 editCellclick(event: any): void {
-  //  if (event.args.datafield === 'edycja') {
-  //    console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
-    
-  // if (this.authService.loggedIn()) {
-  // const datarow = event.args.row.bounddata;
-  const datarow=this.selectedRowData;
-        //if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {
+
+    if(this.selectedRowId !=null){
+          const datarow=this.selectedRowData;
           this.setEditValues(datarow);
           this.editWindow.title('Edycja');
           this.editWindow.open();
-        // } else {
-        //   $('#notificationContent').html('Możesz edytować jedynie swoje dane');
-        //   this.msgNotification.open();
-        // }
-      // } else {
-      //   $('#notificationContent').html('W celu edycji danych należy się zalogować');
-      //   this.msgNotification.open();
-      // }
-  //  }
+    }
+
 }
 
 
@@ -428,17 +490,17 @@ buttondelnoClicked()
     //     return 'Edycja';
     //   },
     // },
-      { text: 'Nazwa', datafield: 'nazwa', width: 200,  },
-      { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', width: 140},
-      { text: 'Wniosek o nadanie<br> uprawnień', datafield: 'wniosek_nadania_upr', width: 200 },
-      { text: 'Nadający uprawnienia', datafield: 'nadajacy_upr', width: 200 },
-      { text: 'Prowadzący rejestr<br> użytkowników', datafield: 'prowadzacy_rejestr_uzyt', width: 200 },
-      { text: 'Wniosek o odebranie<br> uprawnień', datafield: 'wniosek_odebrania_upr', width: 200 },
-      { text: 'Odbierający uprawnienia', datafield: 'odbierajacy_upr', width: 200 },
-      { text: 'Opiekun', datafield: 'opiekun', width: 200 },
-      { text: 'Adres email', datafield: 'adres_email', width: 200 },
-      { text: 'Decyzja', datafield: 'decyzja', width: 200 },
-      { text: 'Uwagi', datafield: 'uwagi', width: 200 },
+      { text: 'Nazwa', datafield: 'nazwa', width: 160,  },
+      { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', width: 160},
+      { text: 'Wniosek o nadanie<br> uprawnień', datafield: 'wniosek_nadania_upr', width: 160 },
+      { text: 'Nadający uprawnienia', datafield: 'nadajacy_upr', width: 160 },
+      { text: 'Prowadzący rejestr<br> użytkowników', datafield: 'prowadzacy_rejestr_uzyt', width: 160 },
+      { text: 'Wniosek o odebranie<br> uprawnień', datafield: 'wniosek_odebrania_upr', width: 160 },
+      { text: 'Odbierający<br>uprawnienia', datafield: 'odbierajacy_upr', width:160 },
+      { text: 'Opiekun', datafield: 'opiekun', width: 160 },
+      { text: 'Adres email', datafield: 'adres_email', width: 160 },
+      { text: 'Decyzja', datafield: 'decyzja', width: 160  },
+      { text: 'Uwagi', datafield: 'uwagi',  minwidth: 200 },
      
   ];
 

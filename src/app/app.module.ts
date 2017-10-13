@@ -28,6 +28,7 @@ import { jqxNotificationComponent } from 'jqwidgets-ts/angular_jqxnotification';
 import { jqxDropDownListComponent } from 'jqwidgets-ts/angular_jqxdropdownlist';
 import { jqxPanelComponent} from 'jqwidgets-ts/angular_jqxpanel';
 import { jqxToolBarComponent} from 'jqwidgets-ts/angular_jqxtoolbar';
+import { jqxFileUploadComponent} from 'jqwidgets-ts/angular_jqxfileupload';
 
 import {SimpleGlobal} from 'ng2-simple-global';
 import { UpowaznieniaComponent } from './upowaznienia/upowaznienia.component'
@@ -60,6 +61,7 @@ export const appRoutes: Routes = [
     UpowaznieniaComponent,
     jqxPanelComponent,
     jqxToolBarComponent,
+    jqxFileUploadComponent,
   ],
   imports: [
     BrowserModule,
