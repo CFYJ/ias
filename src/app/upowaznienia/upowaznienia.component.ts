@@ -1,5 +1,6 @@
 import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy  } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Http } from '@angular/http';
 import { jqxGridComponent } from 'jqwidgets-ts/angular_jqxgrid';
 import { SimpleGlobal } from 'ng2-simple-global';
 import { UpowaznieniaService } from './../upowaznienia.service';
@@ -111,7 +112,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     this.myDelNoButton.createComponent();
 
     //this.panelMenu.createComponent();  
-   if(this.authService.checkIfUserIsInRole('Admin_upowaznienia'))
+   //if(this.authService.checkIfUserIsInRole('Admin_upowaznienia'))
     {this.toolBar.createComponent();}    
     
   
@@ -260,7 +261,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   @ViewChild('upowaznieniaToolBar') toolBar: jqxPanelComponent;
   // @ViewChild('fileuploadbutton') fileupload: jqxFileUploadComponent;
 
-  tools: string ='toggleButton toggleButton toggleButton';
+  tools: string ='toggleButton toggleButton toggleButton toggleButton toggleButton  toggleButton';
   initTools: any =  (type: string, index: number, tool: any, menuToolIninitialization): void => {
     // let icon = document.createElement('div');
     // if (type == "toggleButton") {
@@ -288,6 +289,27 @@ import  'jqwidgets/styles/jqx.darkblue.css';
               tool.text("Usuń");
               tool.on("click", ()=>{
                 this.buttonDelClicked();
+              });
+              break;
+      case 3:
+              tool.jqxToggleButton({ width: 120, toggled:false});
+              tool.text("FileContentResult");
+              tool.on("click", ()=>{
+                this.downloadFile("1");
+              });
+              break;
+      case 4:
+              tool.jqxToggleButton({ width: 120, toggled:false});
+              tool.text("HttpResponseMessage");
+              tool.on("click", ()=>{
+                this.downloadFile("2");
+              });
+              break;
+      case 5:
+              tool.jqxToggleButton({ width: 120, toggled:false});
+              tool.text("Download");
+              tool.on("click", ()=>{
+                this.download();
               });
               break;
     };
@@ -357,7 +379,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
       //let formData: FormData = new FormData();
       var formData = new FormData();
 
-//alert(files[0].name);
+      //alert(files[0].name);
       // for (var i = 0; i < files.length ; i++) {
       //   formData.append(files[i].name, files[i]);
       // }
@@ -412,6 +434,132 @@ import  'jqwidgets/styles/jqx.darkblue.css';
       });
     }
   }
+
+ downloadFile = function (name) {
+   var urlstring=this.sg['SERVICE_URL'] + 'Upowaznienia/TestDownloadd';
+   var contentT ="application/x-www-form-urlencoded;charset=ISO-8859-2";
+   var filename ="f1.txt";
+   if(name==="1"){
+      urlstring=this.sg['SERVICE_URL'] + 'Upowaznienia/TestDownload'
+      contentT="application/x-www-form-urlencoded;charset=ISO-8859-2";
+      filename ="f2.txt";
+      }
+
+    $.ajax({
+        method: 'GET',
+        //dataType:"json", 
+        url: urlstring,
+        //this.sg['SERVICE_URL'] + 'Upowaznienia/TestDownload',
+        contentType: contentT,
+        //contentType: "text/plain; charset=UTF-8",
+        params: { name: name },
+        //responseType: 'arraybuffer'
+        //arraybuffer
+    }).success(function (data, status, headers) {
+        //headers = headers();
+        //alert(headers.getResponseHeader("content-type"));
+        var rez='';
+
+        var t =data;//['content'];
+        // t=t['_content'];
+        // t=t[2];
+        for (var i in t) {
+          rez=rez+";"+t[i];
+          // rez=rez+(t[i]);
+          // for(var j in i)
+          // {           
+          //   rez=rez+i[j];
+          // }
+        }
+        alert(rez);
+        //alert(contentType);
+        //var filename = headers['x-filename'];
+        //var contentType = headers['content-type'];
+        //contentType= "text/plain; charset=UTF-8";
+        //contentType ="text/plain";
+        // "multipart/form-data
+        var linkElement = document.createElement('a');
+        try {
+          //, { type: contentType }
+        
+            var blob = new Blob([data], { type: contentT });
+            var url = window.URL.createObjectURL(blob);
+ 
+            linkElement.setAttribute('href', url);
+            linkElement.setAttribute("download", filename);
+ 
+            var clickEvent = new MouseEvent("click", {
+                "view": window,
+                "bubbles": true,
+                "cancelable": false
+            });
+            linkElement.dispatchEvent(clickEvent);
+        } catch (ex) {
+            console.log(ex);
+        }
+    }).error(function (data) {
+        console.log(data);
+    });
+};
+
+download = function(){
+  var urlstring=this.sg['SERVICE_URL'] + 'Upowaznienia/DownloadAttachment';
+
+  $.ajax(
+    {
+      //url: '@Url.Action("DownloadAttachment", "PostDetail")',
+       // url: '@Url.Action("'+urlstring+'", "PostDetail")',
+       url: urlstring,
+       //contentType: 'application/json; charset="UTF-8"',
+       //contentType: 'application/octet-stream;',
+        //contentType: 'application/json; charset=UTF-8',
+        //datatype: 'json',
+        datatype: 'binary',
+        responseType:'arraybuffer',
+        processData: false,
+        data: {
+            studentId: 123
+        },
+
+        type: "GET",
+        success: function(data) {
+
+          // var rez='';
+          // alert(data.charCodeAt(11));
+          //         var t =data
+          //         for (var i in t) {
+          //           rez=rez+";"+t[i];
+                
+          //         }
+          //         alert(rez);
+// alert("żółąę");
+
+          var blob = new Blob([data]);
+          var link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = "filename.pdf";
+          link.click();
+      }
+        // success: function () {
+        //    window.location = '@Url.Action("'+urlstring+'", "PostDetail", new { studentId = 123 })';
+        //     //window.location = '@Url.Action("DownloadAttachment", "PostDetail", new { studentId = 123 })';
+        //     // var url = window.URL.createObjectURL(urlstring);
+        //     // var linkElement = document.createElement('a');
+        //     //            linkElement.setAttribute('href', url);
+        //     //            linkElement.setAttribute("download", "zzz.txt");
+            
+        //     //            var clickEvent = new MouseEvent("click", {
+        //     //                "view": window,
+        //     //                "bubbles": true,
+        //     //                "cancelable": false
+        //     //            });
+        //     //            linkElement.dispatchEvent(clickEvent);
+        // }
+    });
+
+}
+
+
 
 editCellclick(event: any): void {
 

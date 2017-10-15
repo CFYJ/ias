@@ -1,8 +1,10 @@
 
-<jqxToolbar #upowaznieniaToolBar [height]='40'  [tools]="tools" 
-[initTools]="initTools"  *ngIf="authService.checkIfUserIsInRole('Admin_upowaznienia')"
+<jqxToolbar #upowaznieniaToolBar [height]='40'  [tools]="tools" [auto-create]='false'
+[initTools]="initTools" 
 [theme]='"darkblue"'>
 </jqxToolbar>
+<!-- *ngIf="authService.checkIfUserIsInRole('Admin_upowaznienia')" -->
+
 <!-- [hidden]="!authService.checkIfUserIsInRole('Admin_upowaznienia')" -->
 
 
@@ -132,4 +134,3 @@
 </jqxWindow>  
 
   <!-- <jqxWindow #jqxwindow2 [auto-create]='false'></jqxWindow> -->
-  
