@@ -155,6 +155,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         {name: 'adres_email', type:'string'},
         {name: 'decyzja', type:'string'},
         {name: 'uwagi', type:'string'},
+        {name: 'UpowaznieniaPliki', type: 'any'},
       ],
       id:'id',
       url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
@@ -228,7 +229,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 
   // dataAdapter: any = new $.jqx.dataAdapter(this.source);
   dataAdapter = new $.jqx.dataAdapter(this.source, {
-    formatData: function (data: any) {    
+    formatData: function (data: any) {       
       return data;      
     }
   });
@@ -653,6 +654,13 @@ Cellselect(event: any): void {
     //alert( event.args.rowindex);
     this.selectedRowId = event.args.rowindex;
     this.selectedRowData = event.args.row.bounddata;   
+
+    // var rez="";  
+    // var t = event.args.row.bounddata['UpowaznieniaPliki'];
+    // for (var i in t) {
+    //   rez=rez+";"+t[i];        
+    // }
+    // alert(rez);
 }
 
 buttonDelClicked() {
@@ -702,6 +710,18 @@ buttondelnoClicked()
   //     { text: 'Product Details', align: 'center', name: 'ProductDetails' }
   // ];
 
+  plikirenderer = (row: number, column: any, value: any): string => {
+    var urlstring=this.sg['SERVICE_URL'] + 'Upowaznienia/GetPliki/'+value;
+        $.post(urlstring, function(responseTxt,statusTxt,xhr)
+        {  
+         if(responseTxt!=null) 
+          var tablica = JSON.parse(responseTxt);		
+          $('#wasl_'+row).innerHTML=tablica['nazwa'];
+        //return '<span style="margin-left: 4px; margin-top: 9px; float: left;">' + value[0] + '</span>';
+        });
+        return '<div id="wasl_'+row+'"></div>';
+    }
+
   columns: any[] =
   [
 
@@ -722,8 +742,12 @@ buttondelnoClicked()
       { text: 'Adres email', datafield: 'adres_email', width: 160 },
       { text: 'Decyzja', datafield: 'decyzja', width: 160  },
       { text: 'Uwagi', datafield: 'uwagi',  minwidth: 200 },
+      { text: 'Pliki', datafield: 'id',  minwidth: 200,cellsrenderer: this.plikirenderer },
      
   ];
+
+
+
 
   setEditValues(datarow: any): any{
     //this.fNazwa.val(datarow.nazwa);
