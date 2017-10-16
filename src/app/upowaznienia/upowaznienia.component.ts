@@ -261,7 +261,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   @ViewChild('upowaznieniaToolBar') toolBar: jqxPanelComponent;
   // @ViewChild('fileuploadbutton') fileupload: jqxFileUploadComponent;
 
-  tools: string ='toggleButton toggleButton toggleButton toggleButton toggleButton  toggleButton';
+  tools: string ='toggleButton toggleButton toggleButton';
   initTools: any =  (type: string, index: number, tool: any, menuToolIninitialization): void => {
     // let icon = document.createElement('div');
     // if (type == "toggleButton") {
@@ -291,27 +291,13 @@ import  'jqwidgets/styles/jqx.darkblue.css';
                 this.buttonDelClicked();
               });
               break;
-      case 3:
-              tool.jqxToggleButton({ width: 120, toggled:false});
-              tool.text("FileContentResult");
-              tool.on("click", ()=>{
-                this.downloadFile("1");
-              });
-              break;
-      case 4:
-              tool.jqxToggleButton({ width: 120, toggled:false});
-              tool.text("HttpResponseMessage");
-              tool.on("click", ()=>{
-                this.downloadFile("2");
-              });
-              break;
-      case 5:
-              tool.jqxToggleButton({ width: 120, toggled:false});
-              tool.text("Download");
-              tool.on("click", ()=>{
-                this.download();
-              });
-              break;
+      // case 3:
+      //         tool.jqxToggleButton({ width: 120, toggled:false});
+      //         tool.text("FileContentResult");
+      //         tool.on("click", ()=>{
+      //           this.downloadFile("1");
+      //         });
+      //         break; 
     };
     
   };
@@ -435,7 +421,9 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     }
   }
 
- downloadFile = function (name) {
+  // zły download
+  /*
+    downloadFile = function (name) {
    var urlstring=this.sg['SERVICE_URL'] + 'Upowaznienia/TestDownloadd';
    var contentT ="application/x-www-form-urlencoded;charset=ISO-8859-2";
    var filename ="f1.txt";
@@ -500,63 +488,148 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     }).error(function (data) {
         console.log(data);
     });
-};
+    };
 
-download = function(){
-  var urlstring=this.sg['SERVICE_URL'] + 'Upowaznienia/DownloadAttachment';
+  */
 
-  $.ajax(
-    {
-      //url: '@Url.Action("DownloadAttachment", "PostDetail")',
-       // url: '@Url.Action("'+urlstring+'", "PostDetail")',
-       url: urlstring,
-       //contentType: 'application/json; charset="UTF-8"',
-       //contentType: 'application/octet-stream;',
-        //contentType: 'application/json; charset=UTF-8',
-        //datatype: 'json',
-        datatype: 'binary',
-        responseType:'arraybuffer',
-        processData: false,
-        data: {
-            studentId: 123
-        },
 
-        type: "GET",
-        success: function(data) {
 
-          // var rez='';
-          // alert(data.charCodeAt(11));
-          //         var t =data
-          //         for (var i in t) {
-          //           rez=rez+";"+t[i];
-                
-          //         }
-          //         alert(rez);
-// alert("żółąę");
+downloadFile = function(id){
+  var plikid = 1;
 
-          var blob = new Blob([data]);
-          var link = document.createElement('a');
-          link.href = window.URL.createObjectURL(blob);
-          link.download = "filename.pdf";
-          link.click();
-      }
-        // success: function () {
-        //    window.location = '@Url.Action("'+urlstring+'", "PostDetail", new { studentId = 123 })';
-        //     //window.location = '@Url.Action("DownloadAttachment", "PostDetail", new { studentId = 123 })';
-        //     // var url = window.URL.createObjectURL(urlstring);
-        //     // var linkElement = document.createElement('a');
-        //     //            linkElement.setAttribute('href', url);
-        //     //            linkElement.setAttribute("download", "zzz.txt");
-            
-        //     //            var clickEvent = new MouseEvent("click", {
-        //     //                "view": window,
-        //     //                "bubbles": true,
-        //     //                "cancelable": false
-        //     //            });
-        //     //            linkElement.dispatchEvent(clickEvent);
-        // }
-    });
 
+
+  var urlstring=this.sg['SERVICE_URL'] + 'Upowaznienia/DownloadAttachment/'+plikid;
+
+  // var link = document.createElement('iframe');
+  // link.src = urlstring;    
+  // document.body.appendChild(link);
+
+  //niuedane próby pobrania pliku
+  /*
+    var a=4;
+    
+    if(a==0)
+      {let xhr = new XMLHttpRequest();
+    
+                xhr.open('GET', urlstring, true);
+                xhr.setRequestHeader('Content-type', 'application/json');
+                xhr.responseType='blob';
+    
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+    
+                            var contentType = 'application/octet-stream';
+                            var blob = new Blob([xhr.response], { type: contentType });
+                            var link = document.createElement('a');
+                            link.href = window.URL.createObjectURL(blob);
+                            //link.href = window.URL.createObjectURL(data);
+                            var plik = "plik.pdf";
+                            link.download = plik;
+                            link.click();
+                            //observer.next(blob);
+                            //observer.complete();
+                        } else {
+                            //observer.error(xhr.response);
+                        }
+                    }
+                }
+                xhr.send();
+
+              } 
+
+    if(a===2)
+      $.ajax({
+        url: urlstring,
+        //contentType: 'application/json; charset="UTF-8"',
+        contentType: 'application/octet-stream',
+          //contentType: 'application/json; charset=UTF-8',
+          //datatype: 'json',
+          //datatype: 'binary',
+          //responseType:'arraybuffer',
+          //contentType: "application/x-www-form-urlencoded",
+          //contentType:"multipart/form-data",
+          //contentType: 'undefined',
+          //dataType: 'binary',
+          //contentType: 'application/download',
+          processData: false,
+    
+
+          type: "GET",
+          success: function(data, status, headers) {
+
+          //console.log(data);
+          //console.log(headers);
+            //var rez='';
+            // alert(data.charCodeAt(11));
+                    // var t =data
+                    // for (var i in t) {
+                    //  // rez=rez+";"+t[i];
+                    //  console.log(i);
+                  
+                    // }
+            //         alert(rez);
+
+            var blob = new Blob([data]);
+            var link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            //link.href = window.URL.createObjectURL(data);
+            var plik = plikid===1 ?"plik.pdf":"filename.txt";
+            link.download = plik;
+            link.click();
+        }
+          // success: function () {
+          //    window.location = '@Url.Action("'+urlstring+'", "PostDetail", new { studentId = 123 })';
+          //     //window.location = '@Url.Action("DownloadAttachment", "PostDetail", new { studentId = 123 })';
+          //     // var url = window.URL.createObjectURL(urlstring);
+          //     // var linkElement = document.createElement('a');
+          //     //            linkElement.setAttribute('href', url);
+          //     //            linkElement.setAttribute("download", "zzz.txt");
+              
+          //     //            var clickEvent = new MouseEvent("click", {
+          //     //                "view": window,
+          //     //                "bubbles": true,
+          //     //                "cancelable": false
+          //     //            });
+          //     //            linkElement.dispatchEvent(clickEvent);
+          // }
+      });
+
+
+      if(a===3)
+      $.ajax({
+          url: urlstring,
+          contentType: 'application/octet-stream',
+            processData: false,
+      
+    
+            type: "GET",
+            success: function(data, status, headers) {
+    
+            //console.log(data);
+            //console.log(headers);
+              //var rez='';
+              // alert(data.charCodeAt(11));
+                      // var t =data
+                      // for (var i in t) {
+                      //  // rez=rez+";"+t[i];
+                      //  console.log(i);
+                    
+                      // }
+              //         alert(rez);
+    
+              var blob = new Blob([data]);
+              var link = document.createElement('a');
+              link.href = window.URL.createObjectURL(blob);
+              //link.href = window.URL.createObjectURL(data);
+              var plik = plikid===1 ?"plik.pdf":"filename.txt";
+              link.download = plik;
+              link.click();
+          }
+      
+        });
+  */
 }
 
 
