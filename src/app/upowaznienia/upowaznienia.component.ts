@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy  } from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy, AfterContentInit  } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Http } from '@angular/http';
 import { jqxGridComponent } from 'jqwidgets-ts/angular_jqxgrid';
@@ -28,7 +28,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 })
 
 //export class UpowaznieniaComponent implements OnInit {
-  export class UpowaznieniaComponent implements OnInit, AfterViewInit{
+  export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterContentInit {
 
 
 
@@ -36,8 +36,10 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     private authService: AuthenticationService,private messageService: MessageService,
     private sg: SimpleGlobal) 
     { 
-      
+     
     }
+
+  pliki: any;
 
   message: any = 'message';
   subscription: Subscription;
@@ -46,10 +48,15 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   isInsertOperation = false;
   
 
-
+  ngAfterContentInit(){
+    //$('body').on('click','.deleteFileButton',function(){alert("ggg")});
+  }
   
   ngOnInit() {
 
+    
+    //$('#testwasl').onClick(alert('ddd'));
+   // $('body').on('click','#testwasl',function(){alert("ggg")});
     // const _self = this;
     // this.myGrid.createComponent(this.options);
   }
@@ -658,34 +665,33 @@ import  'jqwidgets/styles/jqx.darkblue.css';
             this.editWindow.title('Edycja');
             this.editWindow.open();
 
-
-
-            
-            if( datarow['upowaznieniaPliki'].length>0){ 
+   
+            if( datarow['upowaznieniaPliki'].length>0){
              
-              //alert(datarow['upowaznieniaPliki'][0]['nazwa']);
-              var pliki = '<table style="width:100%">';            
-              for(var i in datarow['upowaznieniaPliki']){
-                pliki = pliki+'<tr><td style="width:30px"><button class="deleteFileButton"  id="'+datarow['upowaznieniaPliki'][i]['id']+'">-</button></td><td>'+datarow['upowaznieniaPliki'][i]['nazwa']+'</td></tr>';
-               // onClick="deleteFile(1);" 
+              this.pliki = datarow['upowaznieniaPliki'];
+            //   //alert(datarow['upowaznieniaPliki'][0]['nazwa']);
+            //   var pliki = '<table style="width:100%">';            
+            //   for(var i in datarow['upowaznieniaPliki']){
+            //     pliki = pliki+'<tr><td style="width:30px"><button class="deleteFileButton"  id="'+datarow['upowaznieniaPliki'][i]['id']+'">-</button></td><td>'+datarow['upowaznieniaPliki'][i]['nazwa']+'</td></tr>';
+            //    // onClick="deleteFile(1);" 
 
-              }
-              pliki=pliki+'</table>';
-              $('#addedFiles').html(pliki);
+            //   }
+            //   pliki=pliki+'</table>';
+            //   $('#addedFiles').html(pliki);
 
-              // $('.deleteFileButton').click(function(event){
-              //     //alert(event.target.id);
-              //     this._self.deleteFile(event.target.id);     
+            //   // $('.deleteFileButton').click(function(event){
+            //   //     //alert(event.target.id);
+            //   //     this._self.deleteFile(event.target.id);     
                      
-              // });
+            //   // });
 
-             // $('body').on('click','.deleteFileButton',function(){alert("ggg")});
+            //  // $('body').on('click','.deleteFileButton',function(){alert("ggg")});
 
-             document.body.addEventListener( 'click', function ( event ) {
-              if( event.srcElement.id == '1' ) {
-                alert("jjj");
-              };
-            } );
+            //  document.body.addEventListener( 'click', function ( event ) {
+            //   if( event.srcElement.id == '1' ) {
+            //     alert("jjj");
+            //   };
+            // } );
             } 
 
       }
@@ -700,7 +706,11 @@ Cellselect(event: any): void {
     //alert( event.args.rowindex);
     this.selectedRowId = event.args.rowindex;
     this.selectedRowData = event.args.row.bounddata;   
-
+    
+    if( this.selectedRowData['upowaznieniaPliki'].length>0){      
+       this.pliki = this.selectedRowData['upowaznieniaPliki'];
+    }
+    
     // var rez="";  
     // var t = event.args.row.bounddata['UpowaznieniaPliki'];
     // for (var i in t) {
@@ -889,7 +899,6 @@ buttondelyesClicked()
             // } 
 
   }
-
 
 
 }

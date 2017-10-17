@@ -98,6 +98,8 @@
           <tr>
             <td class="upowaznieniaTextAreaLabel">Załączone pliki</td>
             <td align="left" id="addedFiles" >
+              <div *ngFor="let plik of pliki">{{plik.nazwa}} jj</div>
+              
                     <!-- <li *ngFor="let plik of upowaznieniaPliki">
                    {{plik.nazwa}}
                    </li> -->
@@ -141,8 +143,5 @@
 </jqxWindow>  
 
   <!-- <jqxWindow #jqxwindow2 [auto-create]='false'></jqxWindow> -->
+<div id='testwasl'>aaaaa</div>
 
-  <script type='text/javascript'>
-    alert("hhh");
-    $('body').on('click','.deleteFileButton',function(){alert("ggg")});
-  </script>
