@@ -707,6 +707,7 @@ Cellselect(event: any): void {
     this.selectedRowId = event.args.rowindex;
     this.selectedRowData = event.args.row.bounddata;   
     
+    this.pliki = null;
     if( this.selectedRowData['upowaznieniaPliki'].length>0){      
        this.pliki = this.selectedRowData['upowaznieniaPliki'];
     }
@@ -899,6 +900,8 @@ buttondelyesClicked()
             // } 
 
   }
-
+testf(zz: string){
+  alert(zz);
+}
 
 }

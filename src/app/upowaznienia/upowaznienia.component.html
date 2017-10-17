@@ -98,7 +98,7 @@
           <tr>
             <td class="upowaznieniaTextAreaLabel">Załączone pliki</td>
             <td align="left" id="addedFiles" >
-              <div *ngFor="let plik of pliki">{{plik.nazwa}} jj</div>
+              <div *ngFor="let plik of pliki" (click)='testf(plik.nazwa)'>{{plik.nazwa}} jj</div>
               
                     <!-- <li *ngFor="let plik of upowaznieniaPliki">
                    {{plik.nazwa}}
