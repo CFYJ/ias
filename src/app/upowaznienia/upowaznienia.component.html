@@ -1,6 +1,5 @@
+<div (click)="upowaznieniaService.deleteFile(1)">aa</div>
 
-<!-- <iframe src='http://127.0.0.1:5000/api/Upowaznienia/DownloadAttachment/1'></iframe> -->
-<a href="http://127.0.0.1:5000/api/Upowaznienia/DownloadAttachment/2">pobierz</a>
 <jqxToolbar #upowaznieniaToolBar [height]='40'  [tools]="tools" [auto-create]='false'
 [initTools]="initTools" 
 [theme]='"darkblue"'>
@@ -10,13 +9,6 @@
 <!-- [hidden]="!authService.checkIfUserIsInRole('Admin_upowaznienia')" -->
 
 
-<!-- <jqxButton   #buttonReference2 [auto-create]='false' (onClick)="buttonAddClicked()" >Dodaj nowy</jqxButton>
-<jqxButton  #buttonReference3 [auto-create]='false' (onClick)="editCellclick($event)">Edytuj</jqxButton>
-<jqxButton  #buttonDelReference [auto-create]='false' (onClick)="buttonDelClicked()">Usuń</jqxButton> -->
-
-<!-- 
-  <jqxPanel #upowaznieniaPanelMenu [height]='30' [width]='100%' ></jqxPanel>
-</jqxPanel> -->
 
 <jqxGrid id="jqxgrid" #gridReference
 [source]="dataAdapter" [columns]="columns"  [auto-create]='false'
@@ -33,7 +25,7 @@
 
 <jqxWindow #jqxwindow1 [auto-create]='false' >
     <div>Edycja</div>
-    <div style="overflow: hidden;">
+    <div style="overflow: auto;">
       <table>
         <tr>
           <td class="upowaznieniaTextAreaLabel">Nazwa</td>
@@ -104,9 +96,22 @@
             </td>
           </tr>
           <tr>
-            <td align="right">Dodaj wniosek o uprawnienia</td>
+            <td class="upowaznieniaTextAreaLabel">Załączone pliki</td>
+            <td align="left" id="addedFiles" >
+                    <!-- <li *ngFor="let plik of upowaznieniaPliki">
+                   {{plik.nazwa}}
+                   </li> -->
+              <!-- <table>
+                <tr *ngFor="let plik of datarow['upowaznieniaPliki']; let i= index">
+                  <td><button onclick=""+alert({{plik.nazwa}})>-</button></td>
+                </tr>
+              </table> -->
+            </td>
+          </tr>
+          <tr>
+            <td align="right">Dodaj plik</td>
             <td align="left">
-              <!-- <jqxFileupload #fileuploadbutton [auto-create]='false'></jqxFileupload> -->
+              <!-- <jqxFileUpload #fileuploadbutton [auto-create]='false' (change)="uploadFile($event)" ></jqxFileUpload> -->
               <input id="file-field" name="file-field" (change)="uploadFile($event)" type="file" >
               <!-- accept=".png,.jpg,.jpeg" -->
             </td>
@@ -136,3 +141,8 @@
 </jqxWindow>  
 
   <!-- <jqxWindow #jqxwindow2 [auto-create]='false'></jqxWindow> -->
+
+  <script type='text/javascript'>
+    alert("hhh");
+    $('body').on('click','.deleteFileButton',function(){alert("ggg")});
+  </script>

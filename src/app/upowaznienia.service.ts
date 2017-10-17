@@ -19,6 +19,15 @@ export class UpowaznieniaService {
     return result;
   }
 
+  deleteFile(id: any) {
+    // const result = this.http.get(this.sg['SERVICE_URL'] + 'Upowaznienia/GetUpowaznieniaLista')
+    //   .map(this.extractData)
+    //   .catch(this.handleError);
+    // return result;
+    alert("deleted"+id);
+  }
+
+
 
 
     private extractData(res: Response) {

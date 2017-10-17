@@ -32,19 +32,24 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 
 
 
-  constructor(private upowaznieniaService: UpowaznieniaService,
+  constructor(public upowaznieniaService: UpowaznieniaService,
     private authService: AuthenticationService,private messageService: MessageService,
-    private sg: SimpleGlobal) { }
+    private sg: SimpleGlobal) 
+    { 
+      
+    }
 
-    message: any = 'message';
-    subscription: Subscription;
-   // jednostki: string[];
-    initialLoad = true;
-    isInsertOperation = false;
+  message: any = 'message';
+  subscription: Subscription;
+  // jednostki: string[];
+  initialLoad = true;
+  isInsertOperation = false;
   
 
 
+  
   ngOnInit() {
+
     // const _self = this;
     // this.myGrid.createComponent(this.options);
   }
@@ -70,6 +75,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     autorowheight: true,
     autoheight: true,
     altrows: true,
+    enabletooltips: false,
     
     columnsheight:60,
     theme:'darkblue',
@@ -82,6 +88,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 
   ngAfterViewInit(): void {
 
+    const wasl = this.upowaznieniaService;
    //this.authService.checkIfUserIsInRole("Admin_upowaznienia");
      const _self = this;
      this.myGrid.createComponent(this.options);
@@ -127,7 +134,11 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     this.fAdres_email.createComponent(inputSettings);
     this.fDecyzja.createComponent(inputSettings);
     this.fUwagi.createComponent(inputSettings);
-    // this.fileupload.createComponent
+    // this.fileupload.createComponent({
+    //   uploadUrl:this.sg['SERVICE_URL'] + 'Upowaznienia/FileUpload',
+    // });
+
+
   }
 
 
@@ -155,7 +166,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         {name: 'adres_email', type:'string'},
         {name: 'decyzja', type:'string'},
         {name: 'uwagi', type:'string'},
-        {name: 'UpowaznieniaPliki', type: 'any'},
+        {name: 'upowaznieniaPliki', type: 'any'},
       ],
       id:'id',
       url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
@@ -229,7 +240,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 
   // dataAdapter: any = new $.jqx.dataAdapter(this.source);
   dataAdapter = new $.jqx.dataAdapter(this.source, {
-    formatData: function (data: any) {       
+    formatData: function (data: any) {            
       return data;      
     }
   });
@@ -260,7 +271,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 
   //@ViewChild('upowaznieniaPanelMenu') panelMenu: jqxPanelComponent;  
   @ViewChild('upowaznieniaToolBar') toolBar: jqxPanelComponent;
-  // @ViewChild('fileuploadbutton') fileupload: jqxFileUploadComponent;
+  //@ViewChild('fileuploadbutton') fileupload: jqxFileUploadComponent;
 
   tools: string ='toggleButton toggleButton toggleButton';
   initTools: any =  (type: string, index: number, tool: any, menuToolIninitialization): void => {
@@ -391,11 +402,11 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         
         success: function(data, textStatus, jqXHR)
         {
-          alert( textStatus);
+          //alert( textStatus);
             if(typeof data.error === 'undefined')
             {
                 // Success so call function to process the form
-                alert("sukces");
+               // alert("sukces");
             }
             else
             {
@@ -495,119 +506,71 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 
 
 
-downloadFile = function(id){
-  var plikid = 1;
+  downloadFile = function(id){
+    var plikid = 1;
 
 
 
-  var urlstring=this.sg['SERVICE_URL'] + 'Upowaznienia/DownloadAttachment/'+plikid;
+    var urlstring=this.sg['SERVICE_URL'] + 'Upowaznienia/FileDownload/'+plikid;
 
-  // var link = document.createElement('iframe');
-  // link.src = urlstring;    
-  // document.body.appendChild(link);
+    // var link = document.createElement('iframe');
+    // link.src = urlstring;    
+    // document.body.appendChild(link);
 
-  //niuedane próby pobrania pliku
-  /*
-    var a=4;
-    
-    if(a==0)
-      {let xhr = new XMLHttpRequest();
-    
-                xhr.open('GET', urlstring, true);
-                xhr.setRequestHeader('Content-type', 'application/json');
-                xhr.responseType='blob';
-    
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-    
-                            var contentType = 'application/octet-stream';
-                            var blob = new Blob([xhr.response], { type: contentType });
-                            var link = document.createElement('a');
-                            link.href = window.URL.createObjectURL(blob);
-                            //link.href = window.URL.createObjectURL(data);
-                            var plik = "plik.pdf";
-                            link.download = plik;
-                            link.click();
-                            //observer.next(blob);
-                            //observer.complete();
-                        } else {
-                            //observer.error(xhr.response);
-                        }
-                    }
-                }
-                xhr.send();
+    //niuedane próby pobrania pliku
+    /*
+      var a=4;
+      
+      if(a==0)
+        {let xhr = new XMLHttpRequest();
+      
+                  xhr.open('GET', urlstring, true);
+                  xhr.setRequestHeader('Content-type', 'application/json');
+                  xhr.responseType='blob';
+      
+                  xhr.onreadystatechange = function () {
+                      if (xhr.readyState === 4) {
+                          if (xhr.status === 200) {
+      
+                              var contentType = 'application/octet-stream';
+                              var blob = new Blob([xhr.response], { type: contentType });
+                              var link = document.createElement('a');
+                              link.href = window.URL.createObjectURL(blob);
+                              //link.href = window.URL.createObjectURL(data);
+                              var plik = "plik.pdf";
+                              link.download = plik;
+                              link.click();
+                              //observer.next(blob);
+                              //observer.complete();
+                          } else {
+                              //observer.error(xhr.response);
+                          }
+                      }
+                  }
+                  xhr.send();
 
-              } 
+                } 
 
-    if(a===2)
-      $.ajax({
-        url: urlstring,
-        //contentType: 'application/json; charset="UTF-8"',
-        contentType: 'application/octet-stream',
-          //contentType: 'application/json; charset=UTF-8',
-          //datatype: 'json',
-          //datatype: 'binary',
-          //responseType:'arraybuffer',
-          //contentType: "application/x-www-form-urlencoded",
-          //contentType:"multipart/form-data",
-          //contentType: 'undefined',
-          //dataType: 'binary',
-          //contentType: 'application/download',
-          processData: false,
-    
-
-          type: "GET",
-          success: function(data, status, headers) {
-
-          //console.log(data);
-          //console.log(headers);
-            //var rez='';
-            // alert(data.charCodeAt(11));
-                    // var t =data
-                    // for (var i in t) {
-                    //  // rez=rez+";"+t[i];
-                    //  console.log(i);
-                  
-                    // }
-            //         alert(rez);
-
-            var blob = new Blob([data]);
-            var link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            //link.href = window.URL.createObjectURL(data);
-            var plik = plikid===1 ?"plik.pdf":"filename.txt";
-            link.download = plik;
-            link.click();
-        }
-          // success: function () {
-          //    window.location = '@Url.Action("'+urlstring+'", "PostDetail", new { studentId = 123 })';
-          //     //window.location = '@Url.Action("DownloadAttachment", "PostDetail", new { studentId = 123 })';
-          //     // var url = window.URL.createObjectURL(urlstring);
-          //     // var linkElement = document.createElement('a');
-          //     //            linkElement.setAttribute('href', url);
-          //     //            linkElement.setAttribute("download", "zzz.txt");
-              
-          //     //            var clickEvent = new MouseEvent("click", {
-          //     //                "view": window,
-          //     //                "bubbles": true,
-          //     //                "cancelable": false
-          //     //            });
-          //     //            linkElement.dispatchEvent(clickEvent);
-          // }
-      });
-
-
-      if(a===3)
-      $.ajax({
+      if(a===2)
+        $.ajax({
           url: urlstring,
+          //contentType: 'application/json; charset="UTF-8"',
           contentType: 'application/octet-stream',
+            //contentType: 'application/json; charset=UTF-8',
+            //datatype: 'json',
+            //datatype: 'binary',
+            //responseType:'arraybuffer',
+            //contentType: "application/x-www-form-urlencoded",
+            //contentType:"multipart/form-data",
+            //contentType: 'undefined',
+            //dataType: 'binary',
+            //contentType: 'application/download',
             processData: false,
       
-    
+
             type: "GET",
             success: function(data, status, headers) {
-    
+
             //console.log(data);
             //console.log(headers);
               //var rez='';
@@ -619,7 +582,7 @@ downloadFile = function(id){
                     
                       // }
               //         alert(rez);
-    
+
               var blob = new Blob([data]);
               var link = document.createElement('a');
               link.href = window.URL.createObjectURL(blob);
@@ -628,23 +591,106 @@ downloadFile = function(id){
               link.download = plik;
               link.click();
           }
-      
+            // success: function () {
+            //    window.location = '@Url.Action("'+urlstring+'", "PostDetail", new { studentId = 123 })';
+            //     //window.location = '@Url.Action("DownloadAttachment", "PostDetail", new { studentId = 123 })';
+            //     // var url = window.URL.createObjectURL(urlstring);
+            //     // var linkElement = document.createElement('a');
+            //     //            linkElement.setAttribute('href', url);
+            //     //            linkElement.setAttribute("download", "zzz.txt");
+                
+            //     //            var clickEvent = new MouseEvent("click", {
+            //     //                "view": window,
+            //     //                "bubbles": true,
+            //     //                "cancelable": false
+            //     //            });
+            //     //            linkElement.dispatchEvent(clickEvent);
+            // }
         });
-  */
-}
+
+
+        if(a===3)
+        $.ajax({
+            url: urlstring,
+            contentType: 'application/octet-stream',
+              processData: false,
+        
+      
+              type: "GET",
+              success: function(data, status, headers) {
+      
+              //console.log(data);
+              //console.log(headers);
+                //var rez='';
+                // alert(data.charCodeAt(11));
+                        // var t =data
+                        // for (var i in t) {
+                        //  // rez=rez+";"+t[i];
+                        //  console.log(i);
+                      
+                        // }
+                //         alert(rez);
+      
+                var blob = new Blob([data]);
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                //link.href = window.URL.createObjectURL(data);
+                var plik = plikid===1 ?"plik.pdf":"filename.txt";
+                link.download = plik;
+                link.click();
+            }
+        
+          });
+    */
+  }
+
+  deleteFile = function(id){
+    alert("delete "+id);
+  }
 
 
 
-editCellclick(event: any): void {
+  editCellclick(event: any): void {
 
-    if(this.selectedRowId !=null){
-          const datarow=this.selectedRowData;
-          this.setEditValues(datarow);
-          this.editWindow.title('Edycja');
-          this.editWindow.open();
-    }
+      if(this.selectedRowId !=null){
+            const datarow=this.selectedRowData;
+            this.setEditValues(datarow);
+            this.editWindow.title('Edycja');
+            this.editWindow.open();
 
-}
+
+
+            
+            if( datarow['upowaznieniaPliki'].length>0){ 
+             
+              //alert(datarow['upowaznieniaPliki'][0]['nazwa']);
+              var pliki = '<table style="width:100%">';            
+              for(var i in datarow['upowaznieniaPliki']){
+                pliki = pliki+'<tr><td style="width:30px"><button class="deleteFileButton"  id="'+datarow['upowaznieniaPliki'][i]['id']+'">-</button></td><td>'+datarow['upowaznieniaPliki'][i]['nazwa']+'</td></tr>';
+               // onClick="deleteFile(1);" 
+
+              }
+              pliki=pliki+'</table>';
+              $('#addedFiles').html(pliki);
+
+              // $('.deleteFileButton').click(function(event){
+              //     //alert(event.target.id);
+              //     this._self.deleteFile(event.target.id);     
+                     
+              // });
+
+             // $('body').on('click','.deleteFileButton',function(){alert("ggg")});
+
+             document.body.addEventListener( 'click', function ( event ) {
+              if( event.srcElement.id == '1' ) {
+                alert("jjj");
+              };
+            } );
+            } 
+
+      }
+
+  }
 
 
 
@@ -681,46 +727,100 @@ buttondelnoClicked()
     this.deleteWindow.close();
 }
 
-  buttondelyesClicked()
+buttondelyesClicked()
   {
     this.myGrid.deleterow(this.selectedRowData.id);
     this.deleteWindow.close();
 }
 
   // cellsrenderer = (row: number, columnfield: string, value: string | number, defaulthtml: string, columnproperties: any, rowdata: any): string => {
-  //     if (value < 20) {
-  //         return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">' + value + '</span>';
-  //     }
-  //     else {
-  //         return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #008000;">' + value + '</span>';
-  //     }
-  // };
+    //     if (value < 20) {
+    //         return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">' + value + '</span>';
+    //     }
+    //     else {
+    //         return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #008000;">' + value + '</span>';
+    //     }
+    // };
 
-  // columns: any[] =
-  // [
-  //     { text: 'Product Name', columngroup: 'ProductDetails', datafield: 'ProductName', width: 250 },
-  //     { text: 'Quantity per Unit', columngroup: 'ProductDetails', datafield: 'QuantityPerUnit', cellsalign: 'right', align: 'right' },
-  //     { text: 'Unit Price', columngroup: 'ProductDetails', datafield: 'UnitPrice', align: 'right', cellsalign: 'right', cellsformat: 'c2' },
-  //     { text: 'Units In Stock', datafield: 'UnitsInStock', cellsalign: 'right', cellsrenderer: this.cellsrenderer, width: 100 },
-  //     { text: 'Discontinued', columntype: 'checkbox', datafield: 'Discontinued', align: 'center' }
-  // ];  
+    // columns: any[] =
+    // [
+    //     { text: 'Product Name', columngroup: 'ProductDetails', datafield: 'ProductName', width: 250 },
+    //     { text: 'Quantity per Unit', columngroup: 'ProductDetails', datafield: 'QuantityPerUnit', cellsalign: 'right', align: 'right' },
+    //     { text: 'Unit Price', columngroup: 'ProductDetails', datafield: 'UnitPrice', align: 'right', cellsalign: 'right', cellsformat: 'c2' },
+    //     { text: 'Units In Stock', datafield: 'UnitsInStock', cellsalign: 'right', cellsrenderer: this.cellsrenderer, width: 100 },
+    //     { text: 'Discontinued', columntype: 'checkbox', datafield: 'Discontinued', align: 'center' }
+    // ];  
 
-  // columngroups: any[] =
-  // [
-  //     { text: 'Product Details', align: 'center', name: 'ProductDetails' }
-  // ];
+    // columngroups: any[] =
+    // [
+    //     { text: 'Product Details', align: 'center', name: 'ProductDetails' }
+    // ];
 
   plikirenderer = (row: number, column: any, value: any): string => {
-    var urlstring=this.sg['SERVICE_URL'] + 'Upowaznienia/GetPliki/'+value;
-        $.post(urlstring, function(responseTxt,statusTxt,xhr)
-        {  
-         if(responseTxt!=null) 
-          var tablica = JSON.parse(responseTxt);		
-          $('#wasl_'+row).innerHTML=tablica['nazwa'];
-        //return '<span style="margin-left: 4px; margin-top: 9px; float: left;">' + value[0] + '</span>';
+    var basePlikiurl = this.sg['SERVICE_URL'] + 'Upowaznienia/FileDownload/';
+    /*
+        var basePlikiurl = this.sg['SERVICE_URL'] + 'Upowaznienia/FileDownload/';
+        var urlstring= this.sg['SERVICE_URL'] + 'Upowaznienia/GetPliki/'+value;
+
+      var f=3;
+      if(f==2){
+          $.post(urlstring, function(responseTxt,statusTxt,xhr)
+          {  
+          if(responseTxt!=null) {
+
+
+
+            //alert(responseTxt[0]['idPliku']);
+            var plikiHtml ="";
+            for(var i in responseTxt)
+            {
+
+              plikiHtml=plikiHtml+'<p><a href="'+basePlikiurl+responseTxt[i]['idPliku']+'" target="_blank">'+responseTxt[i]['nazwa']+'</a></p>'
+
+            }
+            //  var rez='';
+            // var t=responseTxt[0];
+            // for (var i in t) {
+            //   rez=rez+";"+t[i];
+            // }
+            //   alert(rez);
+
+              $('#wasl_'+row).html(plikiHtml);
+          }
+          });
+        }
+      if(f==1){
+        $.get(this.sg['SERVICE_URL'] + 'Upowaznienia/GetUpowaznieniaLista', function(responseTxt,statusTxt,xhr){
+            var rez='';
+            var t=responseTxt[0]['upowaznieniaPliki'];
+            for (var i in t) {
+              rez=rez+";"+i;
+            }
+              alert(rez);
+
         });
-        return '<div id="wasl_'+row+'"></div>';
+
+      }
+
+      if(f==3){
+
+      }
+    */
+    
+    var plikiHtml='<div style=" overflow-y: auto;">';
+
+    for(var i in value)
+    {
+
+      plikiHtml=plikiHtml+'<div style=";padding: 5px 25px;"><a href="'+basePlikiurl+value[i]['idPliku']+'" target="_blank" '+
+      ' onMouseOver="this.style.backgroundColor=\'#4ca773\'" onMouseOut="this.style.backgroundColor=\'#2f5f44\'" '+      
+     ' style="background-color: #2f5f44;color: white;padding: 5px;text-align: left;text-decoration: none;display: inline-block;min-width:100%; border-radius:5px; " >'+value[i]['nazwa']+'</a></div>'
+
     }
+
+    
+    return plikiHtml+"</div>";
+  }
 
   columns: any[] =
   [
@@ -742,7 +842,7 @@ buttondelnoClicked()
       { text: 'Adres email', datafield: 'adres_email', width: 160 },
       { text: 'Decyzja', datafield: 'decyzja', width: 160  },
       { text: 'Uwagi', datafield: 'uwagi',  minwidth: 200 },
-      { text: 'Pliki', datafield: 'id',  minwidth: 200,cellsrenderer: this.plikirenderer },
+      { text: 'Pliki', datafield: 'upowaznieniaPliki',  minwidth: 200,cellsrenderer: this.plikirenderer },
      
   ];
 
@@ -762,6 +862,32 @@ buttondelnoClicked()
     this.fAdres_email.val(datarow.adres_email);
     this.fDecyzja.val(datarow.decyzja);
     this.fUwagi.val(datarow.uwagi);
+    $('addedFiles').val(datarow.upowaznieniaPliki);
+
+
+    
+            // if( datarow['upowaznieniaPliki'].length>0){ 
+            //   for(var i in  datarow['upowaznieniaPliki']){
+            //     @ViewChild('deleteFileButton'+i) deleteFileButton: jqxButtonComponent;
+            //     this.deleteFileButton.createComponent();
+            //   }
+              // //alert(datarow['upowaznieniaPliki'][0]['nazwa']);
+              // var pliki = '<table style="width:100%">';            
+              // for(var i in datarow['upowaznieniaPliki']){
+              //   pliki = pliki+'<tr><td style="width:30px"><button class="deleteFileButton" (click)="wasl.deleteFile(1)" id="'+datarow['upowaznieniaPliki'][i]['id']+'">-</button></td><td>'+datarow['upowaznieniaPliki'][i]['nazwa']+'</td></tr>';
+              //  // onClick="deleteFile(1);" 
+
+              // }
+              // pliki=pliki+'</table>';
+              // $('#addedFiles').html(pliki);
+
+              // // $('.deleteFileButton').click(function(event){
+              // //     //alert(event.target.id);
+              // //     this._self.deleteFile(event.target.id);     
+                     
+              // // });
+            // } 
+
   }
 
 
