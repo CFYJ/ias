@@ -369,6 +369,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   buttonCancelClicked() {
     this.isInsertOperation = false;
     this.editWindow.close();
+    this.pliki = new Array();
    $('#file-field').val('').clone(true);
   }
 
@@ -391,26 +392,16 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   uploadFile(event) {
     let files = event.target.files;
     if (files.length > 0) {
-      //console.log(files); // You will see the file
-      //let formData: FormData = new FormData();
+    
       var formData = new FormData();
+      var zz = this.pliki;
 
 
-    var zz = this.pliki;
-
-      //alert(files[0].name);
-      // for (var i = 0; i < files.length ; i++) {
-      //   formData.append(files[i].name, files[i]);
-      // }
-
-      //formData.append(files[0].name, files[0]);
       $.each(files, function(key, value)
       {
         formData.append(key, value);
       });
 
-   //alert(files[0].name);
-      //this.http.post(url, formData, request_options)
       $.ajax({
         url: this.sg['SERVICE_URL'] + 'Upowaznienia/FileUpload',
         type: 'POST',
@@ -420,14 +411,20 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         cache: false,        
         dataType: 'json',
         //contentType: 'multipart/form-data',
-        
-        success: function(data, textStatus, jqXHR)
-        {
+                //success: function(data, textStatus, jqXHR)
+        success: function (data: any, status: any, xhr: any) {
           //alert( textStatus);
-            if(typeof data.error === 'undefined')
-            {
+            // if(typeof data.error === 'undefined')
+            // {
+            
+              // var rez="";  
+              // var t = data;
+              // for (var i in t) {
+              //   rez=rez+";"+t[i];        
+              // }
+              // alert(rez);
 
-              var newplik = {"id":0,"id_upowaznienia":0, "id_pliku":"", "nazwa":files[0].name};
+              var newplik = {"id":data.id,"id_upowaznienia":0, "id_pliku":data.id_pliku , "nazwa":files[0].name};
               if(zz!=null)
                 zz.push(newplik); 
               else 
@@ -435,6 +432,8 @@ import  'jqwidgets/styles/jqx.darkblue.css';
                 zz = new Array();
                 zz.push(newplik);             
               }
+
+
               // var rez="";  
               // var t = zz;
               // for (var i in t) {
@@ -445,12 +444,12 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 
                 // Success so call function to process the form
                // alert("sukces");
-            }
-            else
-            {
-                // Handle errors here
-                alert('success ERRORS: ' + data.error);
-            }
+            // }
+            // else
+            // {
+            //     // Handle errors here
+            //     alert('success ERRORS: ' + data.error);
+            // }
         },
         error: function(jqXHR, textStatus, errorThrown)
         {
