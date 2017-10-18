@@ -1,4 +1,3 @@
-<div (click)="upowaznieniaService.deleteFile(1)">aa</div>
 
 <jqxToolbar #upowaznieniaToolBar [height]='40'  [tools]="tools" [auto-create]='false'
 [initTools]="initTools" 
@@ -98,16 +97,13 @@
           <tr>
             <td class="upowaznieniaTextAreaLabel">Załączone pliki</td>
             <td align="left" id="addedFiles" >
-              <div *ngFor="let plik of pliki" (click)='testf(plik.nazwa)'>{{plik.nazwa}} jj</div>
-              
-                    <!-- <li *ngFor="let plik of upowaznieniaPliki">
-                   {{plik.nazwa}}
-                   </li> -->
-              <!-- <table>
-                <tr *ngFor="let plik of datarow['upowaznieniaPliki']; let i= index">
-                  <td><button onclick=""+alert({{plik.nazwa}})>-</button></td>
+              <!-- <div *ngFor="let plik of pliki" (click)='testf(plik.nazwa)'>{{plik.nazwa}}</div> -->                         
+              <table>
+                <tr *ngFor="let plik of pliki">
+                  <td><button  (click)='testf(plik.nazwa)'>-</button></td>
+                  <td>{{plik.nazwa}}</td>
                 </tr>
-              </table> -->
+              </table>
             </td>
           </tr>
           <tr>
@@ -143,5 +139,3 @@
 </jqxWindow>  
 
   <!-- <jqxWindow #jqxwindow2 [auto-create]='false'></jqxWindow> -->
-<div id='testwasl'>aaaaa</div>
-

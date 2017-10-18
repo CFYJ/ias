@@ -27,6 +27,16 @@ import  'jqwidgets/styles/jqx.darkblue.css';
  
 })
 
+// export class PlikUpowaznien{
+
+//   id: number;
+//   id_upowaznienia: number;
+//   id_pliku: string;
+//   nazwa: string;
+
+// }
+
+
 //export class UpowaznieniaComponent implements OnInit {
   export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterContentInit {
 
@@ -40,6 +50,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     }
 
   pliki: any;
+  //pliki: Array<PlikUpowaznien>;
 
   message: any = 'message';
   subscription: Subscription;
@@ -153,13 +164,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   {
     //  datatype: 'xml',
     datatype: 'json',
-      // datafields: [
-      //     { name: 'ProductName', type: 'string' },
-      //     { name: 'QuantityPerUnit', type: 'int' },
-      //     { name: 'UnitPrice', type: 'float' },
-      //     { name: 'UnitsInStock', type: 'float' },
-      //     { name: 'Discontinued', type: 'bool' }
-      // ],
+
       datafields:[
         {name: 'id'},
         {name: 'nazwa', type:'string'},
@@ -177,10 +182,6 @@ import  'jqwidgets/styles/jqx.darkblue.css';
       ],
       id:'id',
       url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
-      // root: 'Products',
-      // record: 'Product',
-      // id: 'ProductID',
-      // url: '../sampledata/products.xml'
  
       addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
         const t = JSON.stringify(rowdata);
@@ -188,7 +189,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
           cache: false,
           dataType: 'json',
           contentType: 'application/json',
-          url: this.sg['SERVICE_URL'] + 'Upowaznienia/PostUpowaznienia',
+          url: this.sg['SERVICE_URL'] + 'Upowaznienia/AddUpowaznienia',
           data: t,
           type: 'POST',
           success: function (data: any, status: any, xhr: any) {
@@ -204,12 +205,21 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         })
       },
       updaterow: (rowid: any, rowdata: any, commit: any) => {
+          
+        var rez="";  
+              var tt = this.pliki;//rowdata;
+              for (var i in tt) {
+                rez=rez+";"+i;        
+              }
+              alert(rez);
+
+
         const t = JSON.stringify(rowdata);
         $.ajax({
           cache: false,
           dataType: 'json',
           contentType: 'application/json',
-          url: this.sg['SERVICE_URL'] + 'Upowaznienia/PutUpowaznienia/' + rowdata.id,
+          url: this.sg['SERVICE_URL'] + 'Upowaznienia/UpdateUpowaznienia/' + rowdata.id,
           data: t,
           type: 'PUT',
           success: function (data: any, status: any, xhr: any) {            
@@ -338,14 +348,14 @@ import  'jqwidgets/styles/jqx.darkblue.css';
       wniosek_nadania_upr: this.fWniosek_nadania_upr.val(), nadajacy_upr: this.fNadajacy_upr.val(),
       prowadzacy_rejestr_uzyt: this.fProwadzacy_rejstr_uzyt.val(), wniosek_odebrania_upr: this.fWniosek_odebrania_upr.val(),
       odbierajacy_upr: this.fOdbierajacy_upr.val(), opiekun: this.fOpiekun.val(),
-      adres_email: this.fAdres_email.val(), decyzja: this.fDecyzja.val(), uwagi: this.fUwagi.val()
+      adres_email: this.fAdres_email.val(), decyzja: this.fDecyzja.val(), uwagi: this.fUwagi.val(), upowaznieniaPliki: this.pliki
     };
     // this.myGrid.updaterow(this.myGrid.getrowid(this.myGrid.getselectedrowindex()), row);
 
     if (this.isInsertOperation) {
       row.id = 0;     
       this.myGrid.addrow(null, row, 'top');
-    } else {
+    } else {    
       this.myGrid.updaterow(this.myGrid.getrowid(rowindex), row);
     }
 
@@ -384,6 +394,9 @@ import  'jqwidgets/styles/jqx.darkblue.css';
       //let formData: FormData = new FormData();
       var formData = new FormData();
 
+
+    var zz = this.pliki;
+
       //alert(files[0].name);
       // for (var i = 0; i < files.length ; i++) {
       //   formData.append(files[i].name, files[i]);
@@ -412,6 +425,21 @@ import  'jqwidgets/styles/jqx.darkblue.css';
           //alert( textStatus);
             if(typeof data.error === 'undefined')
             {
+
+              var newplik = {"id":0,"id_upowaznienia":0, "id_pliku":"", "nazwa":files[0].name};
+              if(zz!=null)
+                zz.push(newplik); 
+              else 
+                zz = newplik;             
+
+              // var rez="";  
+              // var t = zz;
+              // for (var i in t) {
+              //   rez=rez+";"+i;        
+              // }
+              //alert(rez);
+
+
                 // Success so call function to process the form
                // alert("sukces");
             }
@@ -665,34 +693,14 @@ import  'jqwidgets/styles/jqx.darkblue.css';
             this.editWindow.title('Edycja');
             this.editWindow.open();
 
-   
-            if( datarow['upowaznieniaPliki'].length>0){
-             
-              this.pliki = datarow['upowaznieniaPliki'];
-            //   //alert(datarow['upowaznieniaPliki'][0]['nazwa']);
-            //   var pliki = '<table style="width:100%">';            
-            //   for(var i in datarow['upowaznieniaPliki']){
-            //     pliki = pliki+'<tr><td style="width:30px"><button class="deleteFileButton"  id="'+datarow['upowaznieniaPliki'][i]['id']+'">-</button></td><td>'+datarow['upowaznieniaPliki'][i]['nazwa']+'</td></tr>';
-            //    // onClick="deleteFile(1);" 
-
-            //   }
-            //   pliki=pliki+'</table>';
-            //   $('#addedFiles').html(pliki);
-
-            //   // $('.deleteFileButton').click(function(event){
-            //   //     //alert(event.target.id);
-            //   //     this._self.deleteFile(event.target.id);     
-                     
-            //   // });
-
-            //  // $('body').on('click','.deleteFileButton',function(){alert("ggg")});
-
-            //  document.body.addEventListener( 'click', function ( event ) {
-            //   if( event.srcElement.id == '1' ) {
-            //     alert("jjj");
-            //   };
-            // } );
-            } 
+            this.pliki = null;
+            if( this.selectedRowData['upowaznieniaPliki'].length>0){      
+               this.pliki = this.selectedRowData['upowaznieniaPliki'];
+            }
+            
+            // if( datarow['upowaznieniaPliki'].length>0){             
+            //   this.pliki = datarow['upowaznieniaPliki'];
+            // } 
 
       }
 
@@ -707,11 +715,7 @@ Cellselect(event: any): void {
     this.selectedRowId = event.args.rowindex;
     this.selectedRowData = event.args.row.bounddata;   
     
-    this.pliki = null;
-    if( this.selectedRowData['upowaznieniaPliki'].length>0){      
-       this.pliki = this.selectedRowData['upowaznieniaPliki'];
-    }
-    
+  
     // var rez="";  
     // var t = event.args.row.bounddata['UpowaznieniaPliki'];
     // for (var i in t) {
@@ -729,8 +733,6 @@ buttonDelClicked() {
       this.deleteWindow.open();
     }
 }
-
-
   
 buttondelnoClicked()
   {
@@ -900,8 +902,5 @@ buttondelyesClicked()
             // } 
 
   }
-testf(zz: string){
-  alert(zz);
-}
 
 }
