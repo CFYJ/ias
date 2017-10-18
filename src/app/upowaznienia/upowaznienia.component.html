@@ -100,7 +100,7 @@
               <!-- <div *ngFor="let plik of pliki" (click)='testf(plik.nazwa)'>{{plik.nazwa}}</div> -->                         
               <table>
                 <tr *ngFor="let plik of pliki">
-                  <td><button  (click)='testf(plik.nazwa)'>-</button></td>
+                  <td><button  (click)='deleteFile(plik)'>-</button></td>
                   <td>{{plik.nazwa}}</td>
                 </tr>
               </table>

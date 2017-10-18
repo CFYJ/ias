@@ -679,8 +679,14 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     */
   }
 
-  deleteFile = function(id){
-    alert("delete "+id);
+  deleteFile = function(id: any){
+    alert("delete "+id['id']);
+
+    var index = this.pliki.indexOf(id);
+    if(index > -1)
+    {
+      this.pliki.splice(index, 1);
+    }
   }
 
 
