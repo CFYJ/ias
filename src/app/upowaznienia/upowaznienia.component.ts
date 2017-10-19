@@ -351,8 +351,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
       odbierajacy_upr: this.fOdbierajacy_upr.val(), opiekun: this.fOpiekun.val(),
       adres_email: this.fAdres_email.val(), decyzja: this.fDecyzja.val(), uwagi: this.fUwagi.val(), upowaznieniaPliki: this.pliki
     };
-    // this.myGrid.updaterow(this.myGrid.getrowid(this.myGrid.getselectedrowindex()), row);
-
+ 
     if (this.isInsertOperation) {
       row.id = 0;     
       this.myGrid.addrow(null, row, 'top');
@@ -361,20 +360,34 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     }
 
     this.isInsertOperation = false;
-    this.editWindow.close();
     $('#file-field').val('').clone(true);
+    this.editWindow.close();
+
+
+    this.pliki= new Array();
 
   }
 
   buttonCancelClicked() {
+
+    if(this.isInsertOperation){
+      for(let i in this.pliki)
+      {
+        this.deleteFile(this.pliki[i]);        
+      }
+      this.pliki = new Array();
+    }
+
     this.isInsertOperation = false;
+    $('#file-field').val('').clone(true);
     this.editWindow.close();
     this.pliki = new Array();
-   $('#file-field').val('').clone(true);
+
   }
 
 
   buttonAddClicked() {
+    this.pliki = new Array();
     const datarow: any = {
       nazwa: '', nazwa_skrocona: '', wniosek_nadania_upr: '', nadajacy_upr: '', prowadzacy_rejestr_uzyt: '', wniosek_odebrania_upr: '',
       odbierajacy_upr: '', opiekun: '', adres_email: '', decyzja: '', uwagi: ''
@@ -394,7 +407,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     if (files.length > 0) {
     
       var formData = new FormData();
-      var zz = this.pliki;
+      
 
 
       $.each(files, function(key, value)
@@ -403,6 +416,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
       });
 
       $.ajax({
+        context: this,
         url: this.sg['SERVICE_URL'] + 'Upowaznienia/FileUpload',
         type: 'POST',
         data: formData,
@@ -410,46 +424,32 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         contentType: false,      
         cache: false,        
         dataType: 'json',
-        //contentType: 'multipart/form-data',
-                //success: function(data, textStatus, jqXHR)
+
         success: function (data: any, status: any, xhr: any) {
           //alert( textStatus);
             // if(typeof data.error === 'undefined')
             // {
             
               // var rez="";  
-              // var t = data;
+              // var t = this.selectedRowData;
               // for (var i in t) {
               //   rez=rez+";"+t[i];        
               // }
               // alert(rez);
-
-              var newplik = {"id":data.id,"id_upowaznienia":0, "id_pliku":data.id_pliku , "nazwa":files[0].name};
-              if(zz!=null)
-                zz.push(newplik); 
+              
+              //alert(this.selectedRowData['id']);
+              let upid = this.selectedRowData['id']===0?0:this.selectedRowData['id']; 
+              var newplik = {"id":data.id,"id_upowaznienia":upid, "id_pliku":data.idPliku , "nazwa":files[0].name};
+                  
+              //this.selectedRowData['upowaznieniaPliki'].push(newplik);
+              if(this.pliki!=null)
+                this.pliki.push(newplik); 
               else 
               {
-                zz = new Array();
-                zz.push(newplik);             
+                this.pliki = new Array();
+                this.pliki.push(newplik);             
               }
 
-
-              // var rez="";  
-              // var t = zz;
-              // for (var i in t) {
-              //   rez=rez+";"+i;        
-              // }
-              //alert(rez);
-
-
-                // Success so call function to process the form
-               // alert("sukces");
-            // }
-            // else
-            // {
-            //     // Handle errors here
-            //     alert('success ERRORS: ' + data.error);
-            // }
         },
         error: function(jqXHR, textStatus, errorThrown)
         {
@@ -480,10 +480,25 @@ import  'jqwidgets/styles/jqx.darkblue.css';
  
   }
 
-  deleteFile = function(id: any){
-    alert("delete "+id['id']);
+  deleteFile = function(plik: any){
+    
+   // alert(plik['id']);
+    $.ajax({
+      cache: false,
+      dataType: 'json',
+      contentType: 'application/json',
+      url: this.sg['SERVICE_URL'] + 'Upowaznienia/DeleteFile/' + plik['id'],
+      type: 'GET',
+      success: function (data: any, status: any, xhr: any) {         
+    
+      },
+      error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+        alert(textStatus + ' - ' + errorThrown);
+   
+      }
+    });
 
-    var index = this.pliki.indexOf(id);
+    var index = this.pliki.indexOf(plik);
     if(index > -1)
     {
       this.pliki.splice(index, 1);
@@ -495,14 +510,21 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   editCellclick(event: any): void {
 
       if(this.selectedRowId !=null){
+
+        this.pliki = new Array();    
+        if(typeof this.selectedRowData['upowaznieniaPliki'] !== 'undefined' && this.selectedRowData['upowaznieniaPliki']!== ""){    
+          if(this.selectedRowData['upowaznieniaPliki'].length>0)  
+           this.pliki = this.selectedRowData['upowaznieniaPliki'];
+
+
             const datarow=this.selectedRowData;
             this.setEditValues(datarow);
+            $('#file-field').val('').clone(true);
             this.editWindow.title('Edycja');
             this.editWindow.open();
 
-            this.pliki = new Array();    
-            if(typeof this.selectedRowData['upowaznieniaPliki'] !== 'undefined'){      
-               this.pliki = this.selectedRowData['upowaznieniaPliki'];
+           
+            
             }
             
             // if( datarow['upowaznieniaPliki'].length>0){             
@@ -521,7 +543,7 @@ Cellselect(event: any): void {
     //alert( event.args.rowindex);
     this.selectedRowId = event.args.rowindex;
     this.selectedRowData = event.args.row.bounddata;   
-    
+    $('#file-field').val('').clone(true);
   
     // var rez="";  
     // var t = event.args.row.bounddata['UpowaznieniaPliki'];
@@ -551,6 +573,9 @@ buttondelyesClicked()
   {
     this.myGrid.deleterow(this.selectedRowData.id);
     this.deleteWindow.close();
+
+    this.selectedRowId = null;
+    this.selectedRowData = null;
 }
 
   // cellsrenderer = (row: number, columnfield: string, value: string | number, defaulthtml: string, columnproperties: any, rowdata: any): string => {
@@ -709,6 +734,23 @@ buttondelyesClicked()
               // // });
             // } 
 
+  }
+
+
+  showArray(readValues:boolean, tablica: any)
+  {
+    var rez=""
+    if(readValues){
+      for(var i in tablica){
+        rez = rez+";"+tablica[i];
+      }
+    }
+    else{
+      for(var i in tablica){
+        rez = rez+";"+i;
+      }
+    }
+    alert(rez);
   }
 
 }
