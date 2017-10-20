@@ -1,24 +1,72 @@
+<table style="width:100%">
+  <tr>
+    <td style="width:100%" colspan="2">
+      <jqxToolbar #upowaznieniaToolBar [height]='40'  [tools]="tools" [auto-create]='false'
+      [initTools]="initTools" 
+      [theme]='"darkblue"'>
+      </jqxToolbar>
+      <!-- *ngIf="authService.checkIfUserIsInRole('Admin_upowaznienia')" -->
 
-<jqxToolbar #upowaznieniaToolBar [height]='40'  [tools]="tools" [auto-create]='false'
-[initTools]="initTools" 
-[theme]='"darkblue"'>
-</jqxToolbar>
-<!-- *ngIf="authService.checkIfUserIsInRole('Admin_upowaznienia')" -->
+      <!-- [hidden]="!authService.checkIfUserIsInRole('Admin_upowaznienia')" -->
+    </td>
+   
+</tr>
+<tr>
+  <td style="vertical-align: top;">
+    <jqxGrid id="jqxgrid" #gridReference
+    [source]="dataAdapter" [columns]="columns"  [auto-create]='false'
+    [pageable]="true" [autoheight]="true" [sortable]="true" 
+    [altrows]="true"  [enabletooltips]="true"  [editable]="false" 
+    [selectionmode]="'multiplecellsadvanced'" 
+    (onCellclick)="Cellselect($event)" 
+    ></jqxGrid>
+  
+  </td>
 
-<!-- [hidden]="!authService.checkIfUserIsInRole('Admin_upowaznienia')" -->
-
-
-
-<jqxGrid id="jqxgrid" #gridReference
-[source]="dataAdapter" [columns]="columns"  [auto-create]='false'
-[pageable]="true" [autoheight]="true" [sortable]="true" 
-[altrows]="true"  [enabletooltips]="true"  [editable]="false" 
-[selectionmode]="'multiplecellsadvanced'" 
-
-(onCellclick)="Cellselect($event)" 
-></jqxGrid>
-<!-- (onCellclick)='editCellclick($event)'  -->
-
+  <td style="width:50%; vertical-align:top;" >
+      <div *ngIf="selectedRow!=null">
+        <table   class="ditailsTable">
+          <tr>
+            <td class="tableLabel" style="width:30%">Wniosek o nadanie uprawnień</td>
+            <td>{{selectedRow.wniosek_nadania_upr}}</td>
+          </tr>
+          <tr>
+              <td class="tableLabel">Nadający uprawnienia</td>
+              <td>{{selectedRow.nadajacy_upr}}</td>
+          </tr>
+          <tr>
+              <td class="tableLabel">Prowadzący rejestr użytkowników</td>
+              <td>{{selectedRow.prowadzacy_rejestr_uzyt}}</td>
+          </tr>
+          <tr>
+              <td class="tableLabel">Wniosek o odebranie uprawnień</td>
+              <td>{{selectedRow.wniosek_odebrania_upr}}</td>
+          </tr>
+          <tr>
+              <td class="tableLabel">Odbierający uprawnienia</td>
+              <td>{{selectedRow.odbierajacy_upr}}</td>
+          </tr>
+          <tr>
+              <td class="tableLabel">Decyzja</td>
+              <td>{{selectedRow.decyzja}}</td>
+          </tr>
+          <tr>
+              <td class="tableLabel">Uwagi</td>
+              <td>{{selectedRow.uwagi}}</td>
+          </tr>
+          <tr>
+              <td class="tableLabel">Załączone pliki</td>
+              <td *ngIf="selectedRow.upowaznieniaPliki!=null">
+                <div  *ngFor="let plik of selectedRow.upowaznieniaPliki">
+                  <p><a class="fileButton"  target="_blank"  href="{{basePlikiurl}}{{plik.idPliku}}">{{plik.nazwa}}</a></p>
+                </div>
+              </td>
+          </tr>
+        </table>
+      </div >
+    </td>
+</tr>
+</table>
 
 
 
@@ -30,7 +78,7 @@
           <td class="upowaznieniaTextAreaLabel">Nazwa</td>
           <td align="left">
             <!-- <jqxInput #nazwa [auto-create]='false'></jqxInput> -->
-            <textarea id='nazwa' class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
+            <textarea id='nazwa' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{nazwa}}</textarea>
           </td>
         </tr>
         <tr>
