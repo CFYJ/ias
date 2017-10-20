@@ -676,7 +676,7 @@ buttondelyesClicked()
     //     return 'Edycja';
     //   },
     // },
-      { text: 'Pliki', datafield: 'upowaznieniaPliki',  minwidth: 200,cellsrenderer: this.plikirenderer },
+     
       { text: 'Nazwa', datafield: 'nazwa', width: 160,  },
       { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', width: 160},
       { text: 'Wniosek o nadanie<br> uprawnień', datafield: 'wniosek_nadania_upr', width: 160 },
@@ -688,6 +688,7 @@ buttondelyesClicked()
       { text: 'Adres email', datafield: 'adres_email', width: 160 },
       { text: 'Decyzja', datafield: 'decyzja', width: 160  },
       { text: 'Uwagi', datafield: 'uwagi',  minwidth: 200 },
+      { text: 'Pliki', datafield: 'upowaznieniaPliki',  minwidth: 200,cellsrenderer: this.plikirenderer },
     
      
   ];
