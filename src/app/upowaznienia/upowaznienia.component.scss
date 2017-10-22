@@ -34,3 +34,41 @@
     text-decoration: none;
     display: inline-block;
   }
+
+  .ditailsTable  {
+    border: 1px solid silver;
+    border-collapse: collapse;
+    width:100%;
+ }
+ .ditailsTable tr{
+    border: 1px solid silver;
+    height: 35px;
+   
+ }
+ .ditailsTable td{
+    border: 1px solid silver;
+    padding-left: 5px;
+    padding-right: 5px;
+  
+ }
+ .tableLabel{    
+    text-align: right;
+    vertical-align: top;
+    padding-top: 10px;
+    color:black;
+    font-family: "Segoe UI",Arial,sans-serif;
+ }
+
+ .fileButton{
+    background-color: #2f5f44;
+    color: white;
+    padding: 5px;
+    text-align: left;
+    text-decoration: none;
+    display: inline-block;
+    min-width:50%; 
+    border-radius:5px;
+ }
+ .fileButton:hover{
+    background-color: #4ca773;
+ }

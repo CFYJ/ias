@@ -11,24 +11,24 @@ export class AppComponent {
   constructor(@Inject(DOCUMENT) private document: any, private sg: SimpleGlobal) {
         const url: string = this.document.location.href;
 
-        // if (url.startsWith('https')) {
-        //   sg['HTTPS_SERVICE_URL'] = 'https://127.0.0.1:5001/api/'
-        //   sg['SERVICE_URL'] = 'https://127.0.0.1:5001/api/'
-        // } else if (url.startsWith('http')) {
-        //   sg['HTTPS_SERVICE_URL'] = 'http://127.0.0.1:5001/api/'
-        //   sg['SERVICE_URL'] = 'http://127.0.0.1:5001/api/'
-        //  //sg['SERVICE_URL'] = 'http://localhost:5000/api/'
-        // }
-
-
-
         if (url.startsWith('https')) {
-          sg['HTTPS_SERVICE_URL'] = 'https://10.10.0.250:5001/api/'
-          sg['SERVICE_URL'] = 'https://10.10.0.250:5001/api/'
+          sg['HTTPS_SERVICE_URL'] = 'https://127.0.0.1:5001/api/'
+          sg['SERVICE_URL'] = 'https://127.0.0.1:5001/api/'
         } else if (url.startsWith('http')) {
-          sg['HTTPS_SERVICE_URL'] = 'http://10.10.0.250:5001/api/'
-          sg['SERVICE_URL'] = 'http://10.10.0.250:5001/api/'
+          sg['HTTPS_SERVICE_URL'] = 'http://127.0.0.1:5001/api/'
+          sg['SERVICE_URL'] = 'http://127.0.0.1:5001/api/'
+         //sg['SERVICE_URL'] = 'http://localhost:5000/api/'
         }
+
+
+
+        // if (url.startsWith('https')) {
+        //   sg['HTTPS_SERVICE_URL'] = 'https://10.10.0.250:5001/api/'
+        //   sg['SERVICE_URL'] = 'https://10.10.0.250:5001/api/'
+        // } else if (url.startsWith('http')) {
+        //   sg['HTTPS_SERVICE_URL'] = 'http://10.10.0.250:5001/api/'
+        //   sg['SERVICE_URL'] = 'http://10.10.0.250:5001/api/'
+        // }
 
 
         // if (url.startsWith('https')) {

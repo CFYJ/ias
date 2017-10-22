@@ -56,6 +56,8 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   // jednostki: string[];
   initialLoad = true;
   isInsertOperation = false;
+
+  selectedRow: any;
   
 
   ngAfterContentInit(){
@@ -75,7 +77,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   options: jqwidgets.GridOptions =
   {
     localization: {
-      pagergotopagestring: 'Idź do', pagerrangestring: 'z',
+      pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
       pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
       sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
       sortremovestring: 'Wyczyść sortowanie'
@@ -87,7 +89,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     autoshowfiltericon: true,
     filtermode: 'excel',
     showfilterrow: true,
-    pagesize:5,
+    pagesize:20,
 
     autorowheight: true,
     autoheight: true,
@@ -106,7 +108,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   ngAfterViewInit(): void {
 
     const wasl = this.upowaznieniaService;
-   //this.authService.checkIfUserIsInRole("Admin_upowaznienia");
+    //this.authService.checkIfUserIsInRole("Admin_upowaznienia");
      const _self = this;
      this.myGrid.createComponent(this.options);
      const inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'darkblue' };
@@ -136,7 +138,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     this.myDelNoButton.createComponent();
 
     //this.panelMenu.createComponent();  
-   //if(this.authService.checkIfUserIsInRole('Admin_upowaznienia'))
+    //if(this.authService.checkIfUserIsInRole('Admin_upowaznienia'))
     {this.toolBar.createComponent();}    
     
   
@@ -181,6 +183,12 @@ import  'jqwidgets/styles/jqx.darkblue.css';
       ],
       id:'id',
       url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
+
+      // root: 'Rows',
+      // beforeprocessing: function(data)
+      // {		
+      //   this.source.totalrecords = data[0].TotalRows;
+      // },
  
       addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
         const t = JSON.stringify(rowdata);
@@ -537,12 +545,13 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 
 
 
-private selectedRowData = null;
+public selectedRowData = null;
 private selectedRowId = null;
 Cellselect(event: any): void {
     //alert( event.args.rowindex);
     this.selectedRowId = event.args.rowindex;
     this.selectedRowData = event.args.row.bounddata;   
+    this.selectedRow = this.selectedRowData; 
     $('#file-field').val('').clone(true);
   
     // var rez="";  
@@ -552,6 +561,8 @@ Cellselect(event: any): void {
     // }
     // alert(rez);
 }
+
+
 
 buttonDelClicked() {
     //this.isInsertOperation = false;
@@ -577,7 +588,7 @@ buttondelyesClicked()
     this.selectedRowId = null;
     this.selectedRowData = null;
 }
-
+ basePlikiurl = this.sg['SERVICE_URL'] + 'Upowaznienia/FileDownload/';
   // cellsrenderer = (row: number, columnfield: string, value: string | number, defaulthtml: string, columnproperties: any, rowdata: any): string => {
     //     if (value < 20) {
     //         return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">' + value + '</span>';
@@ -602,7 +613,7 @@ buttondelyesClicked()
     // ];
 
   plikirenderer = (row: number, column: any, value: any): string => {
-    var basePlikiurl = this.sg['SERVICE_URL'] + 'Upowaznienia/FileDownload/';
+    
     /*
         var basePlikiurl = this.sg['SERVICE_URL'] + 'Upowaznienia/FileDownload/';
         var urlstring= this.sg['SERVICE_URL'] + 'Upowaznienia/GetPliki/'+value;
@@ -657,7 +668,7 @@ buttondelyesClicked()
     for(var i in value)
     {
 
-      plikiHtml=plikiHtml+'<div style=";padding: 5px 25px;"><a href="'+basePlikiurl+value[i]['idPliku']+'" target="_blank" '+
+      plikiHtml=plikiHtml+'<div style=";padding: 5px 25px;"><a href="'+this.basePlikiurl+value[i]['idPliku']+'" target="_blank" '+
       ' onMouseOver="this.style.backgroundColor=\'#4ca773\'" onMouseOut="this.style.backgroundColor=\'#2f5f44\'" '+      
      ' style="background-color: #2f5f44;color: white;padding: 5px;text-align: left;text-decoration: none;display: inline-block;min-width:100%; border-radius:5px; " >'+value[i]['nazwa']+'</a></div>'
 
@@ -676,19 +687,20 @@ buttondelyesClicked()
     //     return 'Edycja';
     //   },
     // },
-     
-      { text: 'Nazwa', datafield: 'nazwa', width: 160,  },
+
+      //{ text: 'Pliki', datafield: 'upowaznieniaPliki',  minwidth: 200,cellsrenderer: this.plikirenderer },
+      { text: 'Nazwa', datafield: 'nazwa',   },
       { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', width: 160},
-      { text: 'Wniosek o nadanie<br> uprawnień', datafield: 'wniosek_nadania_upr', width: 160 },
-      { text: 'Nadający uprawnienia', datafield: 'nadajacy_upr', width: 160 },
-      { text: 'Prowadzący rejestr<br> użytkowników', datafield: 'prowadzacy_rejestr_uzyt', width: 160 },
-      { text: 'Wniosek o odebranie<br> uprawnień', datafield: 'wniosek_odebrania_upr', width: 160 },
-      { text: 'Odbierający<br>uprawnienia', datafield: 'odbierajacy_upr', width:160 },
+      //{ text: 'Wniosek o nadanie<br> uprawnień', datafield: 'wniosek_nadania_upr', width: 160 },
+      //{ text: 'Nadający uprawnienia', datafield: 'nadajacy_upr', width: 160 },
+      //{ text: 'Prowadzący rejestr<br> użytkowników', datafield: 'prowadzacy_rejestr_uzyt', width: 160 },
+      //{ text: 'Wniosek o odebranie<br> uprawnień', datafield: 'wniosek_odebrania_upr', width: 160 },
+      //{ text: 'Odbierający<br>uprawnienia', datafield: 'odbierajacy_upr', width:160 },
       { text: 'Opiekun', datafield: 'opiekun', width: 160 },
       { text: 'Adres email', datafield: 'adres_email', width: 160 },
-      { text: 'Decyzja', datafield: 'decyzja', width: 160  },
-      { text: 'Uwagi', datafield: 'uwagi',  minwidth: 200 },
-      { text: 'Pliki', datafield: 'upowaznieniaPliki',  minwidth: 200,cellsrenderer: this.plikirenderer },
+      //{ text: 'Decyzja', datafield: 'decyzja', width: 160  },
+      //{ text: 'Uwagi', datafield: 'uwagi',  minwidth: 200 },
+
     
      
   ];
