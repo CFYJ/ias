@@ -58,47 +58,19 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   isInsertOperation = false;
 
   selectedRow: any;
+
+  basePlikiurl = this.sg['SERVICE_URL'] + 'Upowaznienia/FileDownload/';
   
 
   ngAfterContentInit(){
-    //$('body').on('click','.deleteFileButton',function(){alert("ggg")});
   }
   
   ngOnInit() {
 
-    
-    //$('#testwasl').onClick(alert('ddd'));
-   // $('body').on('click','#testwasl',function(){alert("ggg")});
-    // const _self = this;
-    // this.myGrid.createComponent(this.options);
   }
 
 
-  options: jqwidgets.GridOptions =
-  {
-    localization: {
-      pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
-      pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
-      sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
-      sortremovestring: 'Wyczyść sortowanie'
-    },
-    width:'100%',
-    columnsresize: true,
-    
-    filterable: true,
-    autoshowfiltericon: true,
-    filtermode: 'excel',
-    showfilterrow: true,
-    pagesize:20,
-
-    autorowheight: true,
-    autoheight: true,
-    altrows: true,
-    enabletooltips: false,
-    
-    columnsheight:60,
-    theme:'darkblue',
-  };
+ 
 
   // fileuploadoptions: jqwidgets.FileUploadOptions={
   //   multipleFilesUpload: false;
@@ -143,16 +115,16 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     
   
     // this.fNazwa.createComponent(inputSettings);
-    this.fNazwa_skrocona.createComponent(inputSettings);
-    this.fWniosek_nadania_upr.createComponent(inputSettings);
-    this.fNadajacy_upr.createComponent(inputSettings);
-    this.fProwadzacy_rejstr_uzyt.createComponent(inputSettings);
-    this.fWniosek_odebrania_upr.createComponent(inputSettings);
-    this.fOdbierajacy_upr.createComponent(inputSettings);
-    this.fOpiekun.createComponent(inputSettings);
-    this.fAdres_email.createComponent(inputSettings);
-    this.fDecyzja.createComponent(inputSettings);
-    this.fUwagi.createComponent(inputSettings);
+    // this.fNazwa_skrocona.createComponent(inputSettings);
+    // this.fWniosek_nadania_upr.createComponent(inputSettings);
+    // this.fNadajacy_upr.createComponent(inputSettings);
+    // this.fProwadzacy_rejstr_uzyt.createComponent(inputSettings);
+    // this.fWniosek_odebrania_upr.createComponent(inputSettings);
+    // this.fOdbierajacy_upr.createComponent(inputSettings);
+    // this.fOpiekun.createComponent(inputSettings);
+    // this.fAdres_email.createComponent(inputSettings);
+     this.fDecyzja.createComponent(inputSettings);
+    // this.fUwagi.createComponent(inputSettings);
     // this.fileupload.createComponent({
     //   uploadUrl:this.sg['SERVICE_URL'] + 'Upowaznienia/FileUpload',
     // });
@@ -182,12 +154,18 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         {name: 'upowaznieniaPliki', type: 'any'},
       ],
       id:'id',
-      url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
+       url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
+
+      // url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaListaPaged',
 
       // root: 'Rows',
       // beforeprocessing: function(data)
       // {		
-      //   this.source.totalrecords = data[0].TotalRows;
+      //   // var ss ="";
+      //   // for(var z in data)
+      //   //   ss=ss+";"+z;
+      //   // alert(ss);     
+      //   this.totalrecords = data['TotalRows'];
       // },
  
       addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
@@ -202,8 +180,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
           success: function (data: any, status: any, xhr: any) {
             //alert('Wstawiono nowy rekord - id: ' + data.id);
             rowdata.id = data.id;
-            commit(true);
-            
+            commit(true);                  
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
             alert(textStatus + ' - ' + errorThrown);
@@ -212,14 +189,6 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         })
       },
       updaterow: (rowid: any, rowdata: any, commit: any) => {
-          
-        // var rez="";  
-        //       var tt = this.pliki;//rowdata;
-        //       for (var i in tt) {
-        //         rez=rez+";"+i;        
-        //       }
-        //       alert(rez);
-
         const t = JSON.stringify(rowdata);
         $.ajax({
           cache: false,
@@ -228,8 +197,8 @@ import  'jqwidgets/styles/jqx.darkblue.css';
           url: this.sg['SERVICE_URL'] + 'Upowaznienia/UpdateUpowaznienia/' + rowdata.id,
           data: t,
           type: 'PUT',
-          success: function (data: any, status: any, xhr: any) {            
-            commit(true);
+          success: function (data: any, status: any, xhr: any) {               
+            commit(true);           
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
             alert(textStatus + ' - ' + errorThrown);
@@ -248,8 +217,8 @@ import  'jqwidgets/styles/jqx.darkblue.css';
           url: this.sg['SERVICE_URL'] + 'Upowaznienia/DelUpowaznienia/' + rowindex,
           //data: t,
           type: 'POST',
-          success: function (data: any, status: any, xhr: any) {         
-            commit(true);
+          success: function (data: any, status: any, xhr: any) {      
+            commit(true);     
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
             alert(textStatus + ' - ' + errorThrown);
@@ -262,27 +231,88 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   };
 
   // dataAdapter: any = new $.jqx.dataAdapter(this.source);
-  dataAdapter = new $.jqx.dataAdapter(this.source, {
-    formatData: function (data: any) {            
-      return data;      
+  dataAdapter = new $.jqx.dataAdapter(this.source
+    , {
+        formatData: function (data: any) {    
+                 
+          return data;      
+        },
+        // beforeLoadComplete: function (records) {
+       
+        //   return records;
+        // },
+        // loadComplete: function () {
+        //   var ss ="";
+        //   for(var z in this.dataAdapter.records[1])
+        //     ss=ss+";"+this.dataAdapter.records[z];
+        //   alert(ss);
+        // }
+
     }
-  });
+ 
+  );
+
+
+
+
+
+  options: jqwidgets.GridOptions =
+  {
+    localization: {
+      pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
+      pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
+      sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
+      sortremovestring: 'Wyczyść sortowanie'
+    },
+    width:'100%',
+    columnsresize: true,
+    
+    filterable: true,
+    autoshowfiltericon: true,
+    filtermode: 'excel',
+    showfilterrow: true,
+    pagesize:5,
+
+    autorowheight: true,
+    autoheight: true,
+    altrows: true,
+    enabletooltips: false,
+    
+    columnsheight:60,
+    theme:'darkblue',
+
+    source: this.dataAdapter,
+
+    pageable: true,
+    // virtualmode: true,
+    // rendergridrows: function(obj)
+    // {
+   
+    //     //      var ss ="";
+    //     // for(var z in obj)
+    //     //   ss=ss+";"+z;
+    //     // alert(ss);
+
+    //      return  this.dataAdapter.records; //obj.data;     
+    // },
+
+  };
 
   //region viewchildy
   @ViewChild('gridReference') myGrid: jqxGridComponent;
   @ViewChild('jqxwindow1') editWindow: jqxWindowComponent;
   @ViewChild('jqxwindowDelete') deleteWindow: jqxWindowComponent;
  // @ViewChild('nazwa') fNazwa:  jqxInputComponent;
-  @ViewChild('nazwa_skrocona') fNazwa_skrocona: jqxInputComponent;
-  @ViewChild('wniosek_nadania_upr') fWniosek_nadania_upr: jqxInputComponent;
-  @ViewChild('nadajacy_upr') fNadajacy_upr: jqxInputComponent;
-  @ViewChild('prowadzacy_rejestr_uzyt') fProwadzacy_rejstr_uzyt: jqxInputComponent;
-  @ViewChild('wniosek_odebrania_upr') fWniosek_odebrania_upr: jqxInputComponent;
-  @ViewChild('odbierajacy_upr') fOdbierajacy_upr: jqxInputComponent;
-  @ViewChild('opiekun') fOpiekun: jqxInputComponent;
-  @ViewChild('adres_email') fAdres_email: jqxInputComponent;
+  // @ViewChild('nazwa_skrocona') fNazwa_skrocona: jqxInputComponent;
+  // @ViewChild('wniosek_nadania_upr') fWniosek_nadania_upr: jqxInputComponent;
+  // @ViewChild('nadajacy_upr') fNadajacy_upr: jqxInputComponent;
+  // @ViewChild('prowadzacy_rejestr_uzyt') fProwadzacy_rejstr_uzyt: jqxInputComponent;
+  // @ViewChild('wniosek_odebrania_upr') fWniosek_odebrania_upr: jqxInputComponent;
+  // @ViewChild('odbierajacy_upr') fOdbierajacy_upr: jqxInputComponent;
+  // @ViewChild('opiekun') fOpiekun: jqxInputComponent;
+  // @ViewChild('adres_email') fAdres_email: jqxInputComponent;
   @ViewChild('decyzja') fDecyzja: jqxInputComponent;
-  @ViewChild('uwagi') fUwagi: jqxInputComponent;
+  // @ViewChild('uwagi') fUwagi: jqxInputComponent;
 
   @ViewChild('buttonReference') mySaveButton1: jqxButtonComponent;
   @ViewChild('buttonReference1') myCancelButton1: jqxButtonComponent;
@@ -353,11 +383,16 @@ import  'jqwidgets/styles/jqx.darkblue.css';
       id: data.id, 
       nazwa: $('#nazwa').val(),
       // nazwa: this.fNazwa.val(),      
-      nazwa_skrocona: this.fNazwa_skrocona.val(),
-      wniosek_nadania_upr: this.fWniosek_nadania_upr.val(), nadajacy_upr: this.fNadajacy_upr.val(),
-      prowadzacy_rejestr_uzyt: this.fProwadzacy_rejstr_uzyt.val(), wniosek_odebrania_upr: this.fWniosek_odebrania_upr.val(),
-      odbierajacy_upr: this.fOdbierajacy_upr.val(), opiekun: this.fOpiekun.val(),
-      adres_email: this.fAdres_email.val(), decyzja: this.fDecyzja.val(), uwagi: this.fUwagi.val(), upowaznieniaPliki: this.pliki
+      // nazwa_skrocona: this.fNazwa_skrocona.val(),
+      // wniosek_nadania_upr: this.fWniosek_nadania_upr.val(), nadajacy_upr: this.fNadajacy_upr.val(),
+      // prowadzacy_rejestr_uzyt: this.fProwadzacy_rejstr_uzyt.val(), wniosek_odebrania_upr: this.fWniosek_odebrania_upr.val(),
+      // odbierajacy_upr: this.fOdbierajacy_upr.val(), opiekun: this.fOpiekun.val(),
+      // adres_email: this.fAdres_email.val(), decyzja: this.fDecyzja.val(), uwagi: this.fUwagi.val(), upowaznieniaPliki: this.pliki
+      nazwa_skrocona: $('#nazwa_skrocona').val(),
+      wniosek_nadania_upr: $('#wniosek_nadania_upr').val(), nadajacy_upr: $('#nadajacy_upr').val(),
+      prowadzacy_rejestr_uzyt: $('#prowadzacy_rejestr_uzyt').val(), wniosek_odebrania_upr: $('#wniosek_odebrania_upr').val(),
+      odbierajacy_upr: $('#odbierajacy_upr').val(), opiekun: $('#opiekun').val(),
+      adres_email: $('#adres_email').val(), decyzja: this.fDecyzja.val(), uwagi: $('#uwagi').val(), upowaznieniaPliki: this.pliki
     };
  
     if (this.isInsertOperation) {
@@ -366,7 +401,8 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     } else {    
       this.myGrid.updaterow(this.myGrid.getrowid(rowindex), row);
     }
-
+    this.selectedRow = row;
+    this.updateNonWidgets(this.selectedRow);
     this.isInsertOperation = false;
     $('#file-field').val('').clone(true);
     this.editWindow.close();
@@ -434,18 +470,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         dataType: 'json',
 
         success: function (data: any, status: any, xhr: any) {
-          //alert( textStatus);
-            // if(typeof data.error === 'undefined')
-            // {
-            
-              // var rez="";  
-              // var t = this.selectedRowData;
-              // for (var i in t) {
-              //   rez=rez+";"+t[i];        
-              // }
-              // alert(rez);
-              
-              //alert(this.selectedRowData['id']);
+
               let upid = this.selectedRowData['id']===0?0:this.selectedRowData['id']; 
               var newplik = {"id":data.id,"id_upowaznienia":upid, "id_pliku":data.idPliku , "nazwa":files[0].name};
                   
@@ -469,10 +494,6 @@ import  'jqwidgets/styles/jqx.darkblue.css';
       });
     }
   }
-
-
-
-
 
   downloadFile = function(id){
     var plikid = 1;
@@ -513,8 +534,6 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     }
   }
 
-
-
   editCellclick(event: any): void {
 
       if(this.selectedRowId !=null){
@@ -534,11 +553,6 @@ import  'jqwidgets/styles/jqx.darkblue.css';
            
             
             }
-            
-            // if( datarow['upowaznieniaPliki'].length>0){             
-            //   this.pliki = datarow['upowaznieniaPliki'];
-            // } 
-
       }
 
   }
@@ -587,30 +601,10 @@ buttondelyesClicked()
 
     this.selectedRowId = null;
     this.selectedRowData = null;
+
+    this.selectedRow = null;
+    this.updateNonWidgets(null);
 }
- basePlikiurl = this.sg['SERVICE_URL'] + 'Upowaznienia/FileDownload/';
-  // cellsrenderer = (row: number, columnfield: string, value: string | number, defaulthtml: string, columnproperties: any, rowdata: any): string => {
-    //     if (value < 20) {
-    //         return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">' + value + '</span>';
-    //     }
-    //     else {
-    //         return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #008000;">' + value + '</span>';
-    //     }
-    // };
-
-    // columns: any[] =
-    // [
-    //     { text: 'Product Name', columngroup: 'ProductDetails', datafield: 'ProductName', width: 250 },
-    //     { text: 'Quantity per Unit', columngroup: 'ProductDetails', datafield: 'QuantityPerUnit', cellsalign: 'right', align: 'right' },
-    //     { text: 'Unit Price', columngroup: 'ProductDetails', datafield: 'UnitPrice', align: 'right', cellsalign: 'right', cellsformat: 'c2' },
-    //     { text: 'Units In Stock', datafield: 'UnitsInStock', cellsalign: 'right', cellsrenderer: this.cellsrenderer, width: 100 },
-    //     { text: 'Discontinued', columntype: 'checkbox', datafield: 'Discontinued', align: 'center' }
-    // ];  
-
-    // columngroups: any[] =
-    // [
-    //     { text: 'Product Details', align: 'center', name: 'ProductDetails' }
-    // ];
 
   plikirenderer = (row: number, column: any, value: any): string => {
     
@@ -689,15 +683,15 @@ buttondelyesClicked()
     // },
 
       //{ text: 'Pliki', datafield: 'upowaznieniaPliki',  minwidth: 200,cellsrenderer: this.plikirenderer },
-      { text: 'Nazwa', datafield: 'nazwa',   },
-      { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', width: 160},
+      { text: 'Nazwa', datafield: 'nazwa',  minwidth:100 },
+      { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', minwidth: 100},
       //{ text: 'Wniosek o nadanie<br> uprawnień', datafield: 'wniosek_nadania_upr', width: 160 },
       //{ text: 'Nadający uprawnienia', datafield: 'nadajacy_upr', width: 160 },
       //{ text: 'Prowadzący rejestr<br> użytkowników', datafield: 'prowadzacy_rejestr_uzyt', width: 160 },
       //{ text: 'Wniosek o odebranie<br> uprawnień', datafield: 'wniosek_odebrania_upr', width: 160 },
       //{ text: 'Odbierający<br>uprawnienia', datafield: 'odbierajacy_upr', width:160 },
-      { text: 'Opiekun', datafield: 'opiekun', width: 160 },
-      { text: 'Adres email', datafield: 'adres_email', width: 160 },
+      { text: 'Opiekun', datafield: 'opiekun', minwidth: 100 },
+      { text: 'Adres email', datafield: 'adres_email', minwidth: 100 },
       //{ text: 'Decyzja', datafield: 'decyzja', width: 160  },
       //{ text: 'Uwagi', datafield: 'uwagi',  minwidth: 200 },
 
@@ -709,18 +703,28 @@ buttondelyesClicked()
 
 
   setEditValues(datarow: any): any{
-    //this.fNazwa.val(datarow.nazwa);
+    //this.fNazwa.val(datarow.nazwa);   
+    // this.fNazwa_skrocona.val(datarow.nazwa_skrocona);
+    // this.fWniosek_nadania_upr.val(datarow.wniosek_nadania_upr);
+    // this.fNadajacy_upr.val(datarow.nadajacy_upr);
+    // this.fProwadzacy_rejstr_uzyt.val(datarow.prowadzacy_rejestr_uzyt);
+    // this.fWniosek_odebrania_upr.val(datarow.wniosek_odebrania_upr);
+    // this.fOdbierajacy_upr.val(datarow.odbierajacy_upr);
+    // this.fOpiekun.val(datarow.opiekun);
+    // this.fAdres_email.val(datarow.adres_email);
+    // this.fDecyzja.val(datarow.decyzja);
+    // this.fUwagi.val(datarow.uwagi);
     $('#nazwa').val(datarow.nazwa) ;
-    this.fNazwa_skrocona.val(datarow.nazwa_skrocona);
-    this.fWniosek_nadania_upr.val(datarow.wniosek_nadania_upr);
-    this.fNadajacy_upr.val(datarow.nadajacy_upr);
-    this.fProwadzacy_rejstr_uzyt.val(datarow.prowadzacy_rejestr_uzyt);
-    this.fWniosek_odebrania_upr.val(datarow.wniosek_odebrania_upr);
-    this.fOdbierajacy_upr.val(datarow.odbierajacy_upr);
-    this.fOpiekun.val(datarow.opiekun);
-    this.fAdres_email.val(datarow.adres_email);
+    $('#nazwa_skrocona').val(datarow.nazwa_skrocona);
+    $('#wniosek_nadania_upr').val(datarow.wniosek_nadania_upr);
+    $('#nadajacy_upr').val(datarow.nadajacy_upr);
+    $('#prowadzacy_rejestr_uzyt').val(datarow.prowadzacy_rejestr_uzyt);
+    $('#wniosek_odebrania_upr').val(datarow.wniosek_odebrania_upr);
+    $('#odbierajacy_upr').val(datarow.odbierajacy_upr);
+    $('#opiekun').val(datarow.opiekun);
+    $('#adres_email').val(datarow.adres_email);
     this.fDecyzja.val(datarow.decyzja);
-    this.fUwagi.val(datarow.uwagi);
+    $('#uwagi').val(datarow.uwagi);
     $('addedFiles').val(datarow.upowaznieniaPliki);
 
 
@@ -747,6 +751,32 @@ buttondelyesClicked()
               // // });
             // } 
 
+  }
+
+  updateNonWidgets(datarow: any){
+
+    if(datarow===null){
+      $('#iwniosek_nadania_upr').val(null);
+      $('#inadajacy_upr').val(null);
+      $('#iprowadzacy_rejestr_uzyt').val(null);
+      $('#iwniosek_odebrania_upr').val(null);
+      $('#iodbierajacy_upr').val(null);
+      $('#iopiekun').val(null);
+      $('#iadres_email').val(null);
+      $('#idecyzja').val(null);
+      $('#iuwagi').val(null);
+    }
+    else{
+    $('#iwniosek_nadania_upr').val(datarow.wniosek_nadania_upr);
+    $('#inadajacy_upr').val(datarow.nadajacy_upr);
+    $('#iprowadzacy_rejestr_uzyt').val(datarow.prowadzacy_rejestr_uzyt);
+    $('#iwniosek_odebrania_upr').val(datarow.wniosek_odebrania_upr);
+    $('#iodbierajacy_upr').val(datarow.odbierajacy_upr);
+    $('#iopiekun').val(datarow.opiekun);
+    $('#iadres_email').val(datarow.adres_email);
+    $('#idecyzja').val(datarow.decyzja);
+    $('#iuwagi').val(datarow.uwagi);
+    }
   }
 
 

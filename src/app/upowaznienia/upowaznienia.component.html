@@ -14,47 +14,48 @@
 <tr>
   <td style="vertical-align: top;">
     <jqxGrid id="jqxgrid" #gridReference
-    [source]="dataAdapter" [columns]="columns"  [auto-create]='false'
-    [pageable]="true" [autoheight]="true" [sortable]="true" 
+    [columns]="columns"  [auto-create]='false'
+   [autoheight]="true" [sortable]="true" 
     [altrows]="true"  [enabletooltips]="true"  [editable]="false" 
     [selectionmode]="'multiplecellsadvanced'" 
-    (onCellclick)="Cellselect($event)" 
+    (onCellclick)="Cellselect($event)"   
+
     ></jqxGrid>
-  
+    <!-- [source]="dataAdapter"  -->
   </td>
 
   <td style="width:50%; vertical-align:top;" >
-      <div *ngIf="selectedRow!=null">
+      <div >
         <table   class="ditailsTable">
           <tr>
             <td class="tableLabel" style="width:30%">Wniosek o nadanie uprawnień</td>
-            <td>{{selectedRow.wniosek_nadania_upr}}</td>
+            <td><div *ngIf="selectedRow!=null" id="iwniosek_nadania_upr">{{selectedRow.wniosek_nadania_upr}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Nadający uprawnienia</td>
-              <td>{{selectedRow.nadajacy_upr}}</td>
+              <td ><div *ngIf="selectedRow!=null" id="inadajacy_upr">{{selectedRow.nadajacy_upr}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Prowadzący rejestr użytkowników</td>
-              <td>{{selectedRow.prowadzacy_rejestr_uzyt}}</td>
+              <td ><div *ngIf="selectedRow!=null" id="iprowadzacy_rejestr_uzyt">{{selectedRow.prowadzacy_rejestr_uzyt}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Wniosek o odebranie uprawnień</td>
-              <td>{{selectedRow.wniosek_odebrania_upr}}</td>
+              <td ><div *ngIf="selectedRow!=null" id="iwniosek_odebrania_upr">{{selectedRow.wniosek_odebrania_upr}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Odbierający uprawnienia</td>
-              <td>{{selectedRow.odbierajacy_upr}}</td>
+              <td ><div *ngIf="selectedRow!=null" id="iodbierajacy_upr">{{selectedRow.odbierajacy_upr}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Decyzja</td>
-              <td>{{selectedRow.decyzja}}</td>
+              <td ><div *ngIf="selectedRow!=null" id="idecyzja">{{selectedRow.decyzja}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Uwagi</td>
-              <td>{{selectedRow.uwagi}}</td>
+              <td ><div *ngIf="selectedRow!=null" id="iuwagi">{{selectedRow.uwagi}}</div></td>
           </tr>
-          <tr>
+          <tr  *ngIf="selectedRow!=null">
               <td class="tableLabel">Załączone pliki</td>
               <td *ngIf="selectedRow.upowaznieniaPliki!=null">
                 <div  *ngFor="let plik of selectedRow.upowaznieniaPliki">
@@ -82,51 +83,59 @@
           </td>
         </tr>
         <tr>
-          <td align="right" >Nazwa skrócona</td>
+          <td  class="upowaznieniaTextAreaLabel" >Nazwa skrócona</td>
           <td align="left">
-            <jqxInput #nazwa_skrocona [auto-create]='false'></jqxInput>
+            <!-- <jqxInput #nazwa_skrocona [auto-create]='false'></jqxInput> -->
+            <textarea id='nazwa_skrocona' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{nazwa_skrocona}}</textarea>
           </td>
         </tr>
         <tr>
           <td class="upowaznieniaTextAreaLabel">Wniosek nadania uprawnień</td>
           <td align="left">
-            <jqxInput #wniosek_nadania_upr [auto-create]='false'></jqxInput>
+            <!-- <jqxInput #wniosek_nadania_upr [auto-create]='false'></jqxInput> -->
+            <textarea id='wniosek_nadania_upr' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{wniosek_nadania_upr}}</textarea>
           </td>
         </tr>
         <tr>
-            <td align="right">Nadający uprawnienia</td>
+            <td  class="upowaznieniaTextAreaLabel">Nadający uprawnienia</td>
             <td align="left">
-              <jqxInput #nadajacy_upr [auto-create]='false'></jqxInput>
+              <!-- <jqxInput #nadajacy_upr [auto-create]='false'></jqxInput> -->
+              <textarea id='nadajacy_upr' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{nadajacy_upr}}</textarea>
             </td>
           </tr>
           <tr>
-            <td align="right">Prowadzący rejestr użytkowników</td>
+            <td  class="upowaznieniaTextAreaLabel">Prowadzący rejestr użytkowników</td>
             <td align="left">
-              <jqxInput #prowadzacy_rejestr_uzyt [auto-create]='false'></jqxInput>
+              <!-- <jqxInput #prowadzacy_rejestr_uzyt [auto-create]='false'></jqxInput> -->
+              <textarea id='prowadzacy_rejestr_uzyt' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{prowadzacy_rejestr_uzyt}}</textarea>
             </td>
           </tr>
           <tr>
-            <td align="right">Wniosek odebrania uprawnień</td>
+            <td  class="upowaznieniaTextAreaLabel">Wniosek odebrania uprawnień</td>
             <td align="left">
-              <jqxInput #wniosek_odebrania_upr [auto-create]='false'></jqxInput>
+              <!-- <jqxInput #wniosek_odebrania_upr [auto-create]='false'></jqxInput> -->
+              <textarea id='wniosek_odebrania_upr' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{wniosek_odebrania_upr}}</textarea>
             </td>
           </tr>
           <tr>
-            <td align="right">Odbierający uprawnienia</td>
+            <td  class="upowaznieniaTextAreaLabel">Odbierający uprawnienia</td>
             <td align="left">
-              <jqxInput #odbierajacy_upr [auto-create]='false'></jqxInput>
+              <!-- <jqxInput #odbierajacy_upr [auto-create]='false'></jqxInput> -->
+              <textarea id='odbierajacy_upr' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{odbierajacy_upr}}</textarea>
             </td>
           </tr>
           <tr>
-            <td align="right">Opiekun</td>
+            <td  class="upowaznieniaTextAreaLabel">Opiekun</td>
             <td align="left">
-              <jqxInput #opiekun [auto-create]='false'></jqxInput>
+              <!-- <jqxInput #opiekun [auto-create]='false'></jqxInput> -->
+              <textarea id='opiekun' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{opiekun}}</textarea>
             </td>
           </tr>
           <tr>
-            <td align="right">Adres email</td>
+            <td  class="upowaznieniaTextAreaLabel">Adres email</td>
             <td align="left">
-              <jqxInput #adres_email [auto-create]='false'></jqxInput>
+              <!-- <jqxInput #adres_email [auto-create]='false'></jqxInput> -->
+              <textarea id='adres_email' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{adres_email}}</textarea>
             </td>
           </tr>
           <tr>
@@ -137,9 +146,10 @@
             </td>
           </tr>
           <tr>
-            <td align="right">Uwagi</td>
+            <td  class="upowaznieniaTextAreaLabel">Uwagi</td>
             <td align="left">
-              <jqxInput #uwagi [auto-create]='false'></jqxInput>
+              <!-- <jqxInput #uwagi [auto-create]='false'></jqxInput> -->
+              <textarea id='uwagi' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{uwagi}}</textarea>
             </td>
           </tr>
           <tr>
