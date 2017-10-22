@@ -74,31 +74,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   }
 
 
-  options: jqwidgets.GridOptions =
-  {
-    localization: {
-      pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
-      pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
-      sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
-      sortremovestring: 'Wyczyść sortowanie'
-    },
-    width:'100%',
-    columnsresize: true,
-    
-    filterable: true,
-    autoshowfiltericon: true,
-    filtermode: 'excel',
-    showfilterrow: true,
-    pagesize:20,
-
-    autorowheight: true,
-    autoheight: true,
-    altrows: true,
-    enabletooltips: false,
-    
-    columnsheight:60,
-    theme:'darkblue',
-  };
+ 
 
   // fileuploadoptions: jqwidgets.FileUploadOptions={
   //   multipleFilesUpload: false;
@@ -182,13 +158,19 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         {name: 'upowaznieniaPliki', type: 'any'},
       ],
       id:'id',
-      url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
+      // url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
 
-      // root: 'Rows',
-      // beforeprocessing: function(data)
-      // {		
-      //   this.source.totalrecords = data[0].TotalRows;
-      // },
+      url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaListaPaged',
+
+      root: 'Rows',
+      beforeprocessing: function(data)
+      {		
+        // var ss ="";
+        // for(var z in data)
+        //   ss=ss+";"+z;
+        // alert(ss);     
+        this.totalrecords = data['TotalRows'];
+      },
  
       addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
         const t = JSON.stringify(rowdata);
@@ -262,11 +244,72 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   };
 
   // dataAdapter: any = new $.jqx.dataAdapter(this.source);
-  dataAdapter = new $.jqx.dataAdapter(this.source, {
-    formatData: function (data: any) {            
-      return data;      
+  dataAdapter = new $.jqx.dataAdapter(this.source
+    , {
+        formatData: function (data: any) {    
+                 
+          return data;      
+        },
+        beforeLoadComplete: function (records) {
+       
+          return records;
+        },
+        loadComplete: function () {
+          var ss ="";
+          for(var z in this.dataAdapter.records[1])
+            ss=ss+";"+this.dataAdapter.records[z];
+          alert(ss);
+        }
+
     }
-  });
+ 
+  );
+
+
+
+
+
+  options: jqwidgets.GridOptions =
+  {
+    localization: {
+      pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
+      pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
+      sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
+      sortremovestring: 'Wyczyść sortowanie'
+    },
+    width:'100%',
+    columnsresize: true,
+    
+    filterable: true,
+    autoshowfiltericon: true,
+    filtermode: 'excel',
+    showfilterrow: true,
+    pagesize:5,
+
+    autorowheight: true,
+    autoheight: true,
+    altrows: true,
+    enabletooltips: false,
+    
+    columnsheight:60,
+    theme:'darkblue',
+
+    source: this.dataAdapter,
+
+    pageable: true,
+    virtualmode: true,
+    rendergridrows: function(obj)
+    {
+   
+        //      var ss ="";
+        // for(var z in obj)
+        //   ss=ss+";"+z;
+        // alert(ss);
+
+         return  this.dataAdapter.records; //obj.data;     
+    },
+
+  };
 
   //region viewchildy
   @ViewChild('gridReference') myGrid: jqxGridComponent;
