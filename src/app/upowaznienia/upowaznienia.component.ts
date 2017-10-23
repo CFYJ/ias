@@ -158,19 +158,19 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         {name: 'upowaznieniaPliki', type: 'any'},
       ],
       id:'id',
-      // url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
+       url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
 
-      url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaListaPaged',
+      // url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaListaPaged',
 
-      root: 'Rows',
-      beforeprocessing: function(data)
-      {		
-        // var ss ="";
-        // for(var z in data)
-        //   ss=ss+";"+z;
-        // alert(ss);     
-        this.totalrecords = data['TotalRows'];
-      },
+      // root: 'Rows',
+      // beforeprocessing: function(data)
+      // {		
+      //   // var ss ="";
+      //   // for(var z in data)
+      //   //   ss=ss+";"+z;
+      //   // alert(ss);     
+      //   this.totalrecords = data['TotalRows'];
+      // },
  
       addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
         const t = JSON.stringify(rowdata);
@@ -250,16 +250,16 @@ import  'jqwidgets/styles/jqx.darkblue.css';
                  
           return data;      
         },
-        beforeLoadComplete: function (records) {
+        // beforeLoadComplete: function (records) {
        
-          return records;
-        },
-        loadComplete: function () {
-          var ss ="";
-          for(var z in this.dataAdapter.records[1])
-            ss=ss+";"+this.dataAdapter.records[z];
-          alert(ss);
-        }
+        //   return records;
+        // },
+        // loadComplete: function () {
+        //   var ss ="";
+        //   for(var z in this.dataAdapter.records[1])
+        //     ss=ss+";"+this.dataAdapter.records[z];
+        //   alert(ss);
+        // }
 
     }
  
@@ -297,17 +297,17 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     source: this.dataAdapter,
 
     pageable: true,
-    virtualmode: true,
-    rendergridrows: function(obj)
-    {
+    // virtualmode: true,
+    // rendergridrows: function(obj)
+    // {
    
-        //      var ss ="";
-        // for(var z in obj)
-        //   ss=ss+";"+z;
-        // alert(ss);
+    //     //      var ss ="";
+    //     // for(var z in obj)
+    //     //   ss=ss+";"+z;
+    //     // alert(ss);
 
-         return  this.dataAdapter.records; //obj.data;     
-    },
+    //      return  this.dataAdapter.records; //obj.data;     
+    // },
 
   };
 

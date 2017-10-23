@@ -25,37 +25,37 @@
   </td>
 
   <td style="width:50%; vertical-align:top;" >
-      <div *ngIf="selectedRow!=null">
+      <div >
         <table   class="ditailsTable">
           <tr>
             <td class="tableLabel" style="width:30%">Wniosek o nadanie uprawnień</td>
-            <td>{{selectedRow.wniosek_nadania_upr}}</td>
+            <td><div *ngIf="selectedRow!=null">{{selectedRow.wniosek_nadania_upr}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Nadający uprawnienia</td>
-              <td>{{selectedRow.nadajacy_upr}}</td>
+              <td ><div *ngIf="selectedRow!=null">{{selectedRow.nadajacy_upr}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Prowadzący rejestr użytkowników</td>
-              <td>{{selectedRow.prowadzacy_rejestr_uzyt}}</td>
+              <td ><div *ngIf="selectedRow!=null">{{selectedRow.prowadzacy_rejestr_uzyt}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Wniosek o odebranie uprawnień</td>
-              <td>{{selectedRow.wniosek_odebrania_upr}}</td>
+              <td ><div *ngIf="selectedRow!=null">{{selectedRow.wniosek_odebrania_upr}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Odbierający uprawnienia</td>
-              <td>{{selectedRow.odbierajacy_upr}}</td>
+              <td ><div *ngIf="selectedRow!=null">{{selectedRow.odbierajacy_upr}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Decyzja</td>
-              <td>{{selectedRow.decyzja}}</td>
+              <td ><div *ngIf="selectedRow!=null">{{selectedRow.decyzja}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Uwagi</td>
-              <td>{{selectedRow.uwagi}}</td>
+              <td ><div *ngIf="selectedRow!=null">{{selectedRow.uwagi}}</div></td>
           </tr>
-          <tr>
+          <tr  *ngIf="selectedRow!=null">
               <td class="tableLabel">Załączone pliki</td>
               <td *ngIf="selectedRow.upowaznieniaPliki!=null">
                 <div  *ngFor="let plik of selectedRow.upowaznieniaPliki">
