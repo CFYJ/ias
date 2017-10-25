@@ -58,19 +58,15 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   isInsertOperation = false;
 
   selectedRow: any;
+
+  basePlikiurl = this.sg['SERVICE_URL'] + 'Upowaznienia/FileDownload/';
   
 
   ngAfterContentInit(){
-    //$('body').on('click','.deleteFileButton',function(){alert("ggg")});
   }
   
   ngOnInit() {
 
-    
-    //$('#testwasl').onClick(alert('ddd'));
-   // $('body').on('click','#testwasl',function(){alert("ggg")});
-    // const _self = this;
-    // this.myGrid.createComponent(this.options);
   }
 
 
@@ -119,16 +115,16 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     
   
     // this.fNazwa.createComponent(inputSettings);
-    this.fNazwa_skrocona.createComponent(inputSettings);
-    this.fWniosek_nadania_upr.createComponent(inputSettings);
-    this.fNadajacy_upr.createComponent(inputSettings);
-    this.fProwadzacy_rejstr_uzyt.createComponent(inputSettings);
-    this.fWniosek_odebrania_upr.createComponent(inputSettings);
-    this.fOdbierajacy_upr.createComponent(inputSettings);
-    this.fOpiekun.createComponent(inputSettings);
-    this.fAdres_email.createComponent(inputSettings);
-    this.fDecyzja.createComponent(inputSettings);
-    this.fUwagi.createComponent(inputSettings);
+    // this.fNazwa_skrocona.createComponent(inputSettings);
+    // this.fWniosek_nadania_upr.createComponent(inputSettings);
+    // this.fNadajacy_upr.createComponent(inputSettings);
+    // this.fProwadzacy_rejstr_uzyt.createComponent(inputSettings);
+    // this.fWniosek_odebrania_upr.createComponent(inputSettings);
+    // this.fOdbierajacy_upr.createComponent(inputSettings);
+    // this.fOpiekun.createComponent(inputSettings);
+    // this.fAdres_email.createComponent(inputSettings);
+     this.fDecyzja.createComponent(inputSettings);
+    // this.fUwagi.createComponent(inputSettings);
     // this.fileupload.createComponent({
     //   uploadUrl:this.sg['SERVICE_URL'] + 'Upowaznienia/FileUpload',
     // });
@@ -316,16 +312,16 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   @ViewChild('jqxwindow1') editWindow: jqxWindowComponent;
   @ViewChild('jqxwindowDelete') deleteWindow: jqxWindowComponent;
  // @ViewChild('nazwa') fNazwa:  jqxInputComponent;
-  @ViewChild('nazwa_skrocona') fNazwa_skrocona: jqxInputComponent;
-  @ViewChild('wniosek_nadania_upr') fWniosek_nadania_upr: jqxInputComponent;
-  @ViewChild('nadajacy_upr') fNadajacy_upr: jqxInputComponent;
-  @ViewChild('prowadzacy_rejestr_uzyt') fProwadzacy_rejstr_uzyt: jqxInputComponent;
-  @ViewChild('wniosek_odebrania_upr') fWniosek_odebrania_upr: jqxInputComponent;
-  @ViewChild('odbierajacy_upr') fOdbierajacy_upr: jqxInputComponent;
-  @ViewChild('opiekun') fOpiekun: jqxInputComponent;
-  @ViewChild('adres_email') fAdres_email: jqxInputComponent;
+  // @ViewChild('nazwa_skrocona') fNazwa_skrocona: jqxInputComponent;
+  // @ViewChild('wniosek_nadania_upr') fWniosek_nadania_upr: jqxInputComponent;
+  // @ViewChild('nadajacy_upr') fNadajacy_upr: jqxInputComponent;
+  // @ViewChild('prowadzacy_rejestr_uzyt') fProwadzacy_rejstr_uzyt: jqxInputComponent;
+  // @ViewChild('wniosek_odebrania_upr') fWniosek_odebrania_upr: jqxInputComponent;
+  // @ViewChild('odbierajacy_upr') fOdbierajacy_upr: jqxInputComponent;
+  // @ViewChild('opiekun') fOpiekun: jqxInputComponent;
+  // @ViewChild('adres_email') fAdres_email: jqxInputComponent;
   @ViewChild('decyzja') fDecyzja: jqxInputComponent;
-  @ViewChild('uwagi') fUwagi: jqxInputComponent;
+  // @ViewChild('uwagi') fUwagi: jqxInputComponent;
 
   @ViewChild('buttonReference') mySaveButton1: jqxButtonComponent;
   @ViewChild('buttonReference1') myCancelButton1: jqxButtonComponent;
@@ -396,11 +392,16 @@ import  'jqwidgets/styles/jqx.darkblue.css';
       id: data.id, 
       nazwa: $('#nazwa').val(),
       // nazwa: this.fNazwa.val(),      
-      nazwa_skrocona: this.fNazwa_skrocona.val(),
-      wniosek_nadania_upr: this.fWniosek_nadania_upr.val(), nadajacy_upr: this.fNadajacy_upr.val(),
-      prowadzacy_rejestr_uzyt: this.fProwadzacy_rejstr_uzyt.val(), wniosek_odebrania_upr: this.fWniosek_odebrania_upr.val(),
-      odbierajacy_upr: this.fOdbierajacy_upr.val(), opiekun: this.fOpiekun.val(),
-      adres_email: this.fAdres_email.val(), decyzja: this.fDecyzja.val(), uwagi: this.fUwagi.val(), upowaznieniaPliki: this.pliki
+      // nazwa_skrocona: this.fNazwa_skrocona.val(),
+      // wniosek_nadania_upr: this.fWniosek_nadania_upr.val(), nadajacy_upr: this.fNadajacy_upr.val(),
+      // prowadzacy_rejestr_uzyt: this.fProwadzacy_rejstr_uzyt.val(), wniosek_odebrania_upr: this.fWniosek_odebrania_upr.val(),
+      // odbierajacy_upr: this.fOdbierajacy_upr.val(), opiekun: this.fOpiekun.val(),
+      // adres_email: this.fAdres_email.val(), decyzja: this.fDecyzja.val(), uwagi: this.fUwagi.val(), upowaznieniaPliki: this.pliki
+      nazwa_skrocona: $('#nazwa_skrocona').val(),
+      wniosek_nadania_upr: $('#wniosek_nadania_upr').val(), nadajacy_upr: $('#nadajacy_upr').val(),
+      prowadzacy_rejestr_uzyt: $('#prowadzacy_rejestr_uzyt').val(), wniosek_odebrania_upr: $('#wniosek_odebrania_upr').val(),
+      odbierajacy_upr: $('#odbierajacy_upr').val(), opiekun: $('#opiekun').val(),
+      adres_email: $('#adres_email').val(), decyzja: this.fDecyzja.val(), uwagi: $('#uwagi').val(), upowaznieniaPliki: this.pliki
     };
  
     if (this.isInsertOperation) {
@@ -477,18 +478,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         dataType: 'json',
 
         success: function (data: any, status: any, xhr: any) {
-          //alert( textStatus);
-            // if(typeof data.error === 'undefined')
-            // {
-            
-              // var rez="";  
-              // var t = this.selectedRowData;
-              // for (var i in t) {
-              //   rez=rez+";"+t[i];        
-              // }
-              // alert(rez);
-              
-              //alert(this.selectedRowData['id']);
+
               let upid = this.selectedRowData['id']===0?0:this.selectedRowData['id']; 
               var newplik = {"id":data.id,"id_upowaznienia":upid, "id_pliku":data.idPliku , "nazwa":files[0].name};
                   
@@ -512,10 +502,6 @@ import  'jqwidgets/styles/jqx.darkblue.css';
       });
     }
   }
-
-
-
-
 
   downloadFile = function(id){
     var plikid = 1;
@@ -556,8 +542,6 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     }
   }
 
-
-
   editCellclick(event: any): void {
 
       if(this.selectedRowId !=null){
@@ -577,11 +561,6 @@ import  'jqwidgets/styles/jqx.darkblue.css';
            
             
             }
-            
-            // if( datarow['upowaznieniaPliki'].length>0){             
-            //   this.pliki = datarow['upowaznieniaPliki'];
-            // } 
-
       }
 
   }
@@ -631,7 +610,7 @@ buttondelyesClicked()
     this.selectedRowId = null;
     this.selectedRowData = null;
 }
- basePlikiurl = this.sg['SERVICE_URL'] + 'Upowaznienia/FileDownload/';
+
   // cellsrenderer = (row: number, columnfield: string, value: string | number, defaulthtml: string, columnproperties: any, rowdata: any): string => {
     //     if (value < 20) {
     //         return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">' + value + '</span>';
@@ -752,18 +731,28 @@ buttondelyesClicked()
 
 
   setEditValues(datarow: any): any{
-    //this.fNazwa.val(datarow.nazwa);
+    //this.fNazwa.val(datarow.nazwa);   
+    // this.fNazwa_skrocona.val(datarow.nazwa_skrocona);
+    // this.fWniosek_nadania_upr.val(datarow.wniosek_nadania_upr);
+    // this.fNadajacy_upr.val(datarow.nadajacy_upr);
+    // this.fProwadzacy_rejstr_uzyt.val(datarow.prowadzacy_rejestr_uzyt);
+    // this.fWniosek_odebrania_upr.val(datarow.wniosek_odebrania_upr);
+    // this.fOdbierajacy_upr.val(datarow.odbierajacy_upr);
+    // this.fOpiekun.val(datarow.opiekun);
+    // this.fAdres_email.val(datarow.adres_email);
+    // this.fDecyzja.val(datarow.decyzja);
+    // this.fUwagi.val(datarow.uwagi);
     $('#nazwa').val(datarow.nazwa) ;
-    this.fNazwa_skrocona.val(datarow.nazwa_skrocona);
-    this.fWniosek_nadania_upr.val(datarow.wniosek_nadania_upr);
-    this.fNadajacy_upr.val(datarow.nadajacy_upr);
-    this.fProwadzacy_rejstr_uzyt.val(datarow.prowadzacy_rejestr_uzyt);
-    this.fWniosek_odebrania_upr.val(datarow.wniosek_odebrania_upr);
-    this.fOdbierajacy_upr.val(datarow.odbierajacy_upr);
-    this.fOpiekun.val(datarow.opiekun);
-    this.fAdres_email.val(datarow.adres_email);
+    $('#nazwa_skrocona').val(datarow.nazwa_skrocona);
+    $('#wniosek_nadania_upr').val(datarow.wniosek_nadania_upr);
+    $('#nadajacy_upr').val(datarow.nadajacy_upr);
+    $('#prowadzacy_rejestr_uzyt').val(datarow.prowadzacy_rejestr_uzyt);
+    $('#wniosek_odebrania_upr').val(datarow.wniosek_odebrania_upr);
+    $('#odbierajacy_upr').val(datarow.odbierajacy_upr);
+    $('#opiekun').val(datarow.opiekun);
+    $('#adres_email').val(datarow.adres_email);
     this.fDecyzja.val(datarow.decyzja);
-    this.fUwagi.val(datarow.uwagi);
+    $('#uwagi').val(datarow.uwagi);
     $('addedFiles').val(datarow.upowaznieniaPliki);
 
 
