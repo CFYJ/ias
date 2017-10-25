@@ -29,31 +29,31 @@
         <table   class="ditailsTable">
           <tr>
             <td class="tableLabel" style="width:30%">Wniosek o nadanie uprawnień</td>
-            <td><div *ngIf="selectedRow!=null">{{selectedRow.wniosek_nadania_upr}}</div></td>
+            <td><div *ngIf="selectedRow!=null" id="iwniosek_nadania_upr">{{selectedRow.wniosek_nadania_upr}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Nadający uprawnienia</td>
-              <td ><div *ngIf="selectedRow!=null">{{selectedRow.nadajacy_upr}}</div></td>
+              <td ><div *ngIf="selectedRow!=null" id="inadajacy_upr">{{selectedRow.nadajacy_upr}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Prowadzący rejestr użytkowników</td>
-              <td ><div *ngIf="selectedRow!=null">{{selectedRow.prowadzacy_rejestr_uzyt}}</div></td>
+              <td ><div *ngIf="selectedRow!=null" id="iprowadzacy_rejestr_uzyt">{{selectedRow.prowadzacy_rejestr_uzyt}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Wniosek o odebranie uprawnień</td>
-              <td ><div *ngIf="selectedRow!=null">{{selectedRow.wniosek_odebrania_upr}}</div></td>
+              <td ><div *ngIf="selectedRow!=null" id="iwniosek_odebrania_upr">{{selectedRow.wniosek_odebrania_upr}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Odbierający uprawnienia</td>
-              <td ><div *ngIf="selectedRow!=null">{{selectedRow.odbierajacy_upr}}</div></td>
+              <td ><div *ngIf="selectedRow!=null" id="iodbierajacy_upr">{{selectedRow.odbierajacy_upr}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Decyzja</td>
-              <td ><div *ngIf="selectedRow!=null">{{selectedRow.decyzja}}</div></td>
+              <td ><div *ngIf="selectedRow!=null" id="idecyzja">{{selectedRow.decyzja}}</div></td>
           </tr>
           <tr>
               <td class="tableLabel">Uwagi</td>
-              <td ><div *ngIf="selectedRow!=null">{{selectedRow.uwagi}}</div></td>
+              <td ><div *ngIf="selectedRow!=null" id="iuwagi">{{selectedRow.uwagi}}</div></td>
           </tr>
           <tr  *ngIf="selectedRow!=null">
               <td class="tableLabel">Załączone pliki</td>

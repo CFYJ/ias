@@ -180,8 +180,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
           success: function (data: any, status: any, xhr: any) {
             //alert('Wstawiono nowy rekord - id: ' + data.id);
             rowdata.id = data.id;
-            commit(true);
-            
+            commit(true);                  
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
             alert(textStatus + ' - ' + errorThrown);
@@ -190,14 +189,6 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         })
       },
       updaterow: (rowid: any, rowdata: any, commit: any) => {
-          
-        // var rez="";  
-        //       var tt = this.pliki;//rowdata;
-        //       for (var i in tt) {
-        //         rez=rez+";"+i;        
-        //       }
-        //       alert(rez);
-
         const t = JSON.stringify(rowdata);
         $.ajax({
           cache: false,
@@ -206,8 +197,8 @@ import  'jqwidgets/styles/jqx.darkblue.css';
           url: this.sg['SERVICE_URL'] + 'Upowaznienia/UpdateUpowaznienia/' + rowdata.id,
           data: t,
           type: 'PUT',
-          success: function (data: any, status: any, xhr: any) {            
-            commit(true);
+          success: function (data: any, status: any, xhr: any) {               
+            commit(true);           
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
             alert(textStatus + ' - ' + errorThrown);
@@ -226,8 +217,8 @@ import  'jqwidgets/styles/jqx.darkblue.css';
           url: this.sg['SERVICE_URL'] + 'Upowaznienia/DelUpowaznienia/' + rowindex,
           //data: t,
           type: 'POST',
-          success: function (data: any, status: any, xhr: any) {         
-            commit(true);
+          success: function (data: any, status: any, xhr: any) {      
+            commit(true);     
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
             alert(textStatus + ' - ' + errorThrown);
@@ -410,7 +401,8 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     } else {    
       this.myGrid.updaterow(this.myGrid.getrowid(rowindex), row);
     }
-
+    this.selectedRow = row;
+    this.updateNonWidgets(this.selectedRow);
     this.isInsertOperation = false;
     $('#file-field').val('').clone(true);
     this.editWindow.close();
@@ -609,30 +601,10 @@ buttondelyesClicked()
 
     this.selectedRowId = null;
     this.selectedRowData = null;
+
+    this.selectedRow = null;
+    this.updateNonWidgets(null);
 }
-
-  // cellsrenderer = (row: number, columnfield: string, value: string | number, defaulthtml: string, columnproperties: any, rowdata: any): string => {
-    //     if (value < 20) {
-    //         return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">' + value + '</span>';
-    //     }
-    //     else {
-    //         return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #008000;">' + value + '</span>';
-    //     }
-    // };
-
-    // columns: any[] =
-    // [
-    //     { text: 'Product Name', columngroup: 'ProductDetails', datafield: 'ProductName', width: 250 },
-    //     { text: 'Quantity per Unit', columngroup: 'ProductDetails', datafield: 'QuantityPerUnit', cellsalign: 'right', align: 'right' },
-    //     { text: 'Unit Price', columngroup: 'ProductDetails', datafield: 'UnitPrice', align: 'right', cellsalign: 'right', cellsformat: 'c2' },
-    //     { text: 'Units In Stock', datafield: 'UnitsInStock', cellsalign: 'right', cellsrenderer: this.cellsrenderer, width: 100 },
-    //     { text: 'Discontinued', columntype: 'checkbox', datafield: 'Discontinued', align: 'center' }
-    // ];  
-
-    // columngroups: any[] =
-    // [
-    //     { text: 'Product Details', align: 'center', name: 'ProductDetails' }
-    // ];
 
   plikirenderer = (row: number, column: any, value: any): string => {
     
@@ -711,15 +683,15 @@ buttondelyesClicked()
     // },
 
       //{ text: 'Pliki', datafield: 'upowaznieniaPliki',  minwidth: 200,cellsrenderer: this.plikirenderer },
-      { text: 'Nazwa', datafield: 'nazwa',   },
-      { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', width: 160},
+      { text: 'Nazwa', datafield: 'nazwa',  minwidth:100 },
+      { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', minwidth: 100},
       //{ text: 'Wniosek o nadanie<br> uprawnień', datafield: 'wniosek_nadania_upr', width: 160 },
       //{ text: 'Nadający uprawnienia', datafield: 'nadajacy_upr', width: 160 },
       //{ text: 'Prowadzący rejestr<br> użytkowników', datafield: 'prowadzacy_rejestr_uzyt', width: 160 },
       //{ text: 'Wniosek o odebranie<br> uprawnień', datafield: 'wniosek_odebrania_upr', width: 160 },
       //{ text: 'Odbierający<br>uprawnienia', datafield: 'odbierajacy_upr', width:160 },
-      { text: 'Opiekun', datafield: 'opiekun', width: 160 },
-      { text: 'Adres email', datafield: 'adres_email', width: 160 },
+      { text: 'Opiekun', datafield: 'opiekun', minwidth: 100 },
+      { text: 'Adres email', datafield: 'adres_email', minwidth: 100 },
       //{ text: 'Decyzja', datafield: 'decyzja', width: 160  },
       //{ text: 'Uwagi', datafield: 'uwagi',  minwidth: 200 },
 
@@ -779,6 +751,32 @@ buttondelyesClicked()
               // // });
             // } 
 
+  }
+
+  updateNonWidgets(datarow: any){
+
+    if(datarow===null){
+      $('#iwniosek_nadania_upr').val(null);
+      $('#inadajacy_upr').val(null);
+      $('#iprowadzacy_rejestr_uzyt').val(null);
+      $('#iwniosek_odebrania_upr').val(null);
+      $('#iodbierajacy_upr').val(null);
+      $('#iopiekun').val(null);
+      $('#iadres_email').val(null);
+      $('#idecyzja').val(null);
+      $('#iuwagi').val(null);
+    }
+    else{
+    $('#iwniosek_nadania_upr').val(datarow.wniosek_nadania_upr);
+    $('#inadajacy_upr').val(datarow.nadajacy_upr);
+    $('#iprowadzacy_rejestr_uzyt').val(datarow.prowadzacy_rejestr_uzyt);
+    $('#iwniosek_odebrania_upr').val(datarow.wniosek_odebrania_upr);
+    $('#iodbierajacy_upr').val(datarow.odbierajacy_upr);
+    $('#iopiekun').val(datarow.opiekun);
+    $('#iadres_email').val(datarow.adres_email);
+    $('#idecyzja').val(datarow.decyzja);
+    $('#iuwagi').val(datarow.uwagi);
+    }
   }
 
 
