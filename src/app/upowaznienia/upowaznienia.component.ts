@@ -278,7 +278,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     altrows: true,
     enabletooltips: false,
     
-    columnsheight:60,
+    //columnsheight:60,
     theme:'darkblue',
 
     source: this.dataAdapter,
@@ -451,7 +451,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     if (files.length > 0) {
     
       var formData = new FormData();
-      
+   
 
 
       $.each(files, function(key, value)
@@ -468,6 +468,27 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         contentType: false,      
         cache: false,        
         dataType: 'json',
+        xhr: function() {
+          var xhr = new XMLHttpRequest();
+      
+          xhr.upload.addEventListener("progress", function(evt) {
+            if (evt.lengthComputable) {
+              var percentComplete = evt.loaded / evt.total;
+              //percentComplete = parseInt(percentComplete * 100);
+              percentComplete = Math.trunc(percentComplete * 100);
+         
+              //console.log(percentComplete);
+              $("#fileuploadprogress").html('<div style="width:'+percentComplete+'%; background-color:skyblue; color:white"><center>'+percentComplete+'</center></div>');
+
+              if (percentComplete >= 100) {
+                $("#fileuploadprogress").html("");
+              }
+      
+            }
+          }, false);
+      
+          return xhr;
+        },
 
         success: function (data: any, status: any, xhr: any) {
 
@@ -543,7 +564,7 @@ import  'jqwidgets/styles/jqx.darkblue.css';
           if(this.selectedRowData['upowaznieniaPliki'].length>0)  
            this.pliki = this.selectedRowData['upowaznieniaPliki'];
 
-
+  
             const datarow=this.selectedRowData;
             this.setEditValues(datarow);
             $('#file-field').val('').clone(true);
@@ -565,7 +586,7 @@ Cellselect(event: any): void {
     //alert( event.args.rowindex);
     this.selectedRowId = event.args.rowindex;
     this.selectedRowData = event.args.row.bounddata;   
-    this.selectedRow = this.selectedRowData; 
+    this.selectedRow = this.selectedRowData;
     $('#file-field').val('').clone(true);
   
     // var rez="";  
@@ -602,7 +623,6 @@ buttondelyesClicked()
     this.selectedRowId = null;
     this.selectedRowData = null;
 
-    this.selectedRow = null;
     this.updateNonWidgets(null);
 }
 
@@ -756,17 +776,13 @@ buttondelyesClicked()
   updateNonWidgets(datarow: any){
 
     if(datarow===null){
-      $('#iwniosek_nadania_upr').val(null);
-      $('#inadajacy_upr').val(null);
-      $('#iprowadzacy_rejestr_uzyt').val(null);
-      $('#iwniosek_odebrania_upr').val(null);
-      $('#iodbierajacy_upr').val(null);
-      $('#iopiekun').val(null);
-      $('#iadres_email').val(null);
-      $('#idecyzja').val(null);
-      $('#iuwagi').val(null);
+      for(var i in this.selectedRow){
+        this.selectedRow[i] = null;
+      }
+      datarow = this.selectedRow;
+      
     }
-    else{
+ 
     $('#iwniosek_nadania_upr').val(datarow.wniosek_nadania_upr);
     $('#inadajacy_upr').val(datarow.nadajacy_upr);
     $('#iprowadzacy_rejestr_uzyt').val(datarow.prowadzacy_rejestr_uzyt);
@@ -775,8 +791,7 @@ buttondelyesClicked()
     $('#iopiekun').val(datarow.opiekun);
     $('#iadres_email').val(datarow.adres_email);
     $('#idecyzja').val(datarow.decyzja);
-    $('#iuwagi').val(datarow.uwagi);
-    }
+    $('#iuwagi').val(datarow.uwagi);   
   }
 
 

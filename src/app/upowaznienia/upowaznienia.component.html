@@ -28,7 +28,7 @@
       <div >
         <table   class="ditailsTable">
           <tr>
-            <td class="tableLabel" style="width:30%">Wniosek o nadanie uprawnień</td>
+            <td class="tableLabel" style="width:25%">Wniosek o nadanie uprawnień</td>
             <td><div *ngIf="selectedRow!=null" id="iwniosek_nadania_upr">{{selectedRow.wniosek_nadania_upr}}</div></td>
           </tr>
           <tr>
@@ -162,6 +162,7 @@
                   <td>{{plik.nazwa}}</td>
                 </tr>
               </table>
+              <div id="fileuploadprogress"></div>
             </td>
           </tr>
           <tr>
@@ -187,12 +188,12 @@
   
 <jqxWindow #jqxwindowDelete [auto-create]='false'>
 <div>
-    <p id="questionTagWindow"></p>  
-    <p></p>
-    <p>
-      <jqxButton #buttonDelYesReference [auto-create]='false' [width]="40" (onClick)="buttondelyesClicked()">Tak</jqxButton>
-      <jqxButton #buttonDelNoReference [auto-create]='false' [width]="40" (onClick)="buttondelnoClicked()">Nie</jqxButton>
+   <p id="questionTagWindow"></p>    
+    <p>     
+        <jqxButton #buttonDelYesReference [auto-create]='false' [width]="40" (onClick)="buttondelyesClicked()">Tak</jqxButton>
+        <jqxButton #buttonDelNoReference [auto-create]='false' [width]="40" (onClick)="buttondelnoClicked()">Nie</jqxButton>      
     </p>
+  
   </div>
 </jqxWindow>  
 
