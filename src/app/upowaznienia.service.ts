@@ -29,6 +29,22 @@ export class UpowaznieniaService {
 
 
 
+  showmyarray(readValues: Boolean, tablica: any)
+  {
+    let rez=""
+    if(readValues){
+      for(let i in tablica){
+        rez = rez+";"+tablica[i];
+      }
+    }
+    else{
+      for(let i in tablica){
+        rez = rez+";"+i;
+      }
+    }
+    alert(rez);
+    return null;
+  }
 
     private extractData(res: Response) {
       const body = res.json();

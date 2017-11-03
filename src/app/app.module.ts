@@ -36,6 +36,7 @@ import { UpowaznieniaComponent } from './upowaznienia/upowaznienia.component'
 export const appRoutes: Routes = [
   // { path: 'delegacje', component: DelegacjeComponent, canActivate: [AuthGuardService] },
   { path: '', redirectTo: '/kontakty', pathMatch: 'full' },
+  { path: 'wiskas', redirectTo: '/kontakty', pathMatch: 'full' },
   // { path: '', component: LoginComponent },
   { path: 'kontakty', component: KontaktyComponent },
   { path: 'login', component: LoginComponent },

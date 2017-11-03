@@ -37,16 +37,24 @@ import  'jqwidgets/styles/jqx.darkblue.css';
 // }
 
 
-  export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterContentInit {
+export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterContentInit {
 
+
+
+  public testfunction(){
+    alert("test");
+  }
 
 
   constructor(public upowaznieniaService: UpowaznieniaService,
     private authService: AuthenticationService,private messageService: MessageService,
     private sg: SimpleGlobal) 
     { 
-     
+         
+
     }
+
+
 
   pliki: any;
   //pliki: Array<PlikUpowaznien>;
@@ -82,7 +90,9 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     const wasl = this.upowaznieniaService;
     //this.authService.checkIfUserIsInRole("Admin_upowaznienia");
      const _self = this;
-     this.myGrid.createComponent(this.options);
+    this.myGrid.createComponent(this.options);
+  
+
      const inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'darkblue' };
 
      
@@ -110,8 +120,8 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     this.myDelNoButton.createComponent();
 
     //this.panelMenu.createComponent();  
-    //if(this.authService.checkIfUserIsInRole('Admin_upowaznienia'))
-    {this.toolBar.createComponent();}    
+    if(this.authService.checkIfUserIsInRole('Admin_upowaznienia'))
+      {this.toolBar.createComponent();}    
     
   
     // this.fNazwa.createComponent(inputSettings);
@@ -154,18 +164,35 @@ import  'jqwidgets/styles/jqx.darkblue.css';
         {name: 'upowaznieniaPliki', type: 'any'},
       ],
       id:'id',
-       url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
+      url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
 
       // url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaListaPaged',
-
-      // root: 'Rows',
+      // root: 'rows',
       // beforeprocessing: function(data)
       // {		
-      //   // var ss ="";
-      //   // for(var z in data)
+      //   //  var ss ="";
+      //   // for(var z in data.rows.result[0])
       //   //   ss=ss+";"+z;
       //   // alert(ss);     
-      //   this.totalrecords = data['TotalRows'];
+
+      //   // alert(data.rows.result[1].nazwa);
+
+      //   this.totalrecords = data.totalRows;
+      //   // this.totalrecords = data['TotalRows'];
+      // },
+
+      // filter: function () {
+      //   // update the grid and send a request to the server.
+      //   //$("#jqxgrid").jqxGrid('updatebounddata', 'filter');
+
+      //   //this.myGrid.updatebounddata();
+      // },
+
+      //  sort: function () {
+      //   // update the grid and send a request to the server.
+      //   //$("#jqxgrid").jqxGrid('updatebounddata', 'filter');
+
+      //   this.grid.updatebounddata();
       // },
  
       addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
@@ -233,31 +260,37 @@ import  'jqwidgets/styles/jqx.darkblue.css';
   // dataAdapter: any = new $.jqx.dataAdapter(this.source);
   dataAdapter = new $.jqx.dataAdapter(this.source
     , {
-        formatData: function (data: any) {    
-                 
-          return data;      
-        },
-        // beforeLoadComplete: function (records) {
-       
-        //   return records;
+        // formatData: function (data: any) {    
+        // //alert('dataadapter formatdata');
+        //   return data;      
+        // },
+        // beforeLoadComplete: function (records, org) {
+        //   // var ss ="";
+        //   // for(var z in org.rows)
+        //   //   ss=ss+";"+z;
+        //   // alert(ss);
+
+         
+        //    //alert(org.rows.result[0].nazwa);
+
+        //   //return records;
+        //   return org.rows.result;
         // },
         // loadComplete: function () {
-        //   var ss ="";
-        //   for(var z in this.dataAdapter.records[1])
-        //     ss=ss+";"+this.dataAdapter.records[z];
-        //   alert(ss);
+        //   //alert('dataadapter loadcomplete');
+        //   // var ss ="";
+        //   // for(var z in this.dataAdapter.records[1])
+        //   //   ss=ss+";"+this.dataAdapter.records[z];
+        //   // alert(ss);
         // }
 
     }
  
   );
 
-
-
-
-
+  
   options: jqwidgets.GridOptions =
-  {
+  {    
     localization: {
       pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
       pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
@@ -284,16 +317,24 @@ import  'jqwidgets/styles/jqx.darkblue.css';
     source: this.dataAdapter,
 
     pageable: true,
-    // virtualmode: true,
+    // virtualmode: true,    
     // rendergridrows: function(obj)
     // {
-   
+ 
     //     //      var ss ="";
-    //     // for(var z in obj)
+    //     // for(var z in obj.data[0])
     //     //   ss=ss+";"+z;
-    //     // alert(ss);
+    //     // alert(ss+" "+obj.data.);
 
-    //      return  this.dataAdapter.records; //obj.data;     
+    //      //return  this.dataAdapter.records; 
+    //     // alert('grid options');
+
+    //     //this.showmyarray(true, obj.data);
+   
+    //   //this.testfunction();
+    //   //.showmyarray(true,obj);
+     
+    //      return obj.data;     
     // },
 
   };
@@ -683,15 +724,16 @@ buttondelyesClicked()
     // },
 
       //{ text: 'Pliki', datafield: 'upowaznieniaPliki',  minwidth: 200,cellsrenderer: this.plikirenderer },
-      { text: 'Nazwa', datafield: 'nazwa',  minwidth:100 },
-      { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', minwidth: 100},
+      { text: 'Nazwa', datafield: 'nazwa',  minwidth: 220},
+      { text: 'Nazwa skrócona',  datafield: 'nazwa_skrocona', width: 140},
+   
       //{ text: 'Wniosek o nadanie<br> uprawnień', datafield: 'wniosek_nadania_upr', width: 160 },
       //{ text: 'Nadający uprawnienia', datafield: 'nadajacy_upr', width: 160 },
       //{ text: 'Prowadzący rejestr<br> użytkowników', datafield: 'prowadzacy_rejestr_uzyt', width: 160 },
       //{ text: 'Wniosek o odebranie<br> uprawnień', datafield: 'wniosek_odebrania_upr', width: 160 },
       //{ text: 'Odbierający<br>uprawnienia', datafield: 'odbierajacy_upr', width:160 },
-      { text: 'Opiekun', datafield: 'opiekun', minwidth: 100 },
-      { text: 'Adres email', datafield: 'adres_email', minwidth: 100 },
+      { text: 'Opiekun', datafield: 'opiekun', minwidth: 100},
+      { text: 'Adres email', datafield: 'adres_email', minwidth: 100},
       //{ text: 'Decyzja', datafield: 'decyzja', width: 160  },
       //{ text: 'Uwagi', datafield: 'uwagi',  minwidth: 200 },
 
@@ -726,31 +768,6 @@ buttondelyesClicked()
     this.fDecyzja.val(datarow.decyzja);
     $('#uwagi').val(datarow.uwagi);
     $('addedFiles').val(datarow.upowaznieniaPliki);
-
-
-    
-          // if( datarow['upowaznieniaPliki'].length>0){ 
-            //   for(var i in  datarow['upowaznieniaPliki']){
-            //     @ViewChild('deleteFileButton'+i) deleteFileButton: jqxButtonComponent;
-            //     this.deleteFileButton.createComponent();
-            //   }
-              // //alert(datarow['upowaznieniaPliki'][0]['nazwa']);
-              // var pliki = '<table style="width:100%">';            
-              // for(var i in datarow['upowaznieniaPliki']){
-              //   pliki = pliki+'<tr><td style="width:30px"><button class="deleteFileButton" (click)="wasl.deleteFile(1)" id="'+datarow['upowaznieniaPliki'][i]['id']+'">-</button></td><td>'+datarow['upowaznieniaPliki'][i]['nazwa']+'</td></tr>';
-              //  // onClick="deleteFile(1);" 
-
-              // }
-              // pliki=pliki+'</table>';
-              // $('#addedFiles').html(pliki);
-
-              // // $('.deleteFileButton').click(function(event){
-              // //     //alert(event.target.id);
-              // //     this._self.deleteFile(event.target.id);     
-                     
-              // // });
-            // } 
-
   }
 
   updateNonWidgets(datarow: any){
@@ -780,20 +797,22 @@ buttondelyesClicked()
   }
 
 
-  showArray(readValues:boolean, tablica: any)
+  showarray(readValues: Boolean, tablica: any)
   {
-    var rez=""
+  
+    let rez=""
     if(readValues){
-      for(var i in tablica){
+      for(let i in tablica){
         rez = rez+";"+tablica[i];
       }
     }
     else{
-      for(var i in tablica){
+      for(let i in tablica){
         rez = rez+";"+i;
       }
     }
     alert(rez);
+    //return null;
   }
 
 }
