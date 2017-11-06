@@ -414,6 +414,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
 
   buttonSaveClicked(){
     // alert($('#nazwa').val());
+    console.log('wynik:'+this.editobject['nazwa']);
     let data = { id: null };
     let rowindex: number;
     if (!this.isInsertOperation) {
@@ -422,7 +423,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     }
     const row = {
       id: data.id, 
-      nazwa: $('#nazwa').val(),
+      nazwa: this.editobject['nazwa'], //$('#nazwa').val(),
       // nazwa: this.fNazwa.val(),      
       // nazwa_skrocona: this.fNazwa_skrocona.val(),
       // wniosek_nadania_upr: this.fWniosek_nadania_upr.val(), nadajacy_upr: this.fNadajacy_upr.val(),
@@ -586,6 +587,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
 
 
             const datarow=this.selectedRowData;
+            this.editobject =datarow;
             this.setEditValues(datarow);
             $('#file-field').val('').clone(true);
             this.editWindow.title('Edycja');
@@ -743,8 +745,8 @@ buttondelyesClicked()
 
 
 
-
-  setEditValues(datarow: any): any{
+ editobject: any;
+  setEditValues(datarow: any): any{    
     //this.fNazwa.val(datarow.nazwa);   
     // this.fNazwa_skrocona.val(datarow.nazwa_skrocona);
     // this.fWniosek_nadania_upr.val(datarow.wniosek_nadania_upr);

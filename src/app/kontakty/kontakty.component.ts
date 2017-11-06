@@ -95,7 +95,10 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy {
   });
   // hidden = !this.authService.checkIfUserBelongsToITStaff();
   columns = [{
-    text: '', datafield: 'edycja', width: 50, columntype: 'button', filterable: false,
+    text: '', datafield: 'edycja', width: 50, 
+    //columntype: 'button'
+    //, 
+    filterable: false,
     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
       return 'Edycja';
     },

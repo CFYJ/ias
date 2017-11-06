@@ -86,7 +86,7 @@
           <td  class="upowaznieniaTextAreaLabel" >Nazwa skrócona</td>
           <td align="left">
             <!-- <jqxInput #nazwa_skrocona [auto-create]='false'></jqxInput> -->
-            <textarea id='nazwa_skrocona' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{nazwa_skrocona}}</textarea>
+            <textarea id='nazwa_skrocona'  *ngIf="editobject!=null"  [(ngModel)]="editobject.nazwa" class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{nazwa_skrocona}}</textarea>
           </td>
         </tr>
         <tr>
