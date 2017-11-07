@@ -84,14 +84,16 @@ export class AuthenticationService {
         if(role===null)
           return false;
         var role = role.split(",");
-       // alert(role);
+     // console.log(role);
         var result = role.find(function(rola){
                             return rola.trim() === dataRow;
                           });
-        //                  alert(result);
-        if(result!='')                  
-          return true;
-         // alert(result);
+        //console.log(result);
+        if(result!='' && result!=null)                  
+          {  
+            return true;
+          }
+      
       }
     }
     return false;

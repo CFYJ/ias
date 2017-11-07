@@ -120,8 +120,18 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     this.myDelNoButton.createComponent();
 
     //this.panelMenu.createComponent();  
-    if(this.authService.checkIfUserIsInRole('Admin_upowaznienia'))
-      {this.toolBar.createComponent();}    
+    if(this.authService.checkIfUserIsInRole('upowaznienia_admin') || this.authService.checkIfUserIsInRole('upowaznienia_opiekun'))
+    {
+      this.toolBar.createComponent();
+      if(!this.authService.checkIfUserIsInRole('upowaznienia_admin'))
+      {
+        this.toolBar.destroyTool(0);
+        this.toolBar.destroyTool(1);
+        this.toolBar.disableTool(0,true);
+      }
+      
+    }
+    
     
   
     // this.fNazwa.createComponent(inputSettings);
@@ -365,7 +375,8 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
   @ViewChild('buttonDelNoReference') myDelNoButton: jqxButtonComponent;
 
   //@ViewChild('upowaznieniaPanelMenu') panelMenu: jqxPanelComponent;  
-  @ViewChild('upowaznieniaToolBar') toolBar: jqxPanelComponent;
+  // @ViewChild('upowaznieniaToolBar') toolBar: jqxPanelComponent;
+  @ViewChild('upowaznieniaToolBar') toolBar: jqxToolBarComponent;
   //@ViewChild('fileuploadbutton') fileupload: jqxFileUploadComponent;
 
   //endregion
@@ -377,7 +388,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     //     icon.className = 'jqx-editor-toolbar-icon jqx-editor-toolbar-icon-arctic buttonIcon ';
     // }
     switch (index) {
-      case 0:
+      case 0:      
             tool.jqxToggleButton({ width: 120, toggled:false});
             tool.theme='darkblue';
             tool.text("Dodaj nowy");
@@ -610,20 +621,33 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
 
 public selectedRowData = null;
 private selectedRowId = null;
-Cellselect(event: any): void {
+CellClicked(event: any): void {
     //alert( event.args.rowindex);
     this.selectedRowId = event.args.rowindex;
     this.selectedRowData = event.args.row.bounddata;   
     this.selectedRow = this.selectedRowData; 
     $('#file-field').val('').clone(true);
   
-    // var rez="";  
-    // var t = event.args.row.bounddata['UpowaznieniaPliki'];
-    // for (var i in t) {
-    //   rez=rez+";"+t[i];        
-    // }
-    // alert(rez);
+
+
+    //************* odkrywanie przyciskow tylko dla opiekuna i admina ********* */
+    if(!this.authService.checkIfUserIsInRole('upowaznienia_admin') && this.authService.checkIfUserIsInRole('upowaznienia_opiekun'))
+    {
+      let user = this.authService.getUserData();
+      
+      let imie = (user['Imie']).toUpperCase();
+      let nazwisko = (user['Nazwisko']).toUpperCase();
+
+      if((this.selectedRow['opiekun']).toUpperCase().indexOf(imie+' '+nazwisko)>=0 ||
+          (this.selectedRow['opiekun']).toUpperCase().indexOf(nazwisko+' '+imie)>=0)
+        {
+          this.toolBar.disableTool(0,false);
+        }
+      else
+      this.toolBar.disableTool(0,true);
+    }
 }
+
 
 
 
@@ -653,6 +677,14 @@ buttondelyesClicked()
 
     this.selectedRow = null;
     //this.updateNonWidgets(null);
+}
+
+Pagechanged()
+{
+  this.selectedRowId = null;
+  this.selectedRowData = null;
+
+  this.selectedRow = null;
 }
 
   plikirenderer = (row: number, column: any, value: any): string => {

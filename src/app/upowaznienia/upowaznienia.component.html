@@ -1,6 +1,6 @@
 <table style="width:100%">
   <tr>
-    <td style="width:100%" colspan="2" *ngIf="authService.checkIfUserIsInRole('Admin_upowaznienia')">
+    <td style="width:100%" colspan="2">
       <jqxToolbar #upowaznieniaToolBar [height]='40'  [tools]="tools" [auto-create]='false'
       [initTools]="initTools" 
       [theme]='"darkblue"'>
@@ -18,13 +18,14 @@
    [autoheight]="true" [sortable]="true" 
     [altrows]="true"  [enabletooltips]="true"  [editable]="false" 
     [selectionmode]="'multiplecellsadvanced'" 
-    (onCellclick)="Cellselect($event)"   
+    (onCellclick)="CellClicked($event)" 
+    (onPagechanged)="Pagechanged($event)"
 
     ></jqxGrid>
-    <!-- [source]="dataAdapter"  -->
+    <!-- [source]="dataAdapter"  multiplecellsadvanced-->
   </td>
 
-  <td style="width:50%; vertical-align:top;" >
+  <td style="width:50%; vertical-align:top; overflow:auto;" >
       <div >
         <table   class="ditailsTable">
           <tr>
@@ -75,14 +76,14 @@
     <div>Edycja</div>
     <div style="overflow: auto;">
       <table>
-        <tr>
+        <tr *ngIf="authService.checkIfUserIsInRole('upowaznienia_admin')">
           <td class="upowaznieniaTextAreaLabel">Nazwa</td>
           <td align="left">
             <!-- <jqxInput #nazwa [auto-create]='false'></jqxInput> -->
             <textarea id='nazwa'  *ngIf="editobject!=null"  [(ngModel)]="editobject.nazwa" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
           </td>
         </tr>
-        <tr>
+        <tr *ngIf="authService.checkIfUserIsInRole('upowaznienia_admin')">
           <td  class="upowaznieniaTextAreaLabel" >Nazwa skrócona</td>
           <td align="left">
             <!-- <jqxInput #nazwa_skrocona [auto-create]='false'></jqxInput> -->
@@ -124,7 +125,7 @@
               <textarea id='odbierajacy_upr' *ngIf="editobject!=null"  [(ngModel)]="editobject.odbierajacy_upr" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
             </td>
           </tr>
-          <tr>
+          <tr *ngIf="authService.checkIfUserIsInRole('upowaznienia_admin')">
             <td  class="upowaznieniaTextAreaLabel">Opiekun</td>
             <td align="left">
               <!-- <jqxInput #opiekun [auto-create]='false'></jqxInput> -->
