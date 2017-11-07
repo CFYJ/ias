@@ -79,63 +79,63 @@
           <td class="upowaznieniaTextAreaLabel">Nazwa</td>
           <td align="left">
             <!-- <jqxInput #nazwa [auto-create]='false'></jqxInput> -->
-            <textarea id='nazwa' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{nazwa}}</textarea>
+            <textarea id='nazwa'  *ngIf="editobject!=null"  [(ngModel)]="editobject.nazwa" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
           </td>
         </tr>
         <tr>
           <td  class="upowaznieniaTextAreaLabel" >Nazwa skrócona</td>
           <td align="left">
             <!-- <jqxInput #nazwa_skrocona [auto-create]='false'></jqxInput> -->
-            <textarea id='nazwa_skrocona'  *ngIf="editobject!=null"  [(ngModel)]="editobject.nazwa" class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{nazwa_skrocona}}</textarea>
+            <textarea id='nazwa_skrocona'  *ngIf="editobject!=null"  [(ngModel)]="editobject.nazwa_skrocona" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
           </td>
         </tr>
         <tr>
           <td class="upowaznieniaTextAreaLabel">Wniosek nadania uprawnień</td>
           <td align="left">
             <!-- <jqxInput #wniosek_nadania_upr [auto-create]='false'></jqxInput> -->
-            <textarea id='wniosek_nadania_upr' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{wniosek_nadania_upr}}</textarea>
+            <textarea id='wniosek_nadania_upr'  *ngIf="editobject!=null"  [(ngModel)]="editobject.wniosek_nadania_upr" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
           </td>
         </tr>
         <tr>
             <td  class="upowaznieniaTextAreaLabel">Nadający uprawnienia</td>
             <td align="left">
               <!-- <jqxInput #nadajacy_upr [auto-create]='false'></jqxInput> -->
-              <textarea id='nadajacy_upr' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{nadajacy_upr}}</textarea>
+              <textarea id='nadajacy_upr'  *ngIf="editobject!=null"  [(ngModel)]="editobject.nadajacy_upr" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
             </td>
           </tr>
           <tr>
             <td  class="upowaznieniaTextAreaLabel">Prowadzący rejestr użytkowników</td>
             <td align="left">
               <!-- <jqxInput #prowadzacy_rejestr_uzyt [auto-create]='false'></jqxInput> -->
-              <textarea id='prowadzacy_rejestr_uzyt' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{prowadzacy_rejestr_uzyt}}</textarea>
+              <textarea id='prowadzacy_rejestr_uzyt'  *ngIf="editobject!=null"  [(ngModel)]="editobject.prowadzacy_rejestr_uzyt" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
             </td>
           </tr>
           <tr>
             <td  class="upowaznieniaTextAreaLabel">Wniosek odebrania uprawnień</td>
             <td align="left">
               <!-- <jqxInput #wniosek_odebrania_upr [auto-create]='false'></jqxInput> -->
-              <textarea id='wniosek_odebrania_upr' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{wniosek_odebrania_upr}}</textarea>
+              <textarea id='wniosek_odebrania_upr'  *ngIf="editobject!=null"  [(ngModel)]="editobject.wniosek_odebrania_upr" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
             </td>
           </tr>
           <tr>
             <td  class="upowaznieniaTextAreaLabel">Odbierający uprawnienia</td>
             <td align="left">
               <!-- <jqxInput #odbierajacy_upr [auto-create]='false'></jqxInput> -->
-              <textarea id='odbierajacy_upr' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{odbierajacy_upr}}</textarea>
+              <textarea id='odbierajacy_upr' *ngIf="editobject!=null"  [(ngModel)]="editobject.odbierajacy_upr" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
             </td>
           </tr>
           <tr>
             <td  class="upowaznieniaTextAreaLabel">Opiekun</td>
             <td align="left">
               <!-- <jqxInput #opiekun [auto-create]='false'></jqxInput> -->
-              <textarea id='opiekun' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{opiekun}}</textarea>
+              <textarea id='opiekun' *ngIf="editobject!=null"  [(ngModel)]="editobject.opiekun" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
             </td>
           </tr>
           <tr>
             <td  class="upowaznieniaTextAreaLabel">Adres email</td>
             <td align="left">
               <!-- <jqxInput #adres_email [auto-create]='false'></jqxInput> -->
-              <textarea id='adres_email' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{adres_email}}</textarea>
+              <textarea id='adres_email' *ngIf="editobject!=null"  [(ngModel)]="editobject.adres_email" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
             </td>
           </tr>
           <tr>
@@ -149,7 +149,7 @@
             <td  class="upowaznieniaTextAreaLabel">Uwagi</td>
             <td align="left">
               <!-- <jqxInput #uwagi [auto-create]='false'></jqxInput> -->
-              <textarea id='uwagi' class='jqx-input jqx-widget jqx-widget-content inputformStyle'>{{uwagi}}</textarea>
+              <textarea id='uwagi' *ngIf="editobject!=null"  [(ngModel)]="editobject.uwagi" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
             </td>
           </tr>
           <tr>

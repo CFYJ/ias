@@ -30,7 +30,7 @@ import { jqxPanelComponent} from 'jqwidgets-ts/angular_jqxpanel';
 import { jqxToolBarComponent} from 'jqwidgets-ts/angular_jqxtoolbar';
 import { jqxFileUploadComponent} from 'jqwidgets-ts/angular_jqxfileupload';
 
-//import * as $ from 'jquery'
+import * as $ from 'jquery'
 
 import {SimpleGlobal} from 'ng2-simple-global';
 import { UpowaznieniaComponent } from './upowaznienia/upowaznienia.component'

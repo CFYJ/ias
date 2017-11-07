@@ -414,7 +414,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
 
   buttonSaveClicked(){
     // alert($('#nazwa').val());
-    console.log('wynik:'+this.editobject['nazwa']);
+    //console.log('wynik:'+this.editobject['nazwa']);
     let data = { id: null };
     let rowindex: number;
     if (!this.isInsertOperation) {
@@ -423,18 +423,24 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     }
     const row = {
       id: data.id, 
-      nazwa: this.editobject['nazwa'], //$('#nazwa').val(),
+      nazwa: this.editobject['nazwa'],//$('#nazwa').val(),
       // nazwa: this.fNazwa.val(),      
       // nazwa_skrocona: this.fNazwa_skrocona.val(),
       // wniosek_nadania_upr: this.fWniosek_nadania_upr.val(), nadajacy_upr: this.fNadajacy_upr.val(),
       // prowadzacy_rejestr_uzyt: this.fProwadzacy_rejstr_uzyt.val(), wniosek_odebrania_upr: this.fWniosek_odebrania_upr.val(),
       // odbierajacy_upr: this.fOdbierajacy_upr.val(), opiekun: this.fOpiekun.val(),
       // adres_email: this.fAdres_email.val(), decyzja: this.fDecyzja.val(), uwagi: this.fUwagi.val(), upowaznieniaPliki: this.pliki
-      nazwa_skrocona: $('#nazwa_skrocona').val(),
-      wniosek_nadania_upr: $('#wniosek_nadania_upr').val(), nadajacy_upr: $('#nadajacy_upr').val(),
-      prowadzacy_rejestr_uzyt: $('#prowadzacy_rejestr_uzyt').val(), wniosek_odebrania_upr: $('#wniosek_odebrania_upr').val(),
-      odbierajacy_upr: $('#odbierajacy_upr').val(), opiekun: $('#opiekun').val(),
-      adres_email: $('#adres_email').val(), decyzja: this.fDecyzja.val(), uwagi: $('#uwagi').val(), upowaznieniaPliki: this.pliki
+      nazwa_skrocona: this.editobject['nazwa_skrocona'], // $('#nazwa_skrocona').val(),
+      wniosek_nadania_upr:  this.editobject['wniosek_nadania_upr'],//$('#wniosek_nadania_upr').val()
+      nadajacy_upr: this.editobject['nadajacy_upr'],// $('#nadajacy_upr').val(),
+      prowadzacy_rejestr_uzyt: this.editobject['prowadzacy_rejestr_uzyt'],// $('#prowadzacy_rejestr_uzyt').val(),
+       wniosek_odebrania_upr: this.editobject['wniosek_odebrania_upr'],// $('#wniosek_odebrania_upr').val(),
+      odbierajacy_upr: this.editobject['odbierajacy_upr'],// $('#odbierajacy_upr').val(),
+       opiekun: this.editobject['opiekun'],// $('#opiekun').val(),
+      adres_email: this.editobject['adres_email'],// $('#adres_email').val(),
+       decyzja: this.fDecyzja.val(),
+        uwagi: this.editobject['uwagi'],// $('#uwagi').val(),
+         upowaznieniaPliki: this.pliki
     };
  
     if (this.isInsertOperation) {
@@ -444,7 +450,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
       this.myGrid.updaterow(this.myGrid.getrowid(rowindex), row);
     }
     this.selectedRow = row;
-    this.updateNonWidgets(this.selectedRow);
+    //this.updateNonWidgets(this.selectedRow);
     this.isInsertOperation = false;
     $('#file-field').val('').clone(true);
     this.editWindow.close();
@@ -587,13 +593,13 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
 
 
             const datarow=this.selectedRowData;
-            this.editobject =datarow;
+            //this.editobject = datarow;
             this.setEditValues(datarow);
             $('#file-field').val('').clone(true);
             this.editWindow.title('Edycja');
             this.editWindow.open();
 
-           
+           //console.log( this.editobject['nazwa']);
             
             }
       }
@@ -646,7 +652,7 @@ buttondelyesClicked()
     this.selectedRowData = null;
 
     this.selectedRow = null;
-    this.updateNonWidgets(null);
+    //this.updateNonWidgets(null);
 }
 
   plikirenderer = (row: number, column: any, value: any): string => {
@@ -746,7 +752,8 @@ buttondelyesClicked()
 
 
  editobject: any;
-  setEditValues(datarow: any): any{    
+  setEditValues(datarow: any): any{  
+    this.editobject = datarow;  
     //this.fNazwa.val(datarow.nazwa);   
     // this.fNazwa_skrocona.val(datarow.nazwa_skrocona);
     // this.fWniosek_nadania_upr.val(datarow.wniosek_nadania_upr);
@@ -758,44 +765,46 @@ buttondelyesClicked()
     // this.fAdres_email.val(datarow.adres_email);
     // this.fDecyzja.val(datarow.decyzja);
     // this.fUwagi.val(datarow.uwagi);
-    $('#nazwa').val(datarow.nazwa) ;
-    $('#nazwa_skrocona').val(datarow.nazwa_skrocona);
-    $('#wniosek_nadania_upr').val(datarow.wniosek_nadania_upr);
-    $('#nadajacy_upr').val(datarow.nadajacy_upr);
-    $('#prowadzacy_rejestr_uzyt').val(datarow.prowadzacy_rejestr_uzyt);
-    $('#wniosek_odebrania_upr').val(datarow.wniosek_odebrania_upr);
-    $('#odbierajacy_upr').val(datarow.odbierajacy_upr);
-    $('#opiekun').val(datarow.opiekun);
-    $('#adres_email').val(datarow.adres_email);
+   
+    // $('#nazwa').val(datarow.nazwa) ;
+    // $('#nazwa_skrocona').val(datarow.nazwa_skrocona);
+    // $('#wniosek_nadania_upr').val(datarow.wniosek_nadania_upr);
+    // $('#nadajacy_upr').val(datarow.nadajacy_upr);
+    // $('#prowadzacy_rejestr_uzyt').val(datarow.prowadzacy_rejestr_uzyt);
+    // $('#wniosek_odebrania_upr').val(datarow.wniosek_odebrania_upr);
+    // $('#odbierajacy_upr').val(datarow.odbierajacy_upr);
+    // $('#opiekun').val(datarow.opiekun);
+    // $('#adres_email').val(datarow.adres_email);
     this.fDecyzja.val(datarow.decyzja);
-    $('#uwagi').val(datarow.uwagi);
-    $('addedFiles').val(datarow.upowaznieniaPliki);
+    // $('#uwagi').val(datarow.uwagi);
+    // $('addedFiles').val(datarow.upowaznieniaPliki);
   }
 
   updateNonWidgets(datarow: any){
+    //if
 
-    if(datarow===null){
-      $('#iwniosek_nadania_upr').val(null);
-      $('#inadajacy_upr').val(null);
-      $('#iprowadzacy_rejestr_uzyt').val(null);
-      $('#iwniosek_odebrania_upr').val(null);
-      $('#iodbierajacy_upr').val(null);
-      $('#iopiekun').val(null);
-      $('#iadres_email').val(null);
-      $('#idecyzja').val(null);
-      $('#iuwagi').val(null);
-    }
-    else{
-    $('#iwniosek_nadania_upr').val(datarow.wniosek_nadania_upr);
-    $('#inadajacy_upr').val(datarow.nadajacy_upr);
-    $('#iprowadzacy_rejestr_uzyt').val(datarow.prowadzacy_rejestr_uzyt);
-    $('#iwniosek_odebrania_upr').val(datarow.wniosek_odebrania_upr);
-    $('#iodbierajacy_upr').val(datarow.odbierajacy_upr);
-    $('#iopiekun').val(datarow.opiekun);
-    $('#iadres_email').val(datarow.adres_email);
-    $('#idecyzja').val(datarow.decyzja);
-    $('#iuwagi').val(datarow.uwagi);
-    }
+    // if(datarow===null){
+    //   $('#iwniosek_nadania_upr').val(null);
+    //   $('#inadajacy_upr').val(null);
+    //   $('#iprowadzacy_rejestr_uzyt').val(null);
+    //   $('#iwniosek_odebrania_upr').val(null);
+    //   $('#iodbierajacy_upr').val(null);
+    //   $('#iopiekun').val(null);
+    //   $('#iadres_email').val(null);
+    //   $('#idecyzja').val(null);
+    //   $('#iuwagi').val(null);
+    // }
+    // else{
+    // $('#iwniosek_nadania_upr').val(datarow.wniosek_nadania_upr);
+    // $('#inadajacy_upr').val(datarow.nadajacy_upr);
+    // $('#iprowadzacy_rejestr_uzyt').val(datarow.prowadzacy_rejestr_uzyt);
+    // $('#iwniosek_odebrania_upr').val(datarow.wniosek_odebrania_upr);
+    // $('#iodbierajacy_upr').val(datarow.odbierajacy_upr);
+    // $('#iopiekun').val(datarow.opiekun);
+    // $('#iadres_email').val(datarow.adres_email);
+    // $('#idecyzja').val(datarow.decyzja);
+    // $('#iuwagi').val(datarow.uwagi);
+    // }
   }
 
 
