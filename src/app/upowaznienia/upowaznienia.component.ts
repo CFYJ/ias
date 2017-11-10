@@ -322,7 +322,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     enabletooltips: false,
     
     columnsheight:60,
-    theme:'darkblue',
+    theme: 'metro',
 
     source: this.dataAdapter,
 
@@ -603,7 +603,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
            this.pliki = this.selectedRowData['upowaznieniaPliki'];
 
 
-            const datarow=this.selectedRowData;
+           const datarow=this.selectedRowData;
             //this.editobject = datarow;
             this.setEditValues(datarow);
             $('#file-field').val('').clone(true);
@@ -783,9 +783,23 @@ Pagechanged()
 
 
 
- editobject: any;
+  editobject: any;
   setEditValues(datarow: any): any{  
-    this.editobject = datarow;  
+    //this.editobject = datarow;  
+    this.editobject ={nazwa:datarow.nazwa,
+       nazwa_skrocona:datarow.nazwa_skrocona, 
+       wniosek_nadania_upr: datarow.wniosek_nadania_upr, 
+       nadajacy_upr: datarow.nadajacy_upr,
+       prowadzacy_rejestr_uzyt: datarow.prowadzacy_rejestr_uzyt,
+       wniosek_odebrania_upr: datarow.wniosek_odebrania_upr,
+       odbierajacy_upr: datarow.odbierajacy_upr,
+       opiekun: datarow.opiekun,
+       adres_email: datarow.adres_email,
+       decyzja: datarow.decyzja,
+       uwagi: datarow.uwagi};
+
+
+    
     //this.fNazwa.val(datarow.nazwa);   
     // this.fNazwa_skrocona.val(datarow.nazwa_skrocona);
     // this.fWniosek_nadania_upr.val(datarow.wniosek_nadania_upr);
