@@ -2,10 +2,41 @@
   <!--a [routerLink]="['/']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">HOME</a>
   <a [routerLink]="['/about']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">ABOUT</a>
   <a [routerLink]="['/delegacje']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">delegacje</a-->
+  <button class="infobutton" (click)="showInfo()">&nbsp;?&nbsp;</button>
   <a [routerLink]="['/kontakty']"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Kontakty</a>
   <a [routerLink]="['/upowaznienia']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Upoważnienia w aplikacjach</a>
+
+  <div  class="logo">WISKAS</div>
   <a [routerLink]="['/login']" *ngIf="!auth.loggedIn()" style="float:right;" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Logowanie</a>
   <div class="well" *ngIf="auth.loggedIn()">Jesteś zalogowany jako <b>{{ auth.getUser() }}</b>
     <a href (click)="logout()">Wyloguj</a>
   </div>
+  
 </nav>
+
+
+<jqxWindow #jqxwindow1 [auto-create]='false'> 
+  <div style="overflow: hidden; padding:10px">
+    <table>
+      <tr>
+       <p align="justify"><strong>WISKAS</strong> - wielomodułowy informatyczny system KAS przeznaczony dla pracowników KAS w województwie warmińsko-mazurskim.</p>
+       <p>
+          <strong>Obsługa systemu: </strong> </p>
+          <ul>
+            <li align="justify">System dostępny za pomocą przeglądarki internetowej. Logowanie do sytemu odbywa się z wykorzystaniem domeny MF. Część funkcjonalności systemu dostępna jest dopiero po zalogowaniu.</li>
+            <li align="justify">Tabele wykorzystane w systemie posiadają podstawowe funkcjonalności takie jak wyszukiwanie, sortowanie. Aby wyszukać rekordy w tabeli należy wpisać interesującą frazę w polu właściwego nagłówka kolumny. W celu posortowanie należy kliknąć  w nagłówek kolumny.</li>
+          </ul>
+
+       <p align="justify"><strong>Kontakty: </strong><span>moduł zawierający bazę kontaktów pracowników
+          KAS w województwie warmińsko-mazurskim oraz mapę zawierającą dane kontaktowe jednostek KAS w Polsce. 
+          Każdy z pracowników indywidualnie dba o aktualność danych na swój temat. Edycja danych możliwa jest po zalogowaniu do systemu.</span>
+        </p>
+        <p align="justify">
+          <strong>Upoważnienia w aplikacjach: </strong><span>moduł informacyjny dotyczący sposobów nadawania uprawnień w aplikacjach działających w instytucji.</span>
+        </p>
+       
+       
+      </tr>
+    </table>
+  </div>
+</jqxWindow>

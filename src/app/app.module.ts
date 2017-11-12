@@ -29,11 +29,22 @@ import { jqxDropDownListComponent } from 'jqwidgets-ts/angular_jqxdropdownlist';
 import { jqxPanelComponent} from 'jqwidgets-ts/angular_jqxpanel';
 import { jqxToolBarComponent} from 'jqwidgets-ts/angular_jqxtoolbar';
 import { jqxFileUploadComponent} from 'jqwidgets-ts/angular_jqxfileupload';
+import { jqxTreeComponent} from 'jqwidgets-ts/angular_jqxtree';
+import { jqxSplitterComponent} from 'jqwidgets-ts/angular_jqxsplitter';
+import { jqxListBoxComponent} from 'jqwidgets-ts/angular_jqxlistbox';
+import { jqxTabsComponent} from 'jqwidgets-ts/angular_jqxtabs';
 
-//import * as $ from 'jquery'
+import * as $ from 'jquery'
 
 import {SimpleGlobal} from 'ng2-simple-global';
 import { UpowaznieniaComponent } from './upowaznienia/upowaznienia.component'
+
+
+//*******************google maps****************/
+import { CommonModule } from '@angular/common';
+import { AgmCoreModule, GoogleMapsAPIWrapper, MapsAPILoader } from '@agm/core';
+import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
+//**********************************************/
 
 export const appRoutes: Routes = [
   // { path: 'delegacje', component: DelegacjeComponent, canActivate: [AuthGuardService] },
@@ -65,6 +76,10 @@ export const appRoutes: Routes = [
     jqxPanelComponent,
     jqxToolBarComponent,
     jqxFileUploadComponent,
+    jqxTreeComponent,
+    jqxSplitterComponent,
+    jqxListBoxComponent,
+    jqxTabsComponent,
   ],
   imports: [
     BrowserModule,
@@ -72,7 +87,11 @@ export const appRoutes: Routes = [
     HttpModule,
  //   DataTableModule,
  //   SharedModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyDI-66KWWgzNaqY3O5tccOr5PGcozgS_N0'
+    }),  
+    AgmJsMarkerClustererModule,
   ],
   providers: [JwtHelper, AuthGuardService, AuthenticationService, KontaktyService, MessageService, SimpleGlobal,UpowaznieniaService],
   bootstrap: [AppComponent]
