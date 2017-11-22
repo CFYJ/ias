@@ -401,7 +401,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
               tool.jqxToggleButton({ width: 120, toggled:false });
               tool.text("Edytuj");
               tool.on("click", ()=>{
-                this.editCellclick(event);
+                this.editCellclick();
               });
               break;
       case 2:
@@ -528,11 +528,33 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
         cache: false,        
         dataType: 'json',
 
-        success: function (data: any, status: any, xhr: any) {
+        xhr: function() {
+          var xhr = new XMLHttpRequest();
+      
+          xhr.upload.addEventListener("progress", function(evt) {
+            if (evt.lengthComputable) {
+              var percentComplete = evt.loaded / evt.total;
+              //percentComplete = parseInt(percentComplete * 100);
+              percentComplete = Math.trunc(percentComplete * 100);
+         
+              //console.log(percentComplete);
+              $("#fileuploadprogress").html('<div style="width:'+percentComplete+'; background-color:skyblue; color:white"><center>'+percentComplete+'%</center></div>');
+
+              //if (percentComplete >= 100) {
+               // $("#fileuploadprogress").html("");
+              //}
+      
+            }
+          }, false);
+      
+          return xhr;
+        },
+
+        success: (data: any, status: any, xhr: any)=> {
 
               let upid = this.selectedRowData['id']===0?0:this.selectedRowData['id']; 
-              var newplik = {"id":data.id,"id_upowaznienia":upid, "id_pliku":data.idPliku , "nazwa":files[0].name};
-                  
+              var newplik = {"id":data.id,"idUpowaznienia":upid, "idPliku":data.idPliku , "nazwa":files[0].name};
+                  console.log(upid);
               //this.selectedRowData['upowaznieniaPliki'].push(newplik);
               if(this.pliki!=null)
                 this.pliki.push(newplik); 
@@ -593,7 +615,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     }
   }
 
-  editCellclick(event: any): void {
+  editCellclick(): void {
 
       if(this.selectedRowId !=null){
 
@@ -609,7 +631,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
             $('#file-field').val('').clone(true);
             this.editWindow.title('Edycja');
             this.editWindow.open();
-
+            $("#fileuploadprogress").html("");
            //console.log( this.editobject['nazwa']);
             
             }
