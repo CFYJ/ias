@@ -2,6 +2,7 @@ import { MessageService } from './message.service';
 import { KontaktyService } from './kontakty.service';
 import { AuthenticationService } from './authentication.service';
 import { UpowaznieniaService } from './upowaznienia.service';
+//import { SecurityService } from './security.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -44,6 +45,7 @@ import { UpowaznieniaComponent } from './upowaznienia/upowaznienia.component'
 import { CommonModule } from '@angular/common';
 import { AgmCoreModule, GoogleMapsAPIWrapper, MapsAPILoader } from '@agm/core';
 import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
+import { SecurityComponent } from './security/security.component';
 //**********************************************/
 
 export const appRoutes: Routes = [
@@ -55,6 +57,7 @@ export const appRoutes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'about', component: KontaktyComponent },
   { path: 'upowaznienia', component: UpowaznieniaComponent },
+  { path: 'security', component: SecurityComponent},
 ];
 
 @NgModule({
@@ -73,6 +76,7 @@ export const appRoutes: Routes = [
     KontaktyComponent,
     LoginComponent,
     UpowaznieniaComponent,
+    SecurityComponent,
     jqxPanelComponent,
     jqxToolBarComponent,
     jqxFileUploadComponent,
