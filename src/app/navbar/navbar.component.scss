@@ -31,3 +31,38 @@ div.well {
   float: right;
   color: #09C;
 }
+
+.logo{
+  line-height: 48px;
+  color: #4CAF50;
+  font-family: 'Josefin Slab', 'Comfortaa', Sans-Serif;
+  //font-family: 'sofia_probold','Trebuchet MS',Helvetica,Arial,sans-serif;
+  //font-family: fontawesome;
+  font-size: 37px;
+  letter-spacing: 3px;
+  //font-size: 1.5em;
+  font-weight: bold;
+  position: relative;
+  text-align: right;
+  //display: inline-block;
+  float: right;
+  //color: #09C;
+}
+
+
+.infobutton {
+  background-color: skyblue;
+  border: none;
+  color: white;
+  padding: 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  /*margin: 4px 2px;*/
+  margin-right: 20px;
+  border-radius: 50%;
+}
+.infobutton:hover {
+  background-color: #4CAF50;
+}

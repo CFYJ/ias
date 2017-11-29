@@ -1,0 +1,62 @@
+agm-map {
+    height: 800px;
+    //float: right;
+    min-width: 400px;
+  }
+
+  // ************************ kółko ładowania danych
+#loadersframe{
+  width: 35%;
+  height: 55%;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+#loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+//***********************************
+
+.map-display-info-frame{
+  width: 35%;
+  height: 35%;
+  position: fixed;
+  top: 100px;
+  right: 0;
+}
+
+.map-display-info{
+  
+  top: 0px;
+  right: 100px;
+}
+
+.map-load-button{
+  //border: solid #5aaadf;
+  //background-color: #ebf0f3;
+  background-color: #f0f3f5;
+  border-radius: 12px;
+  padding: 5px;
+  text-align: center;
+  text-decoration: none;
+}
+.map-load-button:hover{
+  background-color: #d1d4d2;
+}

@@ -1,112 +1,212 @@
-<div>
-  <!--div>{{message}}</div-->
-</div>
+  <jqxTabs #tabsReference
+   [position]='"top"' [height]="'90%'" [autoHeight]="true" [width]='"100%"'
+  [animationType]='"none"' [selectionTracker]='false' >
+  <!-- (onTabclick)="Tabclick($event)" -->
+    <ul>  
+      <li style="margin-left: 30px;">Kontakty</li>
+      <li>Mapa KAS</li>
 
+    </ul>
 
-<jqxGrid #gridReference id="jqxgrid" [auto-create]='false' (onCellclick)='editCellclick($event)'></jqxGrid>
+    <div >
 
-<jqxWindow #jqxwindow1 [auto-create]='false'>
-  <div>Edycja</div>
-  <div style="overflow: hidden;">
-    <table>
-      <tr>
-        <td align="right">Login</td>
-        <td align="left">
-          <jqxInput #login [auto-create]='false' [disabled]="!authService.checkIfUserBelongsToITStaff()"></jqxInput>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Imię</td>
-        <td align="left">
-          <jqxInput #imie [auto-create]='false'></jqxInput>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Nazwisko</td>
-        <td align="left">
-          <jqxInput #nazwisko [auto-create]='false'></jqxInput>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Jednostka</td>
-        <td align="left">
-          <jqxDropDownList #cbJednostka [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Miejsce pracy</td>
-        <td align="left">
-          <jqxDropDownList #cbMiejscePracy [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Pion</td>
-        <td align="left">
-          <jqxDropDownList #cbPion [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Wydział</td>
-        <td align="left">
-          <jqxDropDownList #cbWydzial [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Wydział podległy</td>
-        <td align="left">
-          <jqxDropDownList #cbWydzialPodlegly [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Stanowisko</td>
-        <td align="left">
-          <jqxDropDownList #cbStanowisko [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Pokój</td>
-        <td align="left">
-          <jqxInput #pokoj [auto-create]='false'></jqxInput>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Email</td>
-        <td align="left">
-          <jqxInput #email [auto-create]='false'></jqxInput>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Telefon</td>
-        <td align="left">
-          <jqxInput #telefon [auto-create]='false'></jqxInput>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Tel. kom.</td>
-        <td align="left">
-          <jqxInput #komorka [auto-create]='false'></jqxInput>
-        </td>
-      </tr>
-      <tr>
-        <td align="right">Wewnętrzny</td>
-        <td align="left">
-          <jqxInput #wewnetrzny [auto-create]='false'></jqxInput>
-        </td>
-      </tr>
-      <tr>
-        <td align="right"></td>
-        <td style="padding-top: 10px;" align="right">
-          <jqxButton #buttonReference [auto-create]='false' (onClick)="buttonClicked()">Zapisz</jqxButton>
-          <jqxButton #buttonReference1 [auto-create]='false' (onClick)="button1Clicked()">Anuluj</jqxButton>
-        </td>
-      </tr>
-    </table>
-  </div>
-</jqxWindow>
-<jqxNotification #msgNotification [width]='300' [position]='"top-right"' [opacity]='0.9' [autoOpen]='false' [autoClose]='true'
-  [animationOpenDelay]='800' [autoCloseDelay]='3000' [template]='"info"' [theme]='"metro"' [auto-create]='false'>
-  <!--div *ngIf="message">{{message}}</div-->
-  <div id="notificationContent"></div>
-</jqxNotification>
+      <jqxGrid #gridReference id="jqxgrid" [auto-create]='false' (onCellclick)='editCellclick($event)'></jqxGrid>
 
-<jqxButton *ngIf="authService.checkIfUserBelongsToITStaff()" #buttonReference2 [auto-create]='false' (onClick)="button2Clicked()">Wstaw nowy rekord</jqxButton>
+      <jqxWindow #jqxwindow1 [auto-create]='false'>
+        <div>Edycja</div>
+        <div style="overflow: hidden;">
+          <table>
+            <tr>
+              <td align="right">Login</td>
+              <td align="left">
+                <jqxInput #login [auto-create]='false' [disabled]="!authService.checkIfUserBelongsToITStaff()"></jqxInput>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Imię</td>
+              <td align="left">
+                <jqxInput #imie [auto-create]='false'></jqxInput>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Nazwisko</td>
+              <td align="left">
+                <jqxInput #nazwisko [auto-create]='false'></jqxInput>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Jednostka</td>
+              <td align="left">
+                <jqxDropDownList #cbJednostka [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Miejsce pracy</td>
+              <td align="left">
+                <jqxDropDownList #cbMiejscePracy [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Pion</td>
+              <td align="left">
+                <jqxDropDownList #cbPion [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Wydział</td>
+              <td align="left">
+                <jqxDropDownList #cbWydzial [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Wydział podległy</td>
+              <td align="left">
+                <jqxDropDownList #cbWydzialPodlegly [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Stanowisko</td>
+              <td align="left">
+                <jqxDropDownList #cbStanowisko [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Pokój</td>
+              <td align="left">
+                <jqxInput #pokoj [auto-create]='false'></jqxInput>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Email</td>
+              <td align="left">
+                <jqxInput #email [auto-create]='false'></jqxInput>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Telefon</td>
+              <td align="left">
+                <jqxInput #telefon [auto-create]='false'></jqxInput>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Tel. kom.</td>
+              <td align="left">
+                <jqxInput #komorka [auto-create]='false'></jqxInput>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">Wewnętrzny</td>
+              <td align="left">
+                <jqxInput #wewnetrzny [auto-create]='false'></jqxInput>
+              </td>
+            </tr>
+            <tr>
+              <td align="right"></td>
+              <td style="padding-top: 10px;" align="right">
+                <jqxButton #buttonReference [auto-create]='false' (onClick)="buttonClicked()">Zapisz</jqxButton>
+                <jqxButton #buttonReference1 [auto-create]='false' (onClick)="button1Clicked()">Anuluj</jqxButton>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </jqxWindow>
+      <jqxNotification #msgNotification [width]='300' [position]='"top-right"' [opacity]='0.9' [autoOpen]='false' [autoClose]='true'
+        [animationOpenDelay]='800' [autoCloseDelay]='3000' [template]='"info"' [theme]='"metro"' [auto-create]='false'>
+        <!--div *ngIf="message">{{message}}</div-->
+        <div id="notificationContent"></div>
+      </jqxNotification>
+
+      <jqxButton *ngIf="authService.checkIfUserBelongsToITStaff()" #buttonReference2 [auto-create]='false' (onClick)="button2Clicked()">Wstaw nowy rekord</jqxButton>
+
+    </div>
+
+    <div>
+
+      <jqxSplitter #mySplitter  [height]="'99%'"
+        [panels]="[{size:600, min: 100 }, { min: 800 }]">
+        <div style="height: 100%">
+            <jqxSplitter #mySplitter2 [width]="'100%'" [height]="'100%'"
+            [panels]="[{   min: 300 }, {  min: 100 }]">
+              <div>
+                <jqxTree #myTree (onSelect)="myTreeOnSelect($event)"
+                [width]="'100%'" [height]="'100%'"   [source]="treeSource">
+                </jqxTree>
+              </div>
+        
+              <div >
+                <table>
+                  <tr>
+                    <td><label>Szukaj:</label></td>
+                    <td><jqxInput id="mapSearch" #mapSearch [auto-create]='false' [width]="230" ></jqxInput></td>
+                  </tr>
+                  <tr>
+                    <td colspan="2"><jqxListBox #myListBox [auto-create]="false" [width]="280" [source]="ListBoxSource" (onSelect)="ListBoxSelect($event)" ></jqxListBox></td>
+                  </tr>  
+                  <tr>
+                      <td colspan="2"><div id="unitInfo"></div></td>
+                  </tr>         
+                </table>
+                <div style="width:100%; bottom:10px; position:absolute; width:280px; padding:5px;  text-align: justify;">
+                    <div (click)="loadMap()">Do wyświetlenia mapy potrzebny jest dostęp do internetu. <button class="map-load-button">Wczytaj mapę </button></div>
+                    <!-- <img src="/images/refresh.png"/> -->
+                </div>
+              </div>
+            </jqxSplitter>
+        </div>
+        <div>
+          <table style="width:100%">
+            <!-- <tr>
+                <td style="text-align:center">         
+                    &nbsp
+                </td>
+            </tr> -->
+            <tr>
+              <td style="width:100%">
+                  <div *ngIf="mapLoaded">
+                      <agm-map [latitude]="lat" [longitude]="lng" (mapClick)="mapClick($event)" [zoom]="mapZoom">
+                        
+                          <agm-marker-cluster [maxZoom]="13" imagePath="https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m" 
+                          >
+                          <!-- *ngFor="let clusterers of mclusterers" -->
+                            <!-- <agm-marker  *ngFor="let m of clusterers.m"  -->
+                                <agm-marker  *ngFor="let m of markers" 
+                              [latitude]="m.lat"
+                              [longitude]="m.lng"
+                              [label]="m.label"
+                              [markerDraggable]="m.draggable">
+                              <agm-info-window [disableAutoPan]="false" >
+                                  <strong>{{m.nazwa}}</strong><br >
+                                  <strong>kod:  </strong>{{m.kod}}<br >
+                                  <strong>miasto: </strong>{{m.miasto}}<br >
+                                  <strong>ulica:  </strong>{{m.ulica}}<br >
+                                  <strong>poczta: </strong>{{m.poczta}}<br >
+                                  <strong>telefon:  </strong>{{m.telefon}}<br >
+                                  <strong>fax:  </strong>{{m.fax}}<br >
+                                  <strong>email:  </strong>{{m.email}}<br >
+                              </agm-info-window>
+                            </agm-marker>
+                          </agm-marker-cluster>
+                        
+                        </agm-map>
+                        
+                        <!-- <div id="loadersframe">
+                          <div id="loader"></div>
+                        </div> -->
+            
+                      
+                      
+                    </div>
+              </td>
+            </tr> 
+              
+          </table>
+        </div>
+      </jqxSplitter>
+
+    </div>
+    <!-- <div></div> -->
+
+  </jqxTabs>  
+
+<!-- przycisk do pobrania pliku csv z adresami do geocodowania z mf
+   <input id="file-field" name="file-field" (change)="uploadFile($event)" type="file" > -->
