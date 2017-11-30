@@ -20,6 +20,8 @@ import { jqxFileUploadComponent} from 'jqwidgets-ts/angular_jqxfileupload';
 import  'jqwidgets/styles/jqx.metro.css';
 import  'jqwidgets/styles/jqx.darkblue.css';
 import { validateConfig } from '@angular/router/src/config';
+
+import { LinkyModule, LinkyPipe } from 'angular-linky';
 //#endregion
 
 @Component({
@@ -117,116 +119,115 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
   }
 
 
-  source=
-  {
+  source={
     //  datatype: 'xml',
     datatype: 'json',
 
-      datafields:[
-        {name: 'id'},
-        {name: 'nazwa', type:'string'},
-        {name: 'nazwa_skrocona', type:'string'},
-        {name: 'wniosek_nadania_upr', type:'string'},
-        {name: 'nadajacy_upr', type:'string'},
-        {name: 'prowadzacy_rejestr_uzyt', type:'string'},
-        {name: 'wniosek_odebrania_upr', type:'string'},
-        {name: 'odbierajacy_upr', type:'string'},
-        {name: 'opiekun', type:'string'},
-        {name: 'adres_email', type:'string'},
-        {name: 'decyzja', type:'string'},
-        {name: 'uwagi', type:'string'},
-        {name: 'upowaznieniaPliki', type: 'any'},
-      ],
-      id:'id',
-      url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
+    datafields:[
+      {name: 'id'},
+      {name: 'nazwa', type:'string'},
+      {name: 'nazwa_skrocona', type:'string'},
+      {name: 'wniosek_nadania_upr', type:'string'},
+      {name: 'nadajacy_upr', type:'string'},
+      {name: 'prowadzacy_rejestr_uzyt', type:'string'},
+      {name: 'wniosek_odebrania_upr', type:'string'},
+      {name: 'odbierajacy_upr', type:'string'},
+      {name: 'opiekun', type:'string'},
+      {name: 'adres_email', type:'string'},
+      {name: 'decyzja', type:'string'},
+      {name: 'uwagi', type:'string'},
+      {name: 'upowaznieniaPliki', type: 'any'},
+    ],
+    id:'id',
+    url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
 
-      // url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaListaPaged',
-      // root: 'rows',
-      // beforeprocessing: function(data)
-      // {		
-      //   //  var ss ="";
-      //   // for(var z in data.rows.result[0])
-      //   //   ss=ss+";"+z;
-      //   // alert(ss);     
+    // url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaListaPaged',
+    // root: 'rows',
+    // beforeprocessing: function(data)
+    // {		
+    //   //  var ss ="";
+    //   // for(var z in data.rows.result[0])
+    //   //   ss=ss+";"+z;
+    //   // alert(ss);     
 
-      //   // alert(data.rows.result[1].nazwa);
+    //   // alert(data.rows.result[1].nazwa);
 
-      //   this.totalrecords = data.totalRows;
-      //   // this.totalrecords = data['TotalRows'];
-      // },
+    //   this.totalrecords = data.totalRows;
+    //   // this.totalrecords = data['TotalRows'];
+    // },
 
-      // filter: function () {
-      //   // update the grid and send a request to the server.
-      //   //$("#jqxgrid").jqxGrid('updatebounddata', 'filter');
+    // filter: function () {
+    //   // update the grid and send a request to the server.
+    //   //$("#jqxgrid").jqxGrid('updatebounddata', 'filter');
 
-      //   //this.myGrid.updatebounddata();
-      // },
+    //   //this.myGrid.updatebounddata();
+    // },
 
-      //  sort: function () {
-      //   // update the grid and send a request to the server.
-      //   //$("#jqxgrid").jqxGrid('updatebounddata', 'filter');
+    //  sort: function () {
+    //   // update the grid and send a request to the server.
+    //   //$("#jqxgrid").jqxGrid('updatebounddata', 'filter');
 
-      //   this.grid.updatebounddata();
-      // },
- 
-      addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
-        const t = JSON.stringify(rowdata);
-        $.ajax({
-          cache: false,
-          dataType: 'json',
-          contentType: 'application/json',
-          url: this.sg['SERVICE_URL'] + 'Upowaznienia/AddUpowaznienia',
-          data: t,
-          type: 'POST',
-          success: function (data: any, status: any, xhr: any) {
-            //alert('Wstawiono nowy rekord - id: ' + data.id);
-            rowdata.id = data.id;
-            commit(true);                  
-          },
-          error: function (jqXHR: any, textStatus: any, errorThrown: any) {
-            alert(textStatus + ' - ' + errorThrown);
-            commit(false);
-          }
-        })
-      },
-      updaterow: (rowid: any, rowdata: any, commit: any) => {
-        const t = JSON.stringify(rowdata);
-        $.ajax({
-          cache: false,
-          dataType: 'json',
-          contentType: 'application/json',
-          url: this.sg['SERVICE_URL'] + 'Upowaznienia/UpdateUpowaznienia/' + rowdata.id,
-          data: t,
-          type: 'PUT',
-          success: function (data: any, status: any, xhr: any) {               
-            commit(true);           
-          },
-          error: function (jqXHR: any, textStatus: any, errorThrown: any) {
-            alert(textStatus + ' - ' + errorThrown);
-            commit(false);
-          }
-        });
-      },
+    //   this.grid.updatebounddata();
+    // },
 
-      deleterow: (rowindex: any, commit: any) => {
-        //const t = JSON.stringify(rowdata);
- 
-        $.ajax({
-          cache: false,
-          dataType: 'json',
-          contentType: 'application/json',
-          url: this.sg['SERVICE_URL'] + 'Upowaznienia/DelUpowaznienia/' + rowindex,
-          //data: t,
-          type: 'POST',
-          success: function (data: any, status: any, xhr: any) {      
-            commit(true);     
-          },
-          error: function (jqXHR: any, textStatus: any, errorThrown: any) {
-            alert(textStatus + ' - ' + errorThrown);
-            commit(false);
-          }
-        });
-      },
+    addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
+      const t = JSON.stringify(rowdata);
+      $.ajax({
+        cache: false,
+        dataType: 'json',
+        contentType: 'application/json',
+        url: this.sg['SERVICE_URL'] + 'Upowaznienia/AddUpowaznienia',
+        data: t,
+        type: 'POST',
+        success: function (data: any, status: any, xhr: any) {
+          //alert('Wstawiono nowy rekord - id: ' + data.id);
+          rowdata.id = data.id;
+          commit(true);                  
+        },
+        error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+          alert(textStatus + ' - ' + errorThrown);
+          commit(false);
+        }
+      })
+    },
+    updaterow: (rowid: any, rowdata: any, commit: any) => {
+      const t = JSON.stringify(rowdata);
+      $.ajax({
+        cache: false,
+        dataType: 'json',
+        contentType: 'application/json',
+        url: this.sg['SERVICE_URL'] + 'Upowaznienia/UpdateUpowaznienia/' + rowdata.id,
+        data: t,
+        type: 'PUT',
+        success: function (data: any, status: any, xhr: any) {               
+          commit(true);           
+        },
+        error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+          alert(textStatus + ' - ' + errorThrown);
+          commit(false);
+        }
+      });
+    },
+
+    deleterow: (rowindex: any, commit: any) => {
+      //const t = JSON.stringify(rowdata);
+
+      $.ajax({
+        cache: false,
+        dataType: 'json',
+        contentType: 'application/json',
+        url: this.sg['SERVICE_URL'] + 'Upowaznienia/DelUpowaznienia/' + rowindex,
+        //data: t,
+        type: 'POST',
+        success: function (data: any, status: any, xhr: any) {      
+          commit(true);     
+        },
+        error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+          alert(textStatus + ' - ' + errorThrown);
+          commit(false);
+        }
+      });
+    },
 
 
   };
@@ -711,8 +712,13 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
 
       return '<div class="jqx-grid-cell-left-align" style="margin-top: 6px;">'+value+'</div>';
       
- };
+  };
 
+  linkycellsrenderer = (row: number, columnfield: string, value: string , defaulthtml: string, columnproperties: any, rowdata: any): string => {
+    var zz= new LinkyPipe();    
+    return '<div class="jqx-grid-cell-left-align" style="margin-top: 6px;">'+zz.transform(value)+'</div>';
+    
+  };
 
   columns: any[] =
   [
@@ -727,11 +733,9 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     { text: 'Opiekun', datafield: 'opiekun', 
      cellsrenderer: this.cellsrenderer,
       width: 200},
-    { text: 'Adres email', datafield: 'adres_email', width: 200},
-    { text: 'Decyzja', datafield: 'decyzja', minwidth: 160},         
+    { text: 'Adres email', datafield: 'adres_email', cellsrenderer: this.linkycellsrenderer, width: 200},
+    { text: 'Decyzja', datafield: 'decyzja', cellsrenderer: this.linkycellsrenderer, minwidth: 160},         
   ];
-
-
 
   editobject: any;
   setEditValues(datarow: any): any{  
@@ -797,53 +801,33 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
         }
       });
   }
-
   
- getUsersTelefone(value: string){
-  let res = '';
-  if(value.indexOf(',')<1)
-  {
-    let tmp = this.telefony.filter(x=>x.user === value.trim())[0];
-    if(tmp!= undefined)
-      res=value+" "+tmp.telefon;
-    else 
-      res = value;
-  }
-  else{
-    let ar = value.split(',');
-    for(let i in ar){
-      let tmp = this.telefony.filter(x=>x.user === ar[i].trim())[0];
-      
+  getUsersTelefone(value: string){
+    let res = '';
+    if(value.indexOf(',')<1)
+    {
+      let tmp = this.telefony.filter(x=>x.user === value.trim())[0];
       if(tmp!= undefined)
-        res=res+ar[i]+" "+tmp.telefon+ ", ";  
-      else
-        res=res+ar[i]+", ";    
+        res=value+" "+tmp.telefon;
+      else 
+        res = value;
     }
+    else{
+      let ar = value.split(',');
+      for(let i in ar){
+        let tmp = this.telefony.filter(x=>x.user === ar[i].trim())[0];
+        
+        if(tmp!= undefined)
+          res=res+ar[i]+" "+tmp.telefon+ ", ";  
+        else
+          res=res+ar[i]+", ";    
+      }
+    }
+    if(res.endsWith(', '))
+      res = res.substr(0, res.length-2);
+
+    return res;
   }
-  if(res.endsWith(', '))
-    res = res.substr(0, res.length-2);
-
-  return res;
-}
-
-// parseUrls(parseUrl: string){
-  
-//     var urls = /(\b(https?|ftp):\/\/[A-Z0-9+&@#\/%?=~_|!:,.;-]*[-A-Z0-9+&@#\/%=~_|])/gim
-//     var emails = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim
-
-//     return function(text) {        
-//         if(text.match(urls)) {
-//             text = text.replace(urls, "<a href=\"$1\" target=\"_blank\">$1</a>")
-//         }
-//         if(text.match(emails)) {
-//             text = text.replace(emails, "<a href=\"mailto:$1\">$1</a>")
-//         }
-
-//         return text       ;
-    
-
-// }
-
 
   showarray(tablica: any){
     for(let i in  tablica)

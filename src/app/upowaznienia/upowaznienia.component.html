@@ -31,23 +31,25 @@
         <table   class="ditailsTable">
           <tr>
             <td class="tableLabel" style="width:30%">Wniosek o nadanie uprawnień</td>
-            <td><div *ngIf="selectedRow!=null" id="iwniosek_nadania_upr">{{selectedRow.wniosek_nadania_upr}}</div></td>
+            <!-- <td><div *ngIf="selectedRow!=null" id="iwniosek_nadania_upr">{{selectedRow.wniosek_nadania_upr | linky}}</div></td> -->
+            <td><div *ngIf="selectedRow!=null" id="iwniosek_nadania_upr" [innerHTML]="selectedRow.wniosek_nadania_upr | linky:{newWindow: true}"></div></td>
           </tr>
           <tr>
               <td class="tableLabel">Nadający uprawnienia</td>
-              <td ><div *ngIf="selectedRow!=null" id="inadajacy_upr">{{getUsersTelefone(selectedRow.nadajacy_upr)}}</div></td>
+              <td ><div *ngIf="selectedRow!=null" id="inadajacy_upr" [innerHTML]="getUsersTelefone(selectedRow.nadajacy_upr) | linky:{newWindow: true}"></div></td>
           </tr>
           <tr>
               <td class="tableLabel">Prowadzący rejestr użytkowników</td>
-              <td ><div *ngIf="selectedRow!=null" id="iprowadzacy_rejestr_uzyt">{{getUsersTelefone(selectedRow.prowadzacy_rejestr_uzyt)}}</div></td>
+              <td ><div *ngIf="selectedRow!=null" id="iprowadzacy_rejestr_uzyt" [innerHTML]="getUsersTelefone(selectedRow.prowadzacy_rejestr_uzyt) | linky:{newWindow: true}"></div></td>
           </tr>
           <tr>
               <td class="tableLabel">Wniosek o odebranie uprawnień</td>
-              <td ><div *ngIf="selectedRow!=null" id="iwniosek_odebrania_upr">{{selectedRow.wniosek_odebrania_upr}}</div></td>
+              <!-- <td ><div *ngIf="selectedRow!=null" id="iwniosek_odebrania_upr">{{selectedRow.wniosek_odebrania_upr}}</div></td> -->
+              <td ><div *ngIf="selectedRow!=null" id="iwniosek_odebrania_upr"  [innerHTML]="selectedRow.wniosek_odebrania_upr | linky:{newWindow: true}"></div></td>
           </tr>
           <tr>
               <td class="tableLabel">Odbierający uprawnienia</td>
-              <td ><div *ngIf="selectedRow!=null" id="iodbierajacy_upr">{{getUsersTelefone(selectedRow.odbierajacy_upr)}}</div></td>
+              <td ><div *ngIf="selectedRow!=null" id="iodbierajacy_upr" [innerHTML]="getUsersTelefone(selectedRow.odbierajacy_upr) | linky:{newWindow: true}"></div></td>
           </tr>
           <!-- <tr>
               <td class="tableLabel">Decyzja</td>
@@ -55,7 +57,7 @@
           </tr> -->
           <tr>
               <td class="tableLabel">Uwagi</td>
-              <td ><div *ngIf="selectedRow!=null" id="iuwagi">{{selectedRow.uwagi}}</div></td>
+              <td ><div *ngIf="selectedRow!=null" id="iuwagi" [innerHTML]="selectedRow.uwagi | linky:{newWindow: true}"></div></td>
           </tr>
           <tr  *ngIf="selectedRow!=null">
               <td class="tableLabel">Załączone pliki</td>

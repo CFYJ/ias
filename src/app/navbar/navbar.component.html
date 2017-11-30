@@ -3,7 +3,7 @@
   <a [routerLink]="['/about']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">ABOUT</a>
   <a [routerLink]="['/delegacje']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">delegacje</a-->
   <button class="infobutton" (click)="showInfo()">&nbsp;?&nbsp;</button>
-  <a *ngIf="!auth.loggedIn()" [routerLink]="['/security']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Moduł administracyjny</a>
+  <a *ngIf="auth.checkIfUserIsInRole('system_admin')" [routerLink]="['/security']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Moduł administracyjny</a>
   <a [routerLink]="['/kontakty']"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Kontakty</a>
   <a [routerLink]="['/upowaznienia']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Upoważnienia w aplikacjach</a>
 
@@ -11,7 +11,7 @@
   <div  class="logo">WISKAS</div>
   <a [routerLink]="['/login']" *ngIf="!auth.loggedIn()" style="float:right;" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Logowanie</a>
   <div class="well" *ngIf="auth.loggedIn()">Jesteś zalogowany jako <b>{{ auth.getUser() }}</b>
-    <a href (click)="logout()">Wyloguj</a>
+    <a [routerLink]="['/kontakty']" (click)="logout()">Wyloguj</a>
   </div>
   
 </nav>

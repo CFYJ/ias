@@ -1,6 +1,6 @@
 import { MessageService } from './../message.service';
 import { AuthenticationService, User } from './../authentication.service';
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -9,7 +9,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit {
 
   public user = new User('', '');
   public errorMsg = '';
@@ -24,6 +24,17 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this._service.logout();
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/kontakty';
+  }
+
+  ngAfterViewInit(){
+    $(()=>{ $("#password").keydown((event)=>{this.passwordEnterClicked(event);})});
+  }
+
+  passwordEnterClicked(event: any){
+  
+    if(Number(event.keyCode)==13)
+      this.login();
+      
   }
 
   login() {

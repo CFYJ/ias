@@ -1,3 +1,209 @@
-<p>
-  security works!
-</p>
+
+<jqxTabs #tabsControll
+[position]='"top"' [height]="'99%'" [autoHeight]="true" [width]='"100%"'
+[animationType]='"none"' [selectionTracker]='false' >
+
+  <ul>
+    <li>
+      Role
+    </li>  
+    <li>
+      Użytkownicy
+    </li>
+
+  
+  </ul>
+
+
+
+  <div style="padding: 10px; padding-bottom:50px">
+    <table class="table-security-role-main">    
+      <tr style="height:30px">
+        <th style="width:300px">
+          Lista ról
+        </th>
+        <th >
+          Użytkownicy w roli
+        </th>
+        <th></th>     
+        <th>
+          Lista użytkowników
+        </th>
+      </tr>
+
+      <tr  style="height:100%">
+        <td  class="td-top-align">
+          <jqxToolbar #securityToolBar [height]='40' [width]='500'  [tools]="tools" [auto-create]='false'
+          [initTools]="initTools"
+          [theme]='"darkblue"'>
+          </jqxToolbar>
+
+          <jqxGrid id="jqxgridrolerole" #gridRoleRole [width]="500"
+          [columns]="rolerolecolumns"  [auto-create]='false'
+          [autoheight]="true" [sortable]="true" 
+          [altrows]="true"  [enabletooltips]="true"  [editable]="false" 
+          [selectionmode]="'singlerow'"
+          (onCellclick)="roleroleCellClicked($event)" 
+          >              
+          </jqxGrid>
+        </td>
+        <!-- [rendered]="rendered" -->
+        <td class="td-top-align">
+            <jqxGrid id="jqxgridusersinrolerole" #gridusersinroleRole 
+            [columns]="allusersrolecolumns"  [auto-create]='false'
+            [autoheight]="true" [sortable]="true" [width]="'100%'" 
+            [altrows]="true"  [enabletooltips]="true"  [editable]="false" 
+            [selectionmode]="'multiplerows'"            
+            ></jqxGrid>         
+        </td>
+        <td style="width:40px; vertical-align:center;">       
+            <div id='addrolebutton' class='rightarrow' (click)='removeUserFromRole()'></div>
+            <div id='removerolebutton' class='leftarrow' (click)='addUserToRole()'></div>          
+        </td>
+        <td class="td-top-align">
+            <jqxGrid id="jqxgridallusersrole" #gridallusersRole 
+            [columns]="allusersrolecolumns"  [auto-create]='false'
+            [autoheight]="true" [sortable]="true" [width]="'100%'" 
+            [altrows]="true"  [enabletooltips]="true"  [editable]="false" 
+            [selectionmode]="'multiplerows'"                   
+            ></jqxGrid>
+        </td>
+      </tr>
+
+
+      
+    </table> 
+    
+    
+    
+  </div>
+
+
+  <div style="padding: 10px; padding-bottom:50px">
+      <table class="table-security-role-main">    
+          <tr style="height:30px">
+            <th>
+              Lista użytkowników
+            </th>
+            <th >
+              Role użytkownika
+            </th>
+            <th></th>     
+            <th>
+              Lista ról
+            </th>
+          </tr>
+    
+          <tr  style="height:100%">
+            <td  class="td-top-align">
+                <jqxGrid id="jqxgriduersusers" #gridusersusers 
+                [columns]="usersuserscolumns"  [auto-create]='false'
+                [autoheight]="true" [sortable]="true" [width]="'100%'" 
+                [altrows]="true"  [enabletooltips]="true"  [editable]="false" 
+                [selectionmode]="'singlerow'"     
+                (onRowclick)="useruserRowClicked($event)"  (onCellclick)='editGridCellClick($event)'             
+                ></jqxGrid>
+    
+                        
+          
+            </td>
+            <!-- [rendered]="rendered" -->
+            <td class="td-top-align">
+                <jqxGrid id="jqxgridusersrolerusers" #gridusersrolerusers 
+                [columns]="usersroleruserscolumns"  [auto-create]='false'
+                [autoheight]="true" [sortable]="true" [width]="'100%'" 
+                [altrows]="true"  [enabletooltips]="true"  [editable]="false" 
+                [selectionmode]="'multiplerows'"            
+                ></jqxGrid>         
+            </td>
+            <td style="width:40px; vertical-align:center;">       
+                <div id='addrolebutton' class='rightarrow' (click)='removeRoleFromUser()'></div>
+                <div id='removerolebutton' class='leftarrow' (click)='addRoleToUser()'></div>          
+            </td>
+            <td class="td-top-align">
+                <jqxGrid id="jqxgridallrolerusers" #gridallrolerusers [width]="'100%'"
+                [columns]="allroleuserscolumns"  [auto-create]='false'
+                [autoheight]="true" [sortable]="true" 
+                [altrows]="true"  [enabletooltips]="true"  [editable]="false" 
+                [selectionmode]="'multiplerows'"             
+                ></jqxGrid>
+            </td>
+          </tr>
+    
+    
+          
+        </table> 
+  
+  </div>
+
+
+
+</jqxTabs>  
+
+<jqxWindow #jqxwindowRole [auto-create]='false' >
+  <div>Edycja</div>
+  <div style="overflow: auto;">
+    <table>
+      <tr>
+        <td class="upowaznieniaTextAreaLabel">Rola</td>
+        <td align="left">
+          <!-- <jqxInput #nazwa [auto-create]='false'></jqxInput> -->
+          <textarea id='rola'  *ngIf="editobject!=null"  [(ngModel)]="editobject.rola" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="upowaznieniaTextAreaLabel">Moduł</td>
+        <td align="left">
+          <textarea id='modul'  *ngIf="editobject!=null"  [(ngModel)]="editobject.modul" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="upowaznieniaTextAreaLabel">Opis</td>
+        <td align="left">
+          <textarea id='opis'  *ngIf="editobject!=null"  [(ngModel)]="editobject.opis" class='jqx-input jqx-widget jqx-widget-content inputformStyle'></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td align="right"></td>
+        <td style="padding-top: 10px;" align="right">
+          <jqxButton #buttonSaveReference [auto-create]='false' (onClick)="buttonSaveClicked()">Zapisz</jqxButton>
+          <jqxButton #buttonCancelReference [auto-create]='false' (onClick)="cancelEditClick()">Anuluj</jqxButton>
+        </td>
+      </tr>
+    </table>  
+  </div>  
+</jqxWindow>
+
+<jqxWindow #jqxwindowDelete [auto-create]='false'>
+  <div>
+      <p id="questionTagWindow"></p>  
+      <p></p>
+      <p>
+        <jqxButton #buttonDelYesReference [auto-create]='false' [width]="40" (onClick)="buttondelyesClicked()">Tak</jqxButton>
+        <jqxButton #buttonDelNoReference [auto-create]='false' [width]="40" (onClick)="buttondelnoClicked()">Nie</jqxButton>
+      </p>
+    </div>
+</jqxWindow> 
+
+<jqxWindow #jqxwindowUserInfo [auto-create]='false'>
+  <div>Historia uprawnień</div>
+  <div>
+    <table class='usershistory'  style="margin-left:auto; margin-right:auto; width:630px;">
+      <tr>
+        <th>Rola</th>
+        <th>Data nadania</th>
+        <th>Nadający</th>
+        <th>Data odebrania</th>
+        <th>Odbierający</th>
+      </tr>
+      <tr *ngFor="let record of userhistory">
+        <td>{{record.rola}}</td>
+        <td>{{record.datanadania}}</td>
+        <td>{{record.nadal}}</td>
+        <td>{{record.dataodebrania}}</td>
+        <td>{{record.odebral}}</td>
+      </tr> 
+    </table>    
+  </div>
+</jqxWindow>
+

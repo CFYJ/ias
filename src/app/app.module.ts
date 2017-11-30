@@ -34,6 +34,7 @@ import { jqxTreeComponent} from 'jqwidgets-ts/angular_jqxtree';
 import { jqxSplitterComponent} from 'jqwidgets-ts/angular_jqxsplitter';
 import { jqxListBoxComponent} from 'jqwidgets-ts/angular_jqxlistbox';
 import { jqxTabsComponent} from 'jqwidgets-ts/angular_jqxtabs';
+//import { jqxDragDropComponent} from 'jqwidgets-ts/angular_jqxdragdrop';
 
 import * as $ from 'jquery'
 
@@ -46,6 +47,10 @@ import { CommonModule } from '@angular/common';
 import { AgmCoreModule, GoogleMapsAPIWrapper, MapsAPILoader } from '@agm/core';
 import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
 import { SecurityComponent } from './security/security.component';
+
+//******************* moduł zamieniający adresy www, email na linki ************/
+import { LinkyModule } from 'angular-linky';
+
 //**********************************************/
 
 export const appRoutes: Routes = [
@@ -84,6 +89,7 @@ export const appRoutes: Routes = [
     jqxSplitterComponent,
     jqxListBoxComponent,
     jqxTabsComponent,
+    //jqxDragDropComponent,
   ],
   imports: [
     BrowserModule,
@@ -96,6 +102,7 @@ export const appRoutes: Routes = [
       apiKey: 'AIzaSyDI-66KWWgzNaqY3O5tccOr5PGcozgS_N0'
     }),  
     AgmJsMarkerClustererModule,
+    LinkyModule,
   ],
   providers: [JwtHelper, AuthGuardService, AuthenticationService, KontaktyService, MessageService, SimpleGlobal,UpowaznieniaService],
   bootstrap: [AppComponent]

@@ -32,6 +32,7 @@ export class NavbarComponent implements OnInit {
   logout() {
     this.auth.logout();
     //this._router.navigateByUrl('/login');
+    //this._router.navigate(['/kontakty']);
   }
 
   showInfo(){
