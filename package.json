@@ -24,12 +24,14 @@
     "@angular/platform-browser": "^4.2.2",
     "@angular/platform-browser-dynamic": "^4.2.2",
     "@angular/router": "^4.2.2",
+    "@types/snapsvg": "^0.4.30",
     "angular-linky": "^1.2.2",
     "bourbon": "^4.3.4",
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
     "js-marker-clusterer": "^1.0.0",
     "rxjs": "^5.1.0",
+    "snapsvg": "^0.5.1",
     "zone.js": "^0.8.4"
   },
   "devDependencies": {

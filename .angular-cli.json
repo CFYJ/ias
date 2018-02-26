@@ -55,7 +55,8 @@
       "./jqwidgets/globalization/globalize.js",
       "./jqwidgets/jqxwindow.js",
       "./jqwidgets/jqxnotification.js",
-      "./scripts/login.js"
+      "./scripts/login.js",
+      "../node_modules/snapsvg/dist/snap.svg-min.js"
     ],
     "environmentSource": "environments/environment.ts",
     "environments": {
