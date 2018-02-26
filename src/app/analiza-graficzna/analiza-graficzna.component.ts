@@ -73,8 +73,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         // let tmp_p = this.svg.createSVGPoint();
         // tmp_p.x = event.offsetX*(1/this.scale)+vbb.x;
         // tmp_p.y = event.offsetY*(1/this.scale)+vbb.y; 
-        // var t =this.s.rect(tmp_p.x, tmp_p.y,5,5);
-        // t.attr({'fill':'orange'});
+        let vb =  this.s.attr('viewBox');
+        var t =this.s.rect( event.offsetX*(1/this.scale)+vb.x,event.offsetY*(1/this.scale)+vb.y,5,5);
+        t.attr({'fill':'green'});
   
   
         if(event['target'].id=="svgCanvas"){
