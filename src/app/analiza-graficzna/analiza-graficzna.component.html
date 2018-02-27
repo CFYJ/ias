@@ -21,7 +21,7 @@
         
           <circle (dblclick)="g_mousedblclick($event)"  id="wasl2" cx="250" cy="250" r="40" stroke="green" stroke-width="4" fill="yellow"/>  
           <rect (dblclick)="g_mousedblclick($event)"  id="wasl3" x="50" y="50" width="40" height="30"  stroke="green" stroke-width="4" fill="yellow"/>  
-          <text x="250" y="300">testdfhhhh  dfdfhdf dfdhdfh dfhdh</text>
+          <text id='testtext'  x="250" y="300">testdfhhhh  dfdfhdf dfdhdfh dfhdh</text>
         
         </svg>
 
@@ -30,14 +30,15 @@
 <!-- panel 3--> 
     <div>
         <button (click)="wyczysc()">wyczysc</button>
-        <button (click)="selectedShape='rect'">Kwadrat</button>
-        <button (click)="selectedShape='circle'">Koło</button>
-        <button (click)="selectedShape='line'">Strzałka</button>
+        <button (click)="selectShape('rect')">Kwadrat</button>
+        <button (click)="selectShape('circle')">Koło</button>
+        <button (click)="selectShape('line')">Strzałka</button>
         <button (click)="saveImage()">Zapisz</button>
         
         <button (click)="test()">test</button>
      <label>startx: {{startY}}</label>
      <label>starty: {{startY}}</label>
+     <input/>
     </div>
   </jqxSplitter>
 </div>

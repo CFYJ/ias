@@ -45,7 +45,12 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.grafyTableSplitter.createComponent();
 
     document.addEventListener('keyup', (event:any)=>{this.g_keypress(event)});
+
+    //ocument.getElementById('testtext').getComputedTextLength();
+    console.log(this.svg.getElementById('testtext').getComputedTextLength());
+
   }
+
 
 
   selected: any=null;
@@ -73,9 +78,11 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         // let tmp_p = this.svg.createSVGPoint();
         // tmp_p.x = event.offsetX*(1/this.scale)+vbb.x;
         // tmp_p.y = event.offsetY*(1/this.scale)+vbb.y; 
-        let vb =  this.s.attr('viewBox');
-        var t =this.s.rect( event.offsetX*(1/this.scale)+vb.x,event.offsetY*(1/this.scale)+vb.y,5,5);
-        t.attr({'fill':'green'});
+
+
+        // let vb =  this.s.attr('viewBox');
+        // var t =this.s.rect( event.offsetX*(1/this.scale)+vb.x,event.offsetY*(1/this.scale)+vb.y,5,5);
+        // t.attr({'fill':'green'});
   
   
         if(event['target'].id=="svgCanvas"){
@@ -192,6 +199,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
           }
   
           this.linesContainer.updatePos($("#"+this.selected.id));
+
           // var m =(this.s.select("#"+this.selected.id)).transform().localMatrix.split();
           // for(var i in m)
           //   console.log("m:"+m[i]);
@@ -219,22 +227,29 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         if(event['target'].id!="svgCanvas"){
           //console.log('p');
           //console.log(event['target'].id);
+
+
+          let vbb =  this.s.attr('viewBox');
+          let tmp_p = this.svg.createSVGPoint();
+          tmp_p.x = event.offsetX*(1/this.scale)+vbb.x;
+          tmp_p.y = event.offsetY*(1/this.scale)+vbb.y;
+
   
-          let obj= this.getelementInPoint(event.offsetX, event.offsetY);
-          //console.log(obj);
-          //console.log('hhhh '+obj.attr('id'));
-          if(obj)
-          this.linesContainer.setEndLine(obj.attr('id'), this.newline);
-          
-          this.s.append(Snap.select(obj.attr('id')));
+          //let obj= this.getelementInPoint(event.offsetX, event.offsetY);
+          let obj= this.getelementInPoint(tmp_p.x, tmp_p.y);
+
+          if(obj){
+            this.linesContainer.setEndLine(obj.attr('id'), this.newline);
+            //this.newline  =null;        
+            this.s.append(Snap.select('#'+obj.attr('id')));    
+          }
   
-         // console.log(obj.attr('id'));
-  
-        }
+
+        }      
       }
   
-      this.selectedShape = null;
-      // if(this.isDragged)
+      //this.selectedShape = null;
+   
       this.selected = null;
       this.isDragged = false;
   
@@ -364,7 +379,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       this.selected = shape;
     
       this.isDrawing = false;
-      this.selectedShape = null;
+      //this.selectedShape = null;
       this.resize = true;
   
       //this.selected.transform('s'+this.scale);
@@ -397,6 +412,12 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   
     }
   
+    selectShape(shape: string){
+      if(this.selectedShape==shape)
+        this.selectedShape = null;
+      else
+        this.selectedShape = shape;
+    }
   
     //#region help functions
   
@@ -483,8 +504,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
                     rez = tmpobject;
                     break;
               }
-        });
-        console.log(rez);
+        });     
         return rez;
       }
     
