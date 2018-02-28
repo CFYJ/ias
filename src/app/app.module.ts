@@ -33,7 +33,9 @@ import { jqxFileUploadComponent} from 'jqwidgets-ts/angular_jqxfileupload';
 import { jqxTreeComponent} from 'jqwidgets-ts/angular_jqxtree';
 import { jqxSplitterComponent} from 'jqwidgets-ts/angular_jqxsplitter';
 import { jqxListBoxComponent} from 'jqwidgets-ts/angular_jqxlistbox';
-import { jqxTabsComponent} from 'jqwidgets-ts/angular_jqxtabs';
+import { jqxTabsComponent} from 'jqwidgets-ts/angular_jqxtabs'; 
+import { jqxColorPickerComponent} from 'jqwidgets-ts/angular_jqxcolorpicker';
+import { jqxDropDownButtonComponent } from 'jqwidgets-ts/angular_jqxdropdownbutton';
 //import { jqxDragDropComponent} from 'jqwidgets-ts/angular_jqxdragdrop';
 
 import * as $ from 'jquery'
@@ -90,7 +92,9 @@ export const appRoutes: Routes = [
     jqxTreeComponent,
     jqxSplitterComponent,
     jqxListBoxComponent,
-    jqxTabsComponent,
+    jqxTabsComponent,  
+    jqxDropDownButtonComponent,
+    jqxColorPickerComponent,
     AnalizaGraficznaComponent,
     //jqxDragDropComponent,
   ],

@@ -1,3 +1,38 @@
-text{
+.text{
     pointer-events: none;
 }
+
+
+.button {
+
+    border: none;
+    color: white;
+    padding: 2px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    /*margin: 4px 2px;*/
+    margin-right: 1px;
+    border-radius: 5px;
+    width:65px;
+    height:45px;
+  }
+
+.button:hover{
+    background-color: rgb(122, 226, 216);
+  }
+.button-highlighted{
+    background-color:rgb(62, 208, 245);
+}
+
+.buttonshape{
+    background-color:white;
+    border: solid black 1px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
