@@ -141,6 +141,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     id:'id',
     url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaLista',
 
+    //#region paging
     // url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaListaPaged',
     // root: 'rows',
     // beforeprocessing: function(data)
@@ -169,6 +170,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
 
     //   this.grid.updatebounddata();
     // },
+    //#endregion
 
     addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
       const t = JSON.stringify(rowdata);
@@ -285,7 +287,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     columnsheight:30,
     theme: 'metro',
 
-    source: this.dataAdapter,
+    //source: this.dataAdapter,
 
     pageable: true,
     // virtualmode: true,    
