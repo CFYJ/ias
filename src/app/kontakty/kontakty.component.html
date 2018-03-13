@@ -116,8 +116,8 @@
         <div id="notificationContent"></div>
       </jqxNotification>
 
-      <jqxButton *ngIf="authService.checkIfUserBelongsToITStaff()" #buttonReference2 [auto-create]='false' (onClick)="button2Clicked()">Wstaw nowy rekord</jqxButton>
-
+      <jqxButton *ngIf="authService.checkIfUserIsInRole('kontakty_administrator')" #buttonReference2 [auto-create]='false' (onClick)="button2Clicked()">Wstaw nowy rekord</jqxButton>
+      <!-- authService.checkIfUserBelongsToITStaff() -->
     </div>
 
     <div>

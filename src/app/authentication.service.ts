@@ -63,6 +63,7 @@ export class AuthenticationService {
     }
   }
 
+ 
   getUserRole(): string {
     if (this.loggedIn) {
       const token = localStorage.getItem('user');
@@ -99,6 +100,7 @@ export class AuthenticationService {
     return false;
   }
 
+//#region metody uprawnien stare Piotrka do kontaktow
   checkIfUserHasPermissionToEdit(dataRow: any): boolean {
     const user = this.getUser();
     const userData = this.getUserData();
@@ -123,6 +125,8 @@ export class AuthenticationService {
     }
     return false;
   }
+
+  //#endregion
 
   login(user) {
     const headers = new Headers();

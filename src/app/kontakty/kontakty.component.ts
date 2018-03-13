@@ -498,7 +498,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
         return 'Edycja';
       },
     },
-    { text: 'Login', datafield: 'login', width: 100, hidden: !this.authService.checkIfUserBelongsToITStaff() },
+    { text: 'Login', datafield: 'login', width: 100, hidden: !this.authService.checkIfUserIsInRole('kontakty_administrator') },
     { text: 'Nazwisko', datafield: 'nazwisko', width: 100 },
     { text: 'Imię', datafield: 'imie', width: 100 },
     { text: 'Telefon', datafield: 'telefon', width: 100 },
@@ -674,7 +674,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
 
     this.mySaveButton1.createComponent(buttonOptions);
     this.myCancelButton1.createComponent(buttonOptions);
-    if (this.authService.checkIfUserBelongsToITStaff()) { this.myInsertButton1.createComponent(buttonOptions); }
+    if (this.authService.checkIfUserIsInRole('kontakty_administrator')) { this.myInsertButton1.createComponent(buttonOptions); }
 
     this.msgNotification.createComponent();
     this.myTree.createComponent();
@@ -695,11 +695,22 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
       console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
       if (this.authService.loggedIn()) {
         const datarow = event.args.row.bounddata;
-        if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {
+        // if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {
+        //   this.setDropDownValues(datarow);
+        //   this.editWindow.title('Edycja');
+        //   this.editWindow.open();
+        // } 
+
+        //console.log(datarow.wydzial+' '+this.authService.getUserData().Login);
+
+        if (this.authService.checkIfUserIsInRole('kontakty_administrator') || 
+        (this.authService.checkIfUserIsInRole('kontakty_kierownik') && this.authService.getUserData().Wydzial==datarow.wydzial && this.authService.getUserData().Pion==datarow.pion) ||
+        (this.authService.getUserData().Login==datarow.login)) {
           this.setDropDownValues(datarow);
           this.editWindow.title('Edycja');
           this.editWindow.open();
-        } else {
+        } 
+        else {
           $('#notificationContent').html('Możesz edytować jedynie swoje dane');
           this.msgNotification.open();
         }
