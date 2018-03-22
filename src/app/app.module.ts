@@ -51,6 +51,7 @@ import { SecurityComponent } from './security/security.component';
 //******************* moduł zamieniający adresy www, email na linki ************/
 import { LinkyModule } from 'angular-linky';
 import { AnalizaGraficznaComponent } from './analiza-graficzna/analiza-graficzna.component';
+import { InterpretacjeComponent } from './interpretacje/interpretacje.component';
 
 //**********************************************/
 
@@ -65,6 +66,7 @@ export const appRoutes: Routes = [
   { path: 'upowaznienia', component: UpowaznieniaComponent },
   { path: 'security', component: SecurityComponent},
   { path: 'analizagraficzna', component: AnalizaGraficznaComponent},
+  { path: 'interpretacje', component: InterpretacjeComponent},
 ];
 
 @NgModule({
@@ -92,6 +94,7 @@ export const appRoutes: Routes = [
     jqxListBoxComponent,
     jqxTabsComponent,
     AnalizaGraficznaComponent,
+    InterpretacjeComponent,
     //jqxDragDropComponent,
   ],
   imports: [

@@ -7,6 +7,8 @@
   <a [routerLink]="['/kontakty']"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Kontakty</a>
   <a [routerLink]="['/upowaznienia']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Upoważnienia w aplikacjach</a>
   <a  *ngIf="auth.checkIfUserIsInRole('Grafy_admin')" [routerLink]="['/analizagraficzna']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Analiza graficzna</a>
+  <a  *ngIf="auth.checkIfUserIsInRole('Interpretacje')" [routerLink]="['/interpretacje']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Interpretacje</a>
+
 
   <div  class="logo">WISKAS</div>
   <a [routerLink]="['/login']" *ngIf="!auth.loggedIn()" style="float:right;" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Logowanie</a>
