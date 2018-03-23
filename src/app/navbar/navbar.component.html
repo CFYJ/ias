@@ -6,9 +6,9 @@
   <a *ngIf="auth.checkIfUserIsInRole('system_admin')" [routerLink]="['/security']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Moduł administracyjny</a>
   <a [routerLink]="['/kontakty']"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Kontakty</a>
   <a [routerLink]="['/upowaznienia']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Upoważnienia w aplikacjach</a>
-  <a  *ngIf="auth.checkIfUserIsInRole('Grafy_admin')" [routerLink]="['/analizagraficzna']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Analiza graficzna</a>
-  <a  *ngIf="auth.checkIfUserIsInRole('Interpretacje')" [routerLink]="['/interpretacje']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Interpretacje</a>
-
+  <a  *ngIf="auth.checkIfUserIsInRole('grafy_admin')" [routerLink]="['/analizagraficzna']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Analiza graficzna</a>
+  <a  [routerLink]="['/interpretacje']"  *ngIf="auth.checkIfUserIsInRole('interpretacje')" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Interpretacje</a>
+  <!-- *ngIf="auth.checkIfUserIsInRole('Interpretacje')" -->
 
   <div  class="logo">WISKAS</div>
   <a [routerLink]="['/login']" *ngIf="!auth.loggedIn()" style="float:right;" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Logowanie</a>
@@ -23,20 +23,24 @@
   <div style="overflow: hidden; padding:10px">
     <table>
       <tr>
-       <p align="justify"><strong>WISKAS</strong> - wielomodułowy informatyczny system KAS przeznaczony dla pracowników KAS w województwie warmińsko-mazurskim.</p>
-       <p>
+        <p align="justify"><strong>WISKAS</strong> - wielomodułowy informatyczny system KAS przeznaczony dla pracowników KAS w województwie warmińsko-mazurskim.</p>
+        <p>
           <strong>Obsługa systemu: </strong> </p>
           <ul>
             <li align="justify">System dostępny za pomocą przeglądarki internetowej. Logowanie do sytemu odbywa się z wykorzystaniem domeny MF. Część funkcjonalności systemu dostępna jest dopiero po zalogowaniu.</li>
-            <li align="justify">Tabele wykorzystane w systemie posiadają podstawowe funkcjonalności takie jak wyszukiwanie, sortowanie. Aby wyszukać rekordy w tabeli należy wpisać interesującą frazę w polu właściwego nagłówka kolumny. W celu posortowanie należy kliknąć  w nagłówek kolumny.</li>
+            <li align="justify">Tabele wykorzystane w systemie posiadają podstawowe funkcjonalności takie jak wyszukiwanie, sortowanie. Aby wyszukać rekordy w tabeli należy wpisać interesującą frazę w polu właściwego nagłówka kolumny. W celu posortowania należy kliknąć w nagłówek kolumny.</li>
           </ul>
 
-       <p align="justify"><strong>Kontakty: </strong><span>moduł zawierający bazę kontaktów pracowników
-          KAS w województwie warmińsko-mazurskim oraz mapę zawierającą dane kontaktowe jednostek KAS w Polsce. 
-          Każdy z pracowników indywidualnie dba o aktualność danych na swój temat. Edycja danych możliwa jest po zalogowaniu do systemu.</span>
+        <p align="justify"><strong>Kontakty: </strong><span>moduł zawierający bazę kontaktów pracowników
+            KAS w województwie warmińsko-mazurskim oraz mapę zawierającą dane kontaktowe jednostek KAS w Polsce. 
+            Każdy z pracowników indywidualnie dba o aktualność danych na swój temat. Edycja danych możliwa jest po zalogowaniu do systemu.</span>
         </p>
         <p align="justify">
           <strong>Upoważnienia w aplikacjach: </strong><span>moduł informacyjny dotyczący sposobów nadawania uprawnień w aplikacjach działających w instytucji.</span>
+        </p>
+        <p align="justify">
+            <strong>Interpretacje: </strong><span>moduł zawierający interpretacje indywidualne podatników (odpowiednik SIP) bez anonimizacji danych.
+               Baza danych modułu opiera się o pliki interpretacji przekazywane przez MF. <font color="red">Dostęp do modułu możliwy po zalogowaniu, tylko dla uprawnionych osób.</font></span>
         </p>
        
        
