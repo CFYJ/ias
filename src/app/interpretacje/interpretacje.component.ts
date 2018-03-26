@@ -40,6 +40,9 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
       
     });
 
+    $(()=>{ $("#argInput").keydown((event)=>{ if(Number(event.keyCode)==13)
+      this.findInterpretacje();})});
+
   }
 
   //#region skladniki grida
@@ -94,15 +97,19 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
   [
     { text: '', datafield: 'edycja', width: 100, 
     filterable: false,
-    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {    
-      return '<span style="margin: 4px; float: left; ">Pokaż</span>';
+    cellsrenderer:  (row, columnfield, value, defaulthtml, columnproperties, rowdata)=> {    
+      // return '<span style="margin: 4px; float: left; "><a href="'+this.sg['SERVICE_URL'] + 'interpretacje/FileDownload/'+rowdata.id+'" target="_blank">Pobierz</a></span>';
+     return '<span style="margin: 4px; float: left; ">Pokaż</span>';
      },
     },
     { text: 'Nazwa/sygnatura', datafield: 'nazwa',  width: 320},
-    { text: 'Nip/pesel', datafield: 'nipy',  width: 200},
+    { text: 'Nip/pesel', datafield: 'nipy',  width: 200,
+      cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {      
+        return '<span style="margin: 4px; float: left; ">'+value.replace(';','; ')+'</span>';
+      },
+    },
     { text: 'Data dodania', datafield: 'data', width: 200,
-      cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {  
-        console.log(value);  
+      cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {      
         return '<span style="margin: 4px; float: left; ">'+value.substr(0,10)+'</span>';
       },
     },
@@ -131,7 +138,8 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
   arg: string="";
   findInterpretacje(){    
     if(this.typ && this.arg){
-      this.myGrid.beginupdate();
+      //this.myGrid.updating = true;
+      this.myGrid.showloadelement();
       $.ajax({
         cache: false,
         dataType: 'json',
@@ -141,18 +149,16 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
         success: (data: any, status: any, xhr: any) =>{           
           this.source['localdata']=data;
           this.dataAdapter = new $.jqx.dataAdapter(this.source);
-          this.myGrid.refresh();
-          this.myGrid.endupdate();
+          //this.myGrid.refresh();
+          this.myGrid.hideloadelement();
         },
         error: function (jqXHR: any, textStatus: any, errorThrown: any) {
           alert(textStatus + ' - ' + errorThrown);  
-          this.myGrid.endupdate();
+          this.myGrid.hideloadelement();
         }
       });
     }
   }
-
-
 
 
   fileupload(){
