@@ -9,6 +9,8 @@ import { forEach } from '@angular/router/src/utils/collection';
 import { jqxWindowComponent } from 'jqwidgets-ts/angular_jqxwindow';
 import { NoConflictStyleCompatibilityMode } from '@angular/material/typings/core/compatibility/compatibility';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
+
+import {Router} from "@angular/router";
 //import { jqxDragDropComponent} from 'jqwidgets-ts/angular_jqxdragdrop';
 
 @Component({
@@ -44,7 +46,11 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
   @ViewChild('jqxwindowUserInfo') historyWindow: jqxWindowComponent;
 
 
-  constructor(private sg: SimpleGlobal, private authService: AuthenticationService) { }
+
+  constructor(private sg: SimpleGlobal, private authService: AuthenticationService, private router:Router) {
+    if(!authService.checkIfUserIsInRole('system_admin'))      
+      this.router.navigate(['/login']);
+   }
 
   ngOnInit() {
   }
@@ -734,9 +740,9 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
       usersuserscolumns: any[] =
       [
     
-        { text: 'Nazwa', datafield: 'nazwa',  width: 250},
+        { text: 'Nazwa', datafield: 'nazwa',  width: 150},
         { text: 'Wydział', datafield: 'wydzial',  width: 270},
-        { text: 'Login', datafield: 'login',  width: 150},
+        { text: 'Login', datafield: 'login',  width: 100},
         { text: 'Historia', datafield: 'usershistory', width: 'auto',    
           filterable: false, cellsalign: 'right',
           cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {

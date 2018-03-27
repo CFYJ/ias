@@ -12,6 +12,8 @@ import { jqxWindowComponent } from 'jqwidgets-ts/angular_jqxwindow';
 import { MessageService } from './../message.service';
 import { AuthenticationService } from './../authentication.service';
 
+import {Router} from "@angular/router";
+
 
 @Component({
   selector: 'app-interpretacje',
@@ -26,7 +28,10 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
 
 
   constructor( private authService: AuthenticationService,private messageService: MessageService,
-    private sg: SimpleGlobal, private sanitizer: DomSanitizer) { }
+    private sg: SimpleGlobal, private sanitizer: DomSanitizer, private router:Router) {
+      if(!authService.checkIfUserIsInRole('interpretacje'))      
+        this.router.navigate(['/login']);
+     }
 
   ngOnInit() {
     this.fileUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
