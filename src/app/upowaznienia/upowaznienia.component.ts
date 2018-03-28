@@ -194,6 +194,8 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     },
     updaterow: (rowid: any, rowdata: any, commit: any) => {
       const t = JSON.stringify(rowdata);
+
+      if(this.isEditing)
       $.ajax({
         cache: false,
         dataType: 'json',
@@ -201,7 +203,8 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
         url: this.sg['SERVICE_URL'] + 'Upowaznienia/UpdateUpowaznienia/' + rowdata.id,
         data: t,
         type: 'PUT',
-        success: function (data: any, status: any, xhr: any) {               
+        success:  (data: any, status: any, xhr: any)=> { 
+          this.isEditing = false;               
           commit(true);           
         },
         error: function (jqXHR: any, textStatus: any, errorThrown: any) {
@@ -361,7 +364,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     
   };
 
-
+isEditing: boolean = false;
   buttonSaveClicked(){
     // alert($('#nazwa').val());
     //console.log('wynik:'+this.editobject['nazwa']);
@@ -396,7 +399,8 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     if (this.isInsertOperation) {
       row.id = 0;     
       this.myGrid.addrow(null, row, 'top');
-    } else {    
+    } else {   
+      this.isEditing = true; 
       this.myGrid.updaterow(this.myGrid.getrowid(rowindex), row);
     }
     this.selectedRow = row;

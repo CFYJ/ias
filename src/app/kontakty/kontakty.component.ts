@@ -464,6 +464,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
     },
     updaterow: (rowid: any, rowdata: any, commit: any) => {
       const t = JSON.stringify(rowdata);
+      if(this.saveEdited)
       $.ajax({
         cache: false,
         dataType: 'json',
@@ -471,7 +472,8 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
         url: this.sg['SERVICE_URL'] + 'Kontakties/PutKontakty/' + rowdata.id,
         data: t,
         type: 'PUT',
-        success: function (data: any, status: any, xhr: any) {
+        success:  (data: any, status: any, xhr: any) =>{
+          this.saveEdited = false;
           commit(true);
         },
         error: function (jqXHR: any, textStatus: any, errorThrown: any) {
@@ -588,7 +590,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
   // }
 
 
-
+  saveEdited : boolean=false;
   buttonClicked() {
     let data = { id: null, login: null };
     let rowindex: number;
@@ -612,6 +614,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
       row.login = this.myLogin.val();
       this.myGrid.addrow(null, row, 'top');
     } else {
+      this.saveEdited = true;
       this.myGrid.updaterow(this.myGrid.getrowid(rowindex), row);
     }
 
