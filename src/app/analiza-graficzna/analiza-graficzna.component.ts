@@ -438,6 +438,36 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     // a.download = 'plot.svg';
     // a.target   = '_blank';
     // document.body.appendChild(a); a.click(); document.body.removeChild(a);
+
+    // var img    = this.svg.toDataURL("image/png");		
+		// var myWindow = window.open("", "MsgWindow", "width=1000px, height=1000px");
+    // myWindow.document.write('<img src="'+img+'"/>');
+    
+
+    //var a      = document.createElement('a');
+    
+    // a.href     = 'data:image/svg+xml;utf8,' + encodeURI($('#svgCanvas')[0].outerHTML);
+    // a.download = 'plot.svg';
+    // a.target   = '_blank';
+    
+
+    
+
+     let serializer = new XMLSerializer();
+    console.log(window.btoa(encodeURI(this.svg)));
+
+     let imgb = new Image();
+    // imgb.src = serializer.serializeToString(this.svg);
+    imgb.src = window.btoa(encodeURI(this.svg));
+    var canvas = document.createElement("canvas");
+    //document.body.appendChild(canvas);
+    canvas.getContext("2d").drawImage(imgb,0,0,800,1000);
+		var img    = canvas.toDataURL("image/png");
+		
+		var myWindow = window.open("", "MsgWindow", "width=1000px, height=1000px");
+		myWindow.document.write('<img src="data:image/png;base64,'+img+'"/>');
+
+    //document.body.appendChild(a); a.click(); document.body.removeChild(a);
   }
 
   //#region tree
@@ -566,7 +596,8 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         data:t,
         type: 'POST',
         success: (data: any, status: any, xhr: any)=> {
-          this.generateTreeSource();                   
+          this.generateTreeSource();   
+          this.treeSelected=null;
         },
         error: function (jqXHR: any, textStatus: any, errorThrown: any) {
           alert(textStatus + ' - ' + errorThrown);
@@ -1002,6 +1033,7 @@ export class GObjectContainerClass{
 
   add(gobject: GObjectBaseClass){
     this.objectsContainer.push(gobject);
+    //this.parent.selected = gobject;
   }
 
   

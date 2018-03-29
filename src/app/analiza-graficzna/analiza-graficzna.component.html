@@ -30,9 +30,10 @@
       </td>
     </tr>
     <tr>
-      <td><button [disabled]="treeSelected.typ=='graf'" (click)="newGraf()">Dodaj</button></td>
-      <td><button [disabled]="treeSelected.id==-1"  (click)="deleteGraf()">Usuń</button></td>
-      <td><button [disabled]="treeSelected.typ!=='graf'" (click)="saveGraf()">Zapisz</button></td>
+      <td><button [disabled]="treeSelected?.typ=='graf'" (click)="newGraf()">Dodaj</button></td>
+      <!-- <td><button [disabled]="treeSelected?.id==-1"  (click)="deleteGraf()">Usuń</button></td> -->
+      <td><button [disabled]="!treeSelected"  (click)="deleteGraf()">Usuń</button></td>
+      <td><button [disabled]="treeSelected?.typ!=='graf'" (click)="saveGraf()">Zapisz</button></td>
     </tr>
 
    
@@ -54,7 +55,7 @@
           
           <tr>
             <td ><button (click)="wyczysc()">wyczysc</button></td>
-            <td ><button (click)="saveImage()">Zapisz</button></td>
+            <td ><button (click)="saveImage()">zapisz grafikę</button></td>
             <td>
               <jqxDropDownButton id='canvasButton' #canvasColor style="margin: 3px; float: left" [width]='55' [height]='22'>
                 <div style="padding: 3px;">          
@@ -77,6 +78,7 @@
           <tr>
             <td >wartosc</td>
             <td colspan="3"><input id='g_displaytext'  value={{selectedText}} (keyup)="textmodyfied($event)"/></td>
+            <!-- {{selectedText}} -->
             
           </tr>
           <tr>
