@@ -6,7 +6,7 @@
   <a *ngIf="auth.checkIfUserIsInRole('system_admin')" [routerLink]="['/security']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Moduł administracyjny</a>
   <a [routerLink]="['/kontakty']"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Kontakty</a>
   <a [routerLink]="['/upowaznienia']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Upoważnienia w aplikacjach</a>
-  <a  [routerLink]="['/analizagraficzna']"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Analiza graficzna</a>
+  <a  [routerLink]="['/analizagraficzna']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Grafy</a>
   <!-- *ngIf="auth.checkIfUserIsInRole('Grafy_admin')" -->
   <div  class="logo">WISKAS</div>
   <a [routerLink]="['/login']" *ngIf="!auth.loggedIn()" style="float:right;" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Logowanie</a>

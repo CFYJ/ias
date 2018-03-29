@@ -1,5 +1,14 @@
-.text{
-    pointer-events: none;
+.gObject:hover{
+    cursor:pointer;
+    fill:silver !important;
+}
+// .text{
+//     /*pointer-events: none;*/
+// }
+
+.jqx-window-content ,.jqx-window-header,.jqx-grid-header, .jqx-grid-column-header
+{
+    font-size: 16px !important;
 }
 
 
@@ -15,9 +24,22 @@
     /*margin: 4px 2px;*/
     margin-right: 1px;
     border-radius: 5px;
-    width:65px;
-    height:45px;
   }
+
+.buttonB{
+    color: black !important;
+    padding:8px !important;  
+    /*height:35px !important;*/
+  
+}
+.buttonB:disabled{
+    color:white;
+}
+.buttonImg{
+    height:45px;
+    width:55px;
+    float:left;
+}
 
 .button:hover{
     background-color: rgb(122, 226, 216);
@@ -36,3 +58,104 @@
     font-size: 16px;
 }
 
+button:disabled,
+button[disabled]{
+    color:white !important;
+}
+
+.infobutton {
+    background-color: skyblue;
+    border: none;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    /*display: inline-block;*/
+    float:right;
+    font-size: 16px;
+    /*margin: 4px 2px;*/
+    margin-right: 10px;
+    margin-top: 5px;
+    border-radius: 50%;
+ 
+  }
+  .infobutton:hover {
+    background-color: #4CAF50;
+  }
+
+
+
+
+.leftarrow{
+    right:-18px;
+    //top:270px;
+    height:15px;
+    //line-height:30px;
+    /*vertical-align:middle;*/
+    text-align:center;
+    padding:0 10px;
+    margin-top: 20px;
+    color:#ffffff;
+    background-color:#1faeff;
+    position:relative;
+    display:inline-block;
+    color: #1faeff;
+
+}
+.leftarrow:before{
+    left:-20px;
+    top:-7px;
+    position:absolute;    
+    content:" ";
+    width: 0px;
+    height: 0px;    
+    border-style: solid;
+    border-width: 15px 20px 15px 0;
+    border-color: transparent #1faeff transparent transparent ;
+}
+.leftarrow:hover{
+    background-color:green;
+}
+.leftarrow:hover:before{
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 15px 20px 15px 0;
+    border-color: transparent green transparent transparent ;
+}
+
+
+.rightarrow{
+    //top:150px;
+    height:15px;
+    //line-height:30px;
+    //vertical-align:middle;
+    text-align:center;
+    padding:0 10px;
+    color:#ffffff;
+    background-color:#1faeff;
+    position:relative;
+    display:inline-block;
+    color: #1faeff;//#9b9ea0;
+}
+.rightarrow:after{
+    top:-7px;
+    position:absolute;
+    right:-20px;
+    content:" ";
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 15px 0 15px 20px;
+    border-color: transparent transparent transparent #1faeff;
+}
+.rightarrow:hover{
+    background-color:green;
+}
+.rightarrow:hover:after{
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 15px 0 15px 20px;
+    border-color: transparent transparent transparent green;
+}

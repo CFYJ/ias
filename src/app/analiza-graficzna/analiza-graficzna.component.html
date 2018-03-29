@@ -1,155 +1,299 @@
-<jqxSplitter #grafySceletonSplitter  [height]="'99%'" width="'100%'"
-[panels]="[{size:250}, { min:800}]">
-<div>
-  <table style="width:100%">
-    <tr>
-      <td colspan="3">
-          <!-- [source]="treeSource" -->
-          <jqxTree #myTree (onSelect)="myTreeOnSelect($event)"
-          [width]="'100%'" [height]="200"  >
-            <ul>
-              <li>l1
-                <ul>
-                  <li>l1.1</li>
-                  <li>l1.2</li>
-                </ul>
-              </li>
-              <li>l2</li>
-              <li>l3
-                <ul>
-                  <li>l3.1
-                    <ul>
-                      <li>l3.1.1</li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-                
-            </ul>
-          </jqxTree>
-      </td>
-    </tr>
-    <tr>
-      <td><button [disabled]="treeSelected?.typ=='graf'" (click)="newGraf()">Dodaj</button></td>
-      <!-- <td><button [disabled]="treeSelected?.id==-1"  (click)="deleteGraf()">Usuń</button></td> -->
-      <td><button [disabled]="!treeSelected"  (click)="deleteGraf()">Usuń</button></td>
-      <td><button [disabled]="treeSelected?.typ!=='graf'" (click)="saveGraf()">Zapisz</button></td>
-    </tr>
-
-   
-  </table>
-</div>
-
-<div>
-    <jqxSplitter #grafyTableSplitter  [height]="'99%'" width="'100%'"
-    [panels]="[{size:300}, {min:800}]">
-      
-    <div>
-        <table >
+<jqxSplitter #grafySceletonSplitter  [height]="'99%'" width="'100%'"  [panels]="[{size:250}, { min:800}]">
+    <!-- [panels]="[{size:250}, { min:800}]" -->
+    <div style="background:skyblue">
+      <table style="width:100%">
           <tr>
-            <td><div class="button" id="bs-rect" (click)="selectShape('rect', $event)"><img id="bs-rect" src="/images/grafy/rect.png" style="width:40px"/></div></td>
-            <td><div class="button" id="bs-circle" (click)="selectShape('circle', $event)"><img id="bs-circle" src="/images/grafy/circle.png" style="width:40px"/></div></td>
-            <td><div class="button" id="bs-line" (click)="selectShape('line', $event)"><img id="bs-line" src="/images/grafy/line.png" style="width:40px"/></div></td>
-            <td> <div class="button" id="bs-text" (click)="selectShape('text', $event)"><img id="bs-text" src="/images/grafy/text.png" style="width:40px"/></div></td>
-          </tr>
-          
-          <tr>
-            <td ><button (click)="wyczysc()">wyczysc</button></td>
-            <td ><button (click)="saveImage()">zapisz grafikę</button></td>
-            <td>
-              <jqxDropDownButton id='canvasButton' #canvasColor style="margin: 3px; float: left" [width]='55' [height]='22'>
-                <div style="padding: 3px;">          
-                    <jqxColorPicker id='canvas' (onColorchange)="colorPickerEvent($event,'canvas')"
-                        [width]='220' [height]='220' [colorMode]='"hue"'>
-                    </jqxColorPicker>          
-                </div>              
-              </jqxDropDownButton>
-
-            </td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colspan="4"><hr></td>
-          </tr>
-          <!-- <tr>
-            <td colspan="2">  <label>startx: {{startY}}</label></td>
-            <td colspan="2"><label>starty: {{startY}}</label></td>           
-          </tr> -->
-          <tr>
-            <td >wartosc</td>
-            <td colspan="3"><input id='g_displaytext'  value={{selectedText}} (keyup)="textmodyfied($event)"/></td>
-            <!-- {{selectedText}} -->
+              <!-- <td><button class="button buttonB" [disabled]="treeSelected?.typ=='graf'" (click)="newGraf()">Dodaj</button></td>    
+              <td><button class="button buttonB" [disabled]="!treeSelected"  (click)="deleteGraf()">Usuń</button></td>
+              <td><button class="button buttonB" [disabled]="treeSelected?.typ!=='graf'" (click)="saveGraf()">Zapisz</button></td>
             
-          </tr>
-          <tr>
-            <td>Wielkość czcionki</td>
-            <td colspan="3"><input  id='g_fontsize' type="number"  value={{selectedFontSize}}  name="points" step="1" (change)="changeFontSize($event)" (click)="changeFontSize($event)"></td>
-          </tr>
-          <tr>
-            <td>Kolor tła</td>
-            <td colspan="3">
-              <jqxDropDownButton #dropDownButton style="margin: 3px; float: left" 
-              [width]='150' [height]='22'>
-              <div style="padding: 3px;">
-          
-                  <jqxColorPicker (onColorchange)="colorPickerEvent($event)"
-                      [width]='220' [height]='220' [colorMode]='"hue"'>
-                  </jqxColorPicker>
-          
-              </div>
-          </jqxDropDownButton>
-          
-            </td>
-          </tr>
-          <tr>
-            <td colspan="4"><hr></td>
-          </tr>
-        </table>
+            
+            [disabled]="treeSelected?.typ=='graf'"
+            -->
+              <button class="button buttonB" (click)="newGraf('Dodaj nowy graf')">Dodaj</button>   
+              <button class="button buttonB" [disabled]="!treeSelected"  (click)="deleteGraf()">Usuń</button>
+              <button class="button buttonB" [disabled]="treeSelected?.role=='obserwator'" (click)="saveGraf()">Zapisz</button>   
+              <!-- [disabled]="treeSelected?.typ!=='graf'"     -->
+            </tr>
+        <tr>
+          <td colspan="3">
+              <!-- [source]="treeSource" -->
+              <jqxTree #myTree (onItemClick)="myTreeOnSelect($event)" [hasThreeStates]="false"
+              [width]="'100%'" [height]="300"  >
+              
+              </jqxTree>
+          </td>
+        </tr>
+
+        <tr>
+          <button class="button buttonB" [disabled]="treeSelected?.typ!=='graf' || treeSelected?.role!='author'" (click)="shareGraf()">Udostępnij</button>
+          <button class="button buttonB" [disabled]="treeSelected?.typ!=='graf'" (click)="cloneGraf()">Utwórz kopię</button>
+        </tr>
       
-          <button (click)="test()">test</button>
+        <tr>
+          <td colspan="2">
+            <jqxGrid #sharesGrid [auto-create]='false' [pageable]="false" [autorowheight]="false"  [columns]="sharesGridcolumns" [source]="sharesGriddataAdapter"  [width]="'100%'" [height]="380"></jqxGrid>
+          </td>
+        </tr>
+
       
-      
-      
+      </table>
     </div>
-    
-    <div>
-        <svg #svgCanvas id="svgCanvas" width="1200" height="800px" style="border: solid 1px black;"
-        (mouseup)="g_mouseup($event)" (mousemove)="g_mousemove($event)" (mousedown)="g_mousedown($event)" (mousewheel)="g_mousewheel($event)" 
-        >
-          <!-- <circle id="wasl" cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" 
-          (mousedown)="g_mousedown($event)" (mousemove)="g_mousemove($event)"  />-->
+  <div>
+      <jqxSplitter #grafyTableSplitter  [height]="'99%'" width="'100%'"
+        [panels]="[{size:280}, {min:800}]">
         
-          <!-- <circle (dblclick)="g_mousedblclick($event)"  id="wasl2" cx="250" cy="250" r="40" stroke="green" stroke-width="4" fill="yellow"/>  
-          <rect (dblclick)="g_mousedblclick($event)"  id="wasl3" x="50" y="50" width="40" height="30"  stroke="green" stroke-width="4" fill="yellow"/>  
-          <text id='testtext' class='text'  x="250" y="300">testdfhhhh  dfdfhdf dfdhdfh dfhdh</text>
-         -->
-        </svg>
-    </div> 
-  </jqxSplitter>
-  
-</div>
+        <div style="background:skyblue">
+            <table width="'100%'">
+              <tr>
+                  <td colspan="4">
+                    <button class="button buttonB" (click)="wyczysc()">Wyczyść</button>
+                    <button class="button buttonB" (click)="saveImage()">Zapisz grafikę</button>
+                    <button class="button buttonB" (click)="loadFile()">Z pliku</button>
+                    <button class="infobutton" (click)="showInfo()">&nbsp;?&nbsp;</button>
+                  </td>      
+              </tr>
+              <tr>
 
+                <td colspan="4">
+                  <div class="button buttonImg" id="bs-rect" (click)="selectShape('rect', $event)"><img id="bs-rect" src="/images/grafy/rect.png" style="width:40px"/></div>
+                  <div class="button buttonImg" id="bs-circle" (click)="selectShape('circle', $event)"><img id="bs-circle" src="/images/grafy/circle.png" style="width:40px"/></div>
+                  <div class="button buttonImg" id="bs-line" (click)="selectShape('line', $event)"><img id="bs-line" src="/images/grafy/line.png" style="width:40px"/></div>
+                  <div class="button buttonImg" id="bs-text" (click)="selectShape('text', $event)"><img id="bs-text" src="/images/grafy/text.png" style="width:40px"/></div>
+                </td>
+              </tr>
+              <tr>
+                <td>Kolor płótna</td>
+                <td colspan="3">
+                  <jqxDropDownButton id='canvasButton' #canvasColor style="margin: 3px; float: left" [width]='150' [height]='22'>
+                    <div style="padding: 3px;">          
+                        <jqxColorPicker id='canvas' (onColorchange)="colorPickerEvent($event,'canvas')"
+                            [width]='220' [height]='220' [colorMode]='"hue"'>
+                        </jqxColorPicker>          
+                    </div>              
+                  </jqxDropDownButton>
+                </td>
+              </tr>
+              
+            
+              <tr>
+                <td colspan="4"><hr></td>
+              </tr>
+              <!-- <tr>
+                <td colspan="2">  <label>startx: {{startY}}</label></td>
+                <td colspan="2"><label>starty: {{startY}}</label></td>           
+              </tr> -->
+              <tr>
+                <td colspan="4">Wyświetlana treść</td>                                      
+              </tr>
+              <tr>
+                <td colspan="3"><textarea id='g_displaytext'  value={{selectedText}} (keyup)="textmodyfied($event)" style="width:99%; height:70px"></textarea></td> 
+              </tr>
+              <tr>
+                <td>Wielkość czcionki</td>
+                <td colspan="3"><input  id='g_fontsize' type="number"  value={{selectedFontSize}}  name="points" step="1" style="width:150px" (change)="changeFontSize($event)" (click)="changeFontSize($event)"></td>
+              </tr>
+              <tr>
+                <td>Kolor Czcionki</td>
+                <td colspan="3">
+                  <jqxDropDownButton #fontColor style="margin: 3px; float: left" 
+                    [width]='150' [height]='22'>
+                    <div style="padding: 3px;">                
+                        <jqxColorPicker (onColorchange)="colorPickerEvent($event, 'font')"
+                            [width]='220' [height]='220' [colorMode]='"hue"'>
+                        </jqxColorPicker>                
+                    </div>
+                  </jqxDropDownButton>              
+                </td>
+              </tr>
+              <tr>
+                <td>Kolor tła</td>
+                <td colspan="3">
+                  <jqxDropDownButton #backgroundColor style="margin: 3px; float: left" 
+                    [width]='150' [height]='22'>
+                    <div style="padding: 3px;">                
+                        <jqxColorPicker (onColorchange)="colorPickerEvent($event,'gobject')"
+                            [width]='220' [height]='220' [colorMode]='"hue"'>
+                        </jqxColorPicker>                
+                    </div>
+                  </jqxDropDownButton>              
+                </td>
+              </tr>
 
+              <tr>
+                  <td colspan="4"><hr></td>
+              </tr>
 
+              <tr>
+                  <td colspan="4">Dodatkowy opis</td>                                      
+                </tr>
+                <tr>
+                  <td colspan="3"><textarea id='g_displaytext'  [ngModel]="selectedGObject?.opis2" (ngModelChange)="selectedGObject.opis2=$event"  style="width:99%; height:400px"></textarea></td>                 
+                </tr>
+             
+          
+            
+            </table>
+          
+              <!-- <button (click)="test($event)">test</button>
+              <input id="file-field"  (change)="test($event)" type="file" > -->
+        </div>
+        
+        <div>
+
+            <svg #svgCanvas id="svgCanvas" width="2400" height="1600px" [ngStyle]="{'background-color': canvasBackgroundColor? canvasBackgroundColor: 'transparent'}"
+            (mouseup)="g_mouseup($event)" (mousemove)="g_mousemove($event)"
+            (mousedown)="g_mousedown($event)" (mousewheel)="g_mousewheel($event)" 
+            >
+
+            </svg>
+        </div> 
+      </jqxSplitter>  
+  </div>
 </jqxSplitter>
 
 
 <jqxWindow #windowNewGraf [auto-create]='false' >
-    <div>
-      <table style="width:100%; border: black solid 1px">
-        <tr>
-          <td><input type="radio" name="typroli" id="typroli" value="graf" checked>Graf</td>          
-          <td><input type="radio" name="typroli" value="katalog">Katalog</td>
-        </tr>
-        <tr>
-          <td>Nazwa</td>          
-          <td><input type="text" id="newRoleName"/></td>
-        </tr>
-        <tr>
-          <td><button (click)="newGrafOk()">Utwórz</button></td>
-          <td><button (click)="newGrafCancel()">Anuluj</button></td> 
-        </tr>         
-      </table>
+    <div style="padding:20px">
+      <div>
+        <div style="margin-top:10px">
+          <input type="radio" [(ngModel)]="newRoleModel.typ" name="typroli" id="typroli" value="graf">Graf        
+          <input type="radio" [(ngModel)]="newRoleModel.typ" name="typroli" value="katalog" style="margin-left:30px">Katalog
+        </div>
+        <div style="margin-top:20px">
+          <label>Nazwa:</label>
+          <input type="text"  [(ngModel)]="newRoleModel.nazwa" style="margin-left:10px"/>     
+          <!-- id="newRoleName"              -->
+        </div>
+          <p id="errormsg" style="color:red; font:bolder;margin-top:20px" *ngIf="newRoleModel.error"><b>Pole nazwa musi być wypełnione!</b></p>
+      </div>
+      <div style="float: right; margin-top: 50px;">
+        <div style="float: right;">
+            <button (click)="newGrafOk()">Utwórz</button>   
+            <button (click)="newGrafCancel()">Anuluj</button>
+        </div>
+      </div>
     </div>
 </jqxWindow>  
     
+
+<!-- [okButton]="'.ok'" [cancelButton]="'.cancel'"  
+ [maxHeight]="280" [maxWidth]="380" [minHeight]="30" [minWidth]="250"-->
+<jqxWindow #questionWindow [auto-create]='false'
+          [width]="470" [height]="355"          
+          [isModal]="true" [modalOpacity]="0.3"
+          [okButton]="'.qok'" [cancelButton]="'.qcancel'" [resizable]="false">
+
+  <div style="height:100%;">
+    <div style="bottom: 40px;overflow: hidden; min-height: 280px;" #windowContent>
+        <div [innerHTML]="questionWindowParams.message" >     </div>
+    </div>
+
+    <div style="float: right; bottom: 10px;">        
+          <jqxButton #okButton class="qok"  *ngIf="questionWindowParams.byes" 
+                    style="display: inline-block; margin-right: 10px;"
+                    [width]="80">
+            {{questionWindowParams.byesval}}
+          </jqxButton>
+          <jqxButton #cancelButton  class="qcancel"  *ngIf="questionWindowParams.bno"
+                    style="display: inline-block;"
+                    [width]="80">               
+            {{questionWindowParams.bnoval}} 
+          </jqxButton>
+   
+    </div>  
+  </div>
+</jqxWindow>  
+
+
+<jqxWindow #shareWindow [auto-create]='false'
+            [width]="870" [height]="480" [title]="'Udostępnianie'"
+          [minHeight]="30" [minWidth]="250"
+           [isModal]="true" [modalOpacity]="0.3"
+           [cancelButton]="'.cancel'" [resizable]="false">
+  <div>
+    <div style="height:400px">
+      <table style="width:100%; height:100%; ">
+        <tr>
+          <td rowspan="3">
+            <jqxGrid #sharedusersGrid 
+            [auto-create]='false'        
+            [columns]="shareduserscolumns"  [width]="400" [height]="380"
+            ></jqxGrid>
+          </td>
+          <td rowspan="3" style="width:40px; vertical-align:center;">
+              <div id='add' class='rightarrow' (click)="shareHandle('remove')"></div>
+              <div id='remove' class='leftarrow' (click)="shareHandle('add')"></div>   
+          </td>
+          <td>
+              <div  style="margin-top:10px;">
+                <label>Wyszukaj osobę: </label>
+                <input style="width:280px; float:right;" [ngModel]="searchShareUser" (keyup)="findUsersToShare($event)"/>
+                <!-- id="searchInput"  -->
+              </div>
+            </td>
+        </tr>
+        <tr> 
+          <td style="height:40px">
+            <div>
+              Jaką rolę przypisać: 
+                <input type="radio" name="userRole" id="userRole" [(ngModel)]="shareType" value="obserwator">Obserwator
+                <input type="radio" name="userRole"  [(ngModel)]="shareType" value="edytor">Edytor
+            </div>
+          </td>          
+        </tr>
+        <tr>
+          <td>
+            <jqxGrid #allusersGrid 
+            [columns]="alluserscolumns" [width]="400"  [height]="300"           
+            [auto-create]='false'                        
+            ></jqxGrid>
+          </td>
+        </tr>
+  
+      </table>
+    </div>
+
+
+    <div style="float: right; margin-top: 15px;">
+      <div style="float: right;">
+  
+          <jqxButton #cancelButton class="cancel"
+                    style="display: inline-block;"
+                    [width]="80">
+            Zamknij
+          </jqxButton>
+      </div>
+    </div>
+  </div>
+</jqxWindow>  
+
+<jqxWindow #fileWindow [auto-create]='false'
+          [width]="670" [height]="655"          
+          [isModal]="true" [modalOpacity]="0.3" 
+          [okButton]="'.fok'" [resizable]="true">
+
+  <div style="height:100%;">
+    <div style="bottom: 20px;overflow: hidden; min-height: 580px;" #windowContent>
+        <input id="file-field"  (change)="test($event)" type="file" >
+
+        <div [innerHTML]="fileContent"></div>
+
+    
+      
+
+
+
+
+    </div>
+
+    <div style="float: right; bottom: 10px;">        
+          <jqxButton #okButton class="fok"  *ngIf="questionWindowParams.byes" 
+                    style="display: inline-block; margin-right: 10px;"
+                    [width]="80">
+            Zakończ
+          </jqxButton>
+
+    </div>  
+  </div>
+</jqxWindow> 

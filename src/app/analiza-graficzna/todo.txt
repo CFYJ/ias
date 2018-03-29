@@ -1,0 +1,22 @@
++drzewko - wyswietlanie tylko dla wlasciciela
++udostepnianie tylko przez autora
++ symbole kola i kwadratu do poprawy
++- operacja move ma przesowac info a nie wyliczac na nowo(przyspieszy dzialanie) - zle dziala na ie i mozilli
++ po zaznaczeniu na grafie wyswietlac gdzies id --- jest podswietlnany element
++ wyswietlanie udostepnien
+-transparent background
+
+
+
+- obsługa drzewka - przciaganie
+- dorobić przyciski powiększenia bo nie działa na firefoxie z wykorzystaniem shifta
+- wczytywanie z pliku
++ klonowanie
++ udostępnianie
+- zaznaczanie fragmentów i kopiowanie
+- edycja nazwy w drzewie
++ dodac opis 2
+- przeciaganie ksztaltu linii
+
+
+-laczenie w grupy i ich obsluga
