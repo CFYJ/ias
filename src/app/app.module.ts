@@ -54,6 +54,7 @@ import { SecurityComponent } from './security/security.component';
 import { LinkyModule } from 'angular-linky';
 import { AnalizaGraficznaComponent } from './analiza-graficzna/analiza-graficzna.component';
 import { InterpretacjeComponent } from './interpretacje/interpretacje.component';
+import { HelpdeskComponent } from './helpdesk/helpdesk.component';
 
 //**********************************************/
 
@@ -69,6 +70,7 @@ export const appRoutes: Routes = [
   { path: 'security', component: SecurityComponent},
   { path: 'analizagraficzna', component: AnalizaGraficznaComponent},
   { path: 'interpretacje', component: InterpretacjeComponent},
+  { path: 'helpdesk', component: HelpdeskComponent},
 ];
 
 @NgModule({
@@ -99,6 +101,7 @@ export const appRoutes: Routes = [
     jqxColorPickerComponent,
     AnalizaGraficznaComponent,
     InterpretacjeComponent,
+    HelpdeskComponent,
     //jqxDragDropComponent,
   ],
   imports: [
