@@ -8,7 +8,7 @@
   <a [routerLink]="['/upowaznienia']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Upoważnienia w aplikacjach</a>
   <a  *ngIf="auth.checkIfUserIsInRole('grafy_admin')" [routerLink]="['/analizagraficzna']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Analiza graficzna</a>
   <a  [routerLink]="['/interpretacje']"  *ngIf="auth.checkIfUserIsInRole('interpretacje')" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Interpretacje</a>
-  <a  [routerLink]="['/helpdesk']"   [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">HelpDesk</a>
+  <a  [routerLink]="['/helpdesk']"  *ngIf="auth.checkIfUserIsInRole('helpdesk')"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">HelpDesk</a>
   <!-- *ngIf="auth.checkIfUserIsInRole('Interpretacje')" -->
 
   <div  class="logo">WISKAS</div>
@@ -21,9 +21,9 @@
 
 
 <jqxWindow #jqxwindow1 [auto-create]='false'> 
-  <div style="overflow: hidden; padding:10px">
-    <table>
-      <tr>
+
+  <div style="padding:10px">
+
         <p align="justify"><strong>WISKAS</strong> - wielomodułowy informatyczny system KAS przeznaczony dla pracowników KAS w województwie warmińsko-mazurskim.</p>
         <p>
           <strong>Obsługa systemu: </strong> </p>
@@ -43,9 +43,9 @@
             <strong>Interpretacje: </strong><span>moduł zawierający interpretacje indywidualne podatników (odpowiednik SIP) bez anonimizacji danych.
                Baza danych modułu opiera się o pliki interpretacji przekazywane przez MF. <font color="red">Dostęp do modułu możliwy po zalogowaniu, tylko dla uprawnionych osób.</font></span>
         </p>
-       
-       
-      </tr>
-    </table>
+        <p align="justify">
+            <strong>HelpDesk: </strong><span>informacje o zgłoszeniach w systemie HelpDesk Ministerstwa Finansów.</span>
+        </p>
+
   </div>
 </jqxWindow>
