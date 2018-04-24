@@ -37,14 +37,15 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
 
 
   constructor(public upowaznieniaService: UpowaznieniaService,
-    private authService: AuthenticationService,private messageService: MessageService,
+    private auth: AuthenticationService,private messageService: MessageService,
     private sg: SimpleGlobal) 
     { 
       this.loadtelefony();
+      this.authService = auth;
     }
 
 
-
+  authService: any;
   pliki: any;
   telefony: any[]=[{user:'', telefon:''}];
   message: any = 'message';
@@ -635,7 +636,7 @@ isEditing: boolean = false;
       //this.updateNonWidgets(null);
   }
 
-  Pagechanged(){
+  Pagechanged(event:any){
     this.selectedRowId = null;
     this.selectedRowData = null;
 

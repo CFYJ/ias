@@ -27,11 +27,21 @@ declare var google: any;
   templateUrl: './kontakty.component.html',
   styleUrls: ['./kontakty.component.scss'],
   
-
-
 })
 
 export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
+
+
+  
+  constructor(private kontaktyService: KontaktyService, private auth: AuthenticationService,
+    private messageService: MessageService, private sg: SimpleGlobal, private _mapsAPILoader: MapsAPILoader) {
+
+    this.authService = auth;
+   
+  }
+
+
+
   message: any = 'message';
   subscription: Subscription;
   jednostki: string[];
@@ -44,11 +54,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild(AgmMap)
   public agmMap: AgmMap
 
-
-
-
-
-
+  authService: any;
 
   //#region ************* geocodowanie adresow z pliku, najlepiej w paczkach max 200 adresow ***************** */
   lines: any;
@@ -500,7 +506,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
         return 'Edycja';
       },
     },
-    { text: 'Login', datafield: 'login', width: 100, hidden: !this.authService.checkIfUserIsInRole('kontakty_administrator') },
+    { text: 'Login', datafield: 'login', width: 100, hidden: true},//hidden: !this.authService.checkIfUserIsInRole('kontakty_administrator') 
     { text: 'Nazwisko', datafield: 'nazwisko', width: 100 },
     { text: 'Imię', datafield: 'imie', width: 100 },
     { text: 'Telefon', datafield: 'telefon', width: 100 },
@@ -575,9 +581,10 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('tabsReference') tabsReference: jqxTabsComponent;
   //#endregion
 
-  constructor(private kontaktyService: KontaktyService, private authService: AuthenticationService,
-    private messageService: MessageService, private sg: SimpleGlobal, private _mapsAPILoader: MapsAPILoader) {
-  }
+  // constructor(private kontaktyService: KontaktyService, private auth: AuthenticationService,
+  //   private messageService: MessageService, private sg: SimpleGlobal, private _mapsAPILoader: MapsAPILoader) {
+  //     this.authService = auth;
+  // }
 
   // createInsertButtonContainer(statusbar: any): void {
   //   const buttonsContainer = document.createElement('div');
@@ -642,13 +649,17 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   ngOnInit():void {
+    
     this.loadMarkers();
+
+   this.columns[1]['hidden'] = !this.authService.checkIfUserIsInRole('kontakty_administrator');
   }
 
   ngAfterViewInit(): void {
-
+   
     $(()=>{ $("#mapSearch").keydown((event)=>{this.mapSearchChange(event);})});
-
+    
+   
 
     const _self = this;
     const inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro' };
@@ -695,7 +706,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
   }
   editCellclick(event: any): void {
     if (event.args.datafield === 'edycja') {
-      console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
+      //console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
       if (this.authService.loggedIn()) {
         const datarow = event.args.row.bounddata;
         // if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {

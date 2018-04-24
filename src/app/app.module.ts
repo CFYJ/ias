@@ -36,7 +36,6 @@ import { jqxListBoxComponent} from 'jqwidgets-ts/angular_jqxlistbox';
 import { jqxTabsComponent} from 'jqwidgets-ts/angular_jqxtabs'; 
 import { jqxColorPickerComponent} from 'jqwidgets-ts/angular_jqxcolorpicker';
 import { jqxDropDownButtonComponent } from 'jqwidgets-ts/angular_jqxdropdownbutton';
-//import { jqxDragDropComponent} from 'jqwidgets-ts/angular_jqxdragdrop';
 
 import * as $ from 'jquery'
 
@@ -55,6 +54,7 @@ import { LinkyModule } from 'angular-linky';
 import { AnalizaGraficznaComponent } from './analiza-graficzna/analiza-graficzna.component';
 import { InterpretacjeComponent } from './interpretacje/interpretacje.component';
 import { HelpdeskComponent } from './helpdesk/helpdesk.component';
+import { jqxDragDropComponent } from 'jqwidgets-ts/angular_jqxdragdrop';
 
 //**********************************************/
 
@@ -102,7 +102,7 @@ export const appRoutes: Routes = [
     AnalizaGraficznaComponent,
     InterpretacjeComponent,
     HelpdeskComponent,
-    //jqxDragDropComponent,
+    jqxDragDropComponent,
   ],
   imports: [
     BrowserModule,
