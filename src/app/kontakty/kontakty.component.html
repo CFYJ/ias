@@ -10,7 +10,7 @@
 
     <div >
 
-      <jqxGrid #gridReference id="jqxgrid" [auto-create]='false' (onCellclick)='editCellclick($event)'></jqxGrid>
+      <jqxGrid #gridReference id="jqxgrid" [auto-create]='false' [sortable]="false" (onCellclick)='editCellclick($event)'></jqxGrid>
 
       <jqxWindow #jqxwindow1 [auto-create]='false'>
         <div>Edycja</div>

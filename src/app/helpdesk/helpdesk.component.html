@@ -1,0 +1,14 @@
+
+<div style="float:left;width: 100%">
+  <jqxGrid  #listGrid
+  [columns]="columns"  [auto-create]='false' [source]='dataAdapter'
+  [autoheight]="true" [sortable]="false" [columns]='columns'
+  [editable]="false" (onCellclick)='editCellclick($event)'
+  [selectionmode]="'multiplecellsadvanced'"
+  ></jqxGrid>
+</div>
+<div style="margin-left:auto; margin-right:auto; width:1200px">
+  <div  [innerHtml]="tresczgloszenia" >
+  </div>
+</div>
+

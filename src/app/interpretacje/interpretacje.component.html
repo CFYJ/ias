@@ -1,0 +1,29 @@
+<p>
+ Kryterium wyszukiwania: 
+ <select  [(ngModel)]="typ" style="height:21px; width:110px">
+   <option *ngFor="let obj of typValues" [value]='obj.key' style="height: 35px">{{obj.val}}</option>
+ </select>
+ <input type="text" [value]="arg" [(ngModel)]="arg" id="argInput" />
+ <button (click)="findInterpretacje()" >Szukaj</button>
+
+ <a href="http://sip.mf.gov.pl/" target="_blank" style="margin-left:50px;text-decoration:none;
+  padding:5px; background-color: lightgreen; border-radius: 15px;">Przeglądarka interpretacji MF</a>
+</p>
+
+<jqxGrid id="jqxInterpretacjegrid" #gridInterpretacjeReference
+[columns]="columns"  [auto-create]='false' [source]='dataAdapter'
+[autoheight]="true" [sortable]="true" [columns]='columns'
+[editable]="false" (onCellclick)='editCellclick($event)'
+[selectionmode]="'multiplecellsadvanced'"(onBindingcomplete)="myGrid.hideloadelement()"
+></jqxGrid>
+
+
+<!-- <button (click)="findInterpretacje()">przycisk</button> -->
+<!-- <button (click)="fileupload()">upload</button> -->
+
+<jqxWindow #jqxwindowFile [auto-create]='false' [height]="'90%'" [width]="'70%'" style="padding-top:5px">
+  <div>
+   <iframe style="width:100%; height:100%" [src]="fileUrl" frameborder="0"></iframe>
+  </div>
+</jqxWindow>  
+

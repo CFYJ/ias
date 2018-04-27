@@ -37,14 +37,15 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
 
 
   constructor(public upowaznieniaService: UpowaznieniaService,
-    private authService: AuthenticationService,private messageService: MessageService,
+    private auth: AuthenticationService,private messageService: MessageService,
     private sg: SimpleGlobal) 
     { 
       this.loadtelefony();
+      this.authService = auth;
     }
 
 
-
+  authService: any;
   pliki: any;
   telefony: any[]=[{user:'', telefon:''}];
   message: any = 'message';
@@ -143,7 +144,16 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
 
     //#region paging
     // url: this.sg['SERVICE_URL']+'Upowaznienia/GetUpowaznieniaListaPaged',
-    // root: 'rows',
+   
+    root: 'rows', 
+    beforeprocessing: function(data){
+      this.totalrecords= data.totalRows;
+    },
+
+    filter: ()=>{
+      // update the grid and send a request to the server.
+      this.myGrid.updatebounddata();
+    },
     // beforeprocessing: function(data)
     // {		
     //   //  var ss ="";
@@ -293,25 +303,12 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
     //source: this.dataAdapter,
 
     pageable: true,
-    // virtualmode: true,    
-    // rendergridrows: function(obj)
-    // {
- 
-    //     //      var ss ="";
-    //     // for(var z in obj.data[0])
-    //     //   ss=ss+";"+z;
-    //     // alert(ss+" "+obj.data.);
 
-    //      //return  this.dataAdapter.records; 
-    //     // alert('grid options');
-
-    //     //this.showmyarray(true, obj.data);
-   
-    //   //this.testfunction();
-    //   //.showmyarray(true,obj);
-     
-    //      return obj.data;     
-    // },
+    virtualmode: true,
+    rendergridrows: function(data)
+    {
+        return data.data;
+    },
 
   };
 
@@ -635,7 +632,7 @@ isEditing: boolean = false;
       //this.updateNonWidgets(null);
   }
 
-  Pagechanged(){
+  Pagechanged(event:any){
     this.selectedRowId = null;
     this.selectedRowData = null;
 

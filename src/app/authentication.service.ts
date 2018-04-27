@@ -87,7 +87,7 @@ export class AuthenticationService {
         var role = role.split(",");
      // console.log(role);
         var result = role.find(function(rola){
-                            return rola.trim() === dataRow;
+                            return rola.trim().toUpperCase() === dataRow.toUpperCase();
                           });
         //console.log(result);
         if(result!='' && result!=null)                  
