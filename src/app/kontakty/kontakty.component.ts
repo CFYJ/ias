@@ -487,7 +487,17 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
           commit(false);
         }
       });
-    }
+    },
+
+    root: 'rows', 
+    beforeprocessing: function(data){
+      this.totalrecords= data.totalRows;
+    },
+
+    filter: ()=>{
+      // update the grid and send a request to the server.
+      this.myGrid.updatebounddata();  
+    },
   };
 
   dataAdapter = new $.jqx.dataAdapter(this.source, {
@@ -549,7 +559,13 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
     sortable: true,
     source: this.dataAdapter,
     columnsresize: true,
-    columns: this.columns
+    columns: this.columns,
+
+    virtualmode: true,
+    rendergridrows: function(data)
+    {
+        return data.data;
+    },
   };
 
   //#region chiledviews
