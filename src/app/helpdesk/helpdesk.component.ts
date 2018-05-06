@@ -56,6 +56,7 @@ export class HelpdeskComponent implements OnInit, AfterViewInit {
     ],
     id:'id',
     url: this.sg['SERVICE_URL']+'HelpDesk/GetRows',
+    //headers:{'Authorization':'ddd'},
     root: 'rows', 
     beforeprocessing: function(data){
       this.totalrecords= data.totalRows;
@@ -64,13 +65,17 @@ export class HelpdeskComponent implements OnInit, AfterViewInit {
     filter: ()=>{
       // update the grid and send a request to the server.
       this.listGrid.updatebounddata();
-      this.tresczgloszenia = "";
+      this.tresczgloszenia = ""; 
     },
 
 
   };
 
-  dataAdapter = new $.jqx.dataAdapter(this.source);
+  dataAdapter = new $.jqx.dataAdapter(this.source,{
+    beforeSend: function (jqXHR, settings) {
+      jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
+  }
+  });
 
   options: jqwidgets.GridOptions ={    
     localization: {

@@ -1,7 +1,9 @@
+//import { AuthorizationHeaderInjector} from './AuthorizationHeaderInjector';
 import { MessageService } from './message.service';
 import { KontaktyService } from './kontakty.service';
 import { AuthenticationService } from './authentication.service';
 import { UpowaznieniaService } from './upowaznienia.service';
+//import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 //import { SecurityService } from './security.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -117,7 +119,13 @@ export const appRoutes: Routes = [
     AgmJsMarkerClustererModule,
     LinkyModule,
   ],
-  providers: [JwtHelper, AuthGuardService, AuthenticationService, KontaktyService, MessageService, SimpleGlobal,UpowaznieniaService],
+  providers: [
+    // {
+    // provide: HTTP_INTERCEPTORS,
+    // useClass: AuthorizationHeaderInjector,
+    // multi: true
+    // },
+    JwtHelper, AuthGuardService, AuthenticationService, KontaktyService, MessageService, SimpleGlobal,UpowaznieniaService,    ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

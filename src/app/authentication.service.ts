@@ -56,6 +56,8 @@ export class AuthenticationService {
       const token = localStorage.getItem('user');
       if (token) {
         const userData = this.jwtHelper.decodeToken(token).userData;
+        //const userData = this.jwtHelper.decodeToken(token)["http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata"];
+        //console.log(userData);
         return userData;
       } else {
         return '';
@@ -80,22 +82,37 @@ export class AuthenticationService {
 
     if(this.loggedIn){
       const token = localStorage.getItem('user');
+
       if (token) {
-        var role = this.jwtHelper.decodeToken(token).securityrole;
-        if(role===null)
-          return false;
-        var role = role.split(",");
-     // console.log(role);
+        var role = this.jwtHelper.decodeToken(token)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
         var result = role.find(function(rola){
-                            return rola.trim().toUpperCase() === dataRow.toUpperCase();
-                          });
-        //console.log(result);
+                                return rola.trim().toUpperCase() === dataRow.toUpperCase();});
+        // console.log(result + ' wasl');
         if(result!='' && result!=null)                  
           {  
             return true;
           }
-      
       }
+
+
+    //************************************** obsługa starego tokena */
+    //   if (token) {
+    //     var role = this.jwtHelper.decodeToken(token).securityrole;
+    //     if(role===null)
+    //       return false;
+    //     var role = role.split(",");
+    //  // console.log(role);
+    //     var result = role.find(function(rola){
+    //                         return rola.trim().toUpperCase() === dataRow.toUpperCase();
+    //                       });
+    //     //console.log(result);
+    //     if(result!='' && result!=null)                  
+    //       {  
+    //         return true;
+    //       }
+      
+    //   }
     }
     return false;
   }
@@ -136,6 +153,7 @@ export class AuthenticationService {
         user = response.json();
         if (user && user.token) {
           localStorage.setItem('user', user.token);
+         // console.log(localStorage.getItem('user'))
         }
       });
   }
