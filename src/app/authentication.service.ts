@@ -86,8 +86,8 @@ export class AuthenticationService {
       if (token) {
         var role = this.jwtHelper.decodeToken(token)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
-        var result = role.find(function(rola){
-                                return rola.trim().toUpperCase() === dataRow.toUpperCase();});
+        if(role)
+        var result = role.find(function(rola){ return rola.trim().toUpperCase() === dataRow.toUpperCase();});
         // console.log(result + ' wasl');
         if(result!='' && result!=null)                  
           {  
