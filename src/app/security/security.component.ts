@@ -7,7 +7,7 @@ import { jqxToolBarComponent} from 'jqwidgets-ts/angular_jqxtoolbar';
 import { AuthenticationService } from './../authentication.service';
 import { forEach } from '@angular/router/src/utils/collection';
 import { jqxWindowComponent } from 'jqwidgets-ts/angular_jqxwindow';
-import { NoConflictStyleCompatibilityMode } from '@angular/material/typings/core/compatibility/compatibility';
+//import { NoConflictStyleCompatibilityMode } from '@angular/material/typings/core/compatibility/compatibility';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 
 import {Router} from "@angular/router";
