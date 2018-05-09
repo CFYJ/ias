@@ -29,8 +29,8 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
 
   constructor( private authService: AuthenticationService,private messageService: MessageService,
     private sg: SimpleGlobal, private sanitizer: DomSanitizer, private router:Router) {
-      if(!authService.checkIfUserIsInRole('interpretacje'))      
-        this.router.navigate(['/login']);
+      // if(!authService.checkIfUserIsInRole('interpretacje'))      
+      //   this.router.navigate(['/login']);
      }
 
   ngOnInit() {
@@ -67,11 +67,43 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
     id:'id'
   };
 
-  dataAdapter = new $.jqx.dataAdapter(this.source, {
-    formatData: function (data: any) {
-      return data;
+
+  source2={
+    datatype: 'json',
+    datafields:[
+      {name: 'id'},
+      {name: 'nazwa', type:'string'},
+      {name: 'tresc', type:'string'},
+      {name: 'data', type:'string'},
+      {name: 'nipy', type:'string'},
+    ],
+    id:'id',
+    url: this.sg['SERVICE_URL']+'Interpretacje/GetRows',
+    //headers:{'Authorization':'ddd'},
+    root: 'rows', 
+    beforeprocessing: function(data){
+      this.totalrecords= data.totalRows;
+    },
+
+    filter: ()=>{
+      // update the grid and send a request to the server.
+      this.myGrid.updatebounddata(); 
+    },
+
+  }
+
+
+  dataAdapter2 = new $.jqx.dataAdapter(this.source2,
+    {beforeSend: function (jqXHR, settings) {
+      jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
+    }},
+    {
+      formatData: function (data: any) {
+        return data;
     }
   });
+
+  dataAdapter = this.dataAdapter2;
 
   options: jqwidgets.GridOptions ={    
     localization: {
@@ -95,6 +127,12 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
     theme: 'metro',
     pageable: true,
     selectionmode: 'multiplecellsadvanced',
+
+    virtualmode: true,
+    rendergridrows: function(data)
+    {
+        return data.data;
+    },
   };
 
  
@@ -123,16 +161,54 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
   ];
 
 
+
+
   fileUrl:any=this.sanitizer.bypassSecurityTrustResourceUrl(this.sg['SERVICE_URL']+'interpretacje');
+
   editCellclick(event: any): void {
     if (event.args.datafield === 'edycja') {
       const datarow = event.args.row.bounddata;
 
-      let basePlikiurl = this.sg['SERVICE_URL'] + 'interpretacje/FileDownload/'+datarow.id;   
+      let basePlikiurl = this.sg['SERVICE_URL'] + 'Interpretacje/FileDownload/'+datarow.id;   
 
-      this.fileUrl=this.sanitizer.bypassSecurityTrustResourceUrl(basePlikiurl);
-      this.jqxwindowFile.title(datarow.nazwa);
-      this.jqxwindowFile.open();
+      var xhr = new XMLHttpRequest();      
+      xhr.open('GET', basePlikiurl);
+      xhr.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user')); 
+      xhr.onreadystatechange = ()=>{      
+        if (xhr.readyState ==4) {         
+          if (xhr.status === 200) {
+
+            var file = new Blob([xhr.response], {type: "application/pdf"});
+       
+            if (window.navigator.msSaveOrOpenBlob) {
+              navigator.msSaveOrOpenBlob(file,datarow.nazwa+".pdf");
+            } 
+            else {
+              // this.response is a Blob, because we set responseType above
+              //var file = new Blob([xhr.response], {type: "application/pdf"});
+              //this.fileUrl = URL.createObjectURL(file);      
+              this.fileUrl =this.sanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(file));  
+              this.jqxwindowFile.title(datarow.nazwa);
+              this.jqxwindowFile.open();
+            }
+
+          } else {
+            console.error("Błąd: "+xhr);
+          }
+        }
+        else if(xhr.readyState == 2) {    
+          if(xhr.status == 200) {
+            xhr.responseType = "blob";
+          } else {
+            xhr.responseType = "text";
+          }
+        }
+      }
+             
+      xhr.send();
+
+      // this.jqxwindowFile.title(datarow.nazwa);
+      // this.jqxwindowFile.open();
     }
   }
 
@@ -149,6 +225,9 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
         cache: false,
         dataType: 'json',
         contentType: 'application/json',
+        beforeSend: function(request) {
+          request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
+        },
         url: this.sg['SERVICE_URL'] + 'Interpretacje/GetList/'+this.typ+'/'+this.arg,
         type: 'GET',
         success: (data: any, status: any, xhr: any) =>{           
@@ -159,12 +238,15 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
         },
         error: function (jqXHR: any, textStatus: any, errorThrown: any) {
           alert(textStatus + ' - ' + errorThrown);  
-          this.myGrid.hideloadelement();
+          //this.myGrid.hideloadelement();
         }
       });
     }
   }
 
+  clearSearch(){
+    this.dataAdapter = this.dataAdapter2;
+  }
 
   fileupload(){
     $.ajax({

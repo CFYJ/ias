@@ -5,6 +5,7 @@
  </select>
  <input type="text" [value]="arg" [(ngModel)]="arg" id="argInput" />
  <button (click)="findInterpretacje()" >Szukaj</button>
+ <button (click)="clearSearch()" >Wyczyść parametry</button>
 
  <a href="http://sip.mf.gov.pl/" target="_blank" style="margin-left:50px;text-decoration:none;
   padding:5px; background-color: lightgreen; border-radius: 15px;">Przeglądarka interpretacji MF</a>
@@ -22,8 +23,8 @@
 <!-- <button (click)="fileupload()">upload</button> -->
 
 <jqxWindow #jqxwindowFile [auto-create]='false' [height]="'90%'" [width]="'70%'" style="padding-top:5px">
-  <div>
-   <iframe style="width:100%; height:100%" [src]="fileUrl" frameborder="0"></iframe>
+  <div >
+   <iframe style="width:98%; height:98%; margin: auto" [src]="fileUrl" frameborder="0"></iframe>
   </div>
 </jqxWindow>  
 
