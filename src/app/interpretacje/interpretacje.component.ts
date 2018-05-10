@@ -1,7 +1,8 @@
 import { Component, ViewChild, OnInit, AfterViewInit, OnDestroy, AfterContentInit  } from '@angular/core';
+import { HTTP_INTERCEPTORS, HttpClient,  } from '@angular/common/http';
 
 import { FormsModule } from '@angular/forms';
-import { Http } from '@angular/http';
+//import { Http } from '@angular/http';
 import { SimpleGlobal } from 'ng2-simple-global';
 import { Subscription } from 'rxjs/Subscription';
 import { DomSanitizer} from '@angular/platform-browser';
@@ -13,6 +14,7 @@ import { MessageService } from './../message.service';
 import { AuthenticationService } from './../authentication.service';
 
 import {Router} from "@angular/router";
+
 
 
 @Component({
@@ -27,7 +29,7 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
   @ViewChild('jqxwindowFile') jqxwindowFile: jqxWindowComponent;
 
 
-  constructor( private authService: AuthenticationService,private messageService: MessageService,
+  constructor(public http: HttpClient, private authService: AuthenticationService,private messageService: MessageService,
     private sg: SimpleGlobal, private sanitizer: DomSanitizer, private router:Router) {
       // if(!authService.checkIfUserIsInRole('interpretacje'))      
       //   this.router.navigate(['/login']);
@@ -221,26 +223,45 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
     if(this.typ && this.arg){
       //this.myGrid.updating = true;
       this.myGrid.showloadelement();
-      $.ajax({
-        cache: false,
-        dataType: 'json',
-        contentType: 'application/json',
-        beforeSend: function(request) {
-          request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
-        },
-        url: this.sg['SERVICE_URL'] + 'Interpretacje/GetList/'+this.typ+'/'+this.arg,
-        type: 'GET',
-        success: (data: any, status: any, xhr: any) =>{           
+
+
+      
+      // $.ajax({
+      //   cache: false,
+      //   dataType: 'json',
+      //   contentType: 'application/json',
+      //   beforeSend: function(request) {
+      //     request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
+      //   },
+      //   url: this.sg['SERVICE_URL'] + 'Interpretacje/GetList/'+this.typ+'/'+this.arg,
+      //   type: 'GET',
+      //   success: (data: any, status: any, xhr: any) =>{           
+      //     this.source['localdata']=data;
+      //     this.dataAdapter = new $.jqx.dataAdapter(this.source);
+      //     //this.myGrid.refresh();
+      //     this.myGrid.hideloadelement();
+      //   },
+      //   error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+      //     alert(textStatus + ' - ' + errorThrown);  
+      //     //this.myGrid.hideloadelement();
+      //   }
+      // });
+
+
+      this.http.get(this.sg['SERVICE_URL'] + 'Interpretacje/GetList/'+this.typ+'/'+this.arg)
+      .subscribe(
+        data => {
           this.source['localdata']=data;
-          this.dataAdapter = new $.jqx.dataAdapter(this.source);
-          //this.myGrid.refresh();
+          this.dataAdapter = new $.jqx.dataAdapter(this.source);    
           this.myGrid.hideloadelement();
         },
-        error: function (jqXHR: any, textStatus: any, errorThrown: any) {
-          alert(textStatus + ' - ' + errorThrown);  
-          //this.myGrid.hideloadelement();
-        }
-      });
+        err =>{
+          alert("Błąd programu, skontaktuj się z administratorem. \n"+err);  
+        } 
+      );
+
+
+
     }
   }
 
