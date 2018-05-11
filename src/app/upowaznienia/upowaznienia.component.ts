@@ -191,6 +191,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
         url: this.sg['SERVICE_URL'] + 'Upowaznienia/AddUpowaznienia',
         data: t,
         type: 'POST',
+        beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
         success: function (data: any, status: any, xhr: any) {
           //alert('Wstawiono nowy rekord - id: ' + data.id);
           rowdata.id = data.id;
@@ -213,6 +214,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
         url: this.sg['SERVICE_URL'] + 'Upowaznienia/UpdateUpowaznienia/' + rowdata.id,
         data: t,
         type: 'PUT',
+        beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
         success:  (data: any, status: any, xhr: any)=> { 
           this.isEditing = false;               
           commit(true);           
@@ -234,6 +236,7 @@ export class UpowaznieniaComponent implements OnInit, AfterViewInit, AfterConten
         url: this.sg['SERVICE_URL'] + 'Upowaznienia/DelUpowaznienia/' + rowindex,
         //data: t,
         type: 'POST',
+        beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
         success: function (data: any, status: any, xhr: any) {      
           commit(true);     
         },
@@ -468,7 +471,7 @@ isEditing: boolean = false;
         contentType: false,      
         cache: false,        
         dataType: 'json',
-
+        beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
         xhr: function() {
           var xhr = new XMLHttpRequest();
       
@@ -538,6 +541,7 @@ isEditing: boolean = false;
       contentType: 'application/json',
       url: this.sg['SERVICE_URL'] + 'Upowaznienia/DeleteFile/' + plik['id'],
       type: 'GET',
+      beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
       success: function (data: any, status: any, xhr: any) {         
     
       },
@@ -641,55 +645,6 @@ isEditing: boolean = false;
 
   plikirenderer = (row: number, column: any, value: any): string => {
     
-    /*
-        var basePlikiurl = this.sg['SERVICE_URL'] + 'Upowaznienia/FileDownload/';
-        var urlstring= this.sg['SERVICE_URL'] + 'Upowaznienia/GetPliki/'+value;
-
-      var f=3;
-      if(f==2){
-          $.post(urlstring, function(responseTxt,statusTxt,xhr)
-          {  
-          if(responseTxt!=null) {
-
-
-
-            //alert(responseTxt[0]['idPliku']);
-            var plikiHtml ="";
-            for(var i in responseTxt)
-            {
-
-              plikiHtml=plikiHtml+'<p><a href="'+basePlikiurl+responseTxt[i]['idPliku']+'" target="_blank">'+responseTxt[i]['nazwa']+'</a></p>'
-
-            }
-            //  var rez='';
-            // var t=responseTxt[0];
-            // for (var i in t) {
-            //   rez=rez+";"+t[i];
-            // }
-            //   alert(rez);
-
-              $('#wasl_'+row).html(plikiHtml);
-          }
-          });
-        }
-      if(f==1){
-        $.get(this.sg['SERVICE_URL'] + 'Upowaznienia/GetUpowaznieniaLista', function(responseTxt,statusTxt,xhr){
-            var rez='';
-            var t=responseTxt[0]['upowaznieniaPliki'];
-            for (var i in t) {
-              rez=rez+";"+i;
-            }
-              alert(rez);
-
-        });
-
-      }
-
-      if(f==3){
-
-      }
-    */
-    
     var plikiHtml='<div style=" overflow-y: auto;">';
 
     for(var i in value)
@@ -742,7 +697,6 @@ isEditing: boolean = false;
 
   editobject: any;
   setEditValues(datarow: any): any{  
-    //this.editobject = datarow;  
     this.editobject ={nazwa:datarow.nazwa,
        nazwa_skrocona:datarow.nazwa_skrocona, 
        wniosek_nadania_upr: datarow.wniosek_nadania_upr, 
@@ -755,32 +709,8 @@ isEditing: boolean = false;
        decyzja: datarow.decyzja,
        uwagi: datarow.uwagi};
 
-
-    
-    //this.fNazwa.val(datarow.nazwa);   
-    // this.fNazwa_skrocona.val(datarow.nazwa_skrocona);
-    // this.fWniosek_nadania_upr.val(datarow.wniosek_nadania_upr);
-    // this.fNadajacy_upr.val(datarow.nadajacy_upr);
-    // this.fProwadzacy_rejstr_uzyt.val(datarow.prowadzacy_rejestr_uzyt);
-    // this.fWniosek_odebrania_upr.val(datarow.wniosek_odebrania_upr);
-    // this.fOdbierajacy_upr.val(datarow.odbierajacy_upr);
-    // this.fOpiekun.val(datarow.opiekun);
-    // this.fAdres_email.val(datarow.adres_email);
-    // this.fDecyzja.val(datarow.decyzja);
-    // this.fUwagi.val(datarow.uwagi);
-   
-    // $('#nazwa').val(datarow.nazwa) ;
-    // $('#nazwa_skrocona').val(datarow.nazwa_skrocona);
-    // $('#wniosek_nadania_upr').val(datarow.wniosek_nadania_upr);
-    // $('#nadajacy_upr').val(datarow.nadajacy_upr);
-    // $('#prowadzacy_rejestr_uzyt').val(datarow.prowadzacy_rejestr_uzyt);
-    // $('#wniosek_odebrania_upr').val(datarow.wniosek_odebrania_upr);
-    // $('#odbierajacy_upr').val(datarow.odbierajacy_upr);
-    // $('#opiekun').val(datarow.opiekun);
-    // $('#adres_email').val(datarow.adres_email);
     this.fDecyzja.val(datarow.decyzja);
-    // $('#uwagi').val(datarow.uwagi);
-    // $('addedFiles').val(datarow.upowaznieniaPliki);
+
   }
 
   loadtelefony(){
@@ -794,6 +724,7 @@ isEditing: boolean = false;
         contentType: 'application/json',
         url: this.sg['SERVICE_URL'] + 'Upowaznienia/GetTelefony' ,
         type: 'GET',
+        beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
         success: (data: any, status: any, xhr: any)=>{
     
           this.telefony = data;   
