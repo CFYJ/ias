@@ -195,8 +195,7 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
         this.deleteWindow.close();
     }
 
-    buttondelyesClicked(){
-      console.log('ffff'+this.editobject.id);
+    buttondelyesClicked(){     
         this.gridRoleRole.deleterow(this.editobject.id);
         this.deleteWindow.close();
 
@@ -243,6 +242,9 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
             url: this.sg['SERVICE_URL'] + 'ADAuthentication/AddRole',
             data: t,
             type: 'POST',
+            beforeSend: function(request) {
+              request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
+            },
             success: function (data: any, status: any, xhr: any) {
               //alert('Wstawiono nowy rekord - id: ' + data.id);
               rowdata.id = data.id;
@@ -263,6 +265,9 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
             url: this.sg['SERVICE_URL'] + 'ADAuthentication/UpdateRole/' + rowdata.id,
             data: t,
             type: 'PUT',
+            beforeSend: function(request) {
+              request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
+            },
             success: function (data: any, status: any, xhr: any) {               
               commit(true);           
             },
@@ -273,8 +278,7 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
           });
         },
 
-        deleterow: (rowindex: any, commit: any) => {  
-          console.log('hh'+rowindex);
+        deleterow: (rowindex: any, commit: any) => {        
           $.ajax({
             cache: false,
             dataType: 'json',
@@ -282,6 +286,9 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
             url: this.sg['SERVICE_URL'] + 'ADAuthentication/DelRole/' + rowindex,
             //data: t,
             type: 'POST',
+            beforeSend: function(request) {
+              request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
+            },
             success: function (data: any, status: any, xhr: any) {      
               commit(true);     
             },
@@ -295,7 +302,9 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
 
     };
 
-    roleroledataAdapter = new $.jqx.dataAdapter(this.rolerolesource);
+    roleroledataAdapter = new $.jqx.dataAdapter(this.rolerolesource,
+      {beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}}, 
+    );
 
     
     rolerolegridoptions: jqwidgets.GridOptions ={    
@@ -363,6 +372,9 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
               cache: false,
               dataType: 'json',
               contentType: 'application/json',
+              beforeSend: function(request) {
+                request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
+              },
               url: this.sg['SERVICE_URL'] + 'ADAuthentication/AddUserRole',
               data: t,
               type: 'POST',
@@ -390,15 +402,14 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
       };
     
       usersinroleroledataAdapter = new $.jqx.dataAdapter(this.usersinrolerolesource,
-        
-        {formatData: (data)=> {
-          $.extend(data, {
-            id: this.selectedRoleRole
-          });
-          return data;
-        }
-      }
-      
+        {
+          formatData: (data)=> {
+            $.extend(data, {
+              id: this.selectedRoleRole
+            });
+            return data;},
+          beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}
+        },             
       );
 
       usersinrolerolegridoptions: jqwidgets.GridOptions ={    
@@ -462,6 +473,9 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
             url: this.sg['SERVICE_URL'] + 'ADAuthentication/RemoveUserRole',
             data: t,
             type: 'POST',
+            beforeSend: function(request) {
+              request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
+            },
             success: function (data: any, status: any, xhr: any) { 
             
                 rowdata.id = data.id;
@@ -489,7 +503,7 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
     };
 
     allusersroledataAdapter = new $.jqx.dataAdapter(this.allusersrolesource,
-    
+      {beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}}, 
       {formatData: (data)=> {
         $.extend(data, {
           id: this.selectedRoleRole
@@ -702,7 +716,9 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
           url: this.sg['SERVICE_URL']+'ADAuthentication/GetAllUsers',    
       };
     
-      usersusersdataAdapter = new $.jqx.dataAdapter(this.usersuserssource);
+      usersusersdataAdapter = new $.jqx.dataAdapter(this.usersuserssource,
+        {beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}}, 
+      );
     
       
       usersusersgridoptions: jqwidgets.GridOptions ={    
@@ -741,8 +757,8 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
       [
     
         { text: 'Nazwa', datafield: 'nazwa',  width: 150},
-        { text: 'Wydział', datafield: 'wydzial',  width: 270},
-        { text: 'Login', datafield: 'login',  width: 100},
+        { text: 'Wydział', datafield: 'wydzial',  width: 200},
+        { text: 'Login', datafield: 'login',  width: 80},
         { text: 'Historia', datafield: 'usershistory', width: 'auto',    
           filterable: false, cellsalign: 'right',
           cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
@@ -763,6 +779,9 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
           contentType: 'application/json',
           url: this.sg['SERVICE_URL'] + 'ADAuthentication/GetUsersHistory/'+ event.args.row.bounddata.id,
           type: 'GET',
+          beforeSend: function(request) {
+            request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
+          },
           success: (data: any, status: any, xhr: any)=>{     
             this.userhistory=data; 
             this.historyWindow.title("Historia uprawnień użytkownika");
@@ -806,6 +825,9 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
             url: this.sg['SERVICE_URL'] + 'ADAuthentication/AddRoleToUser',
             data: t,
             type: 'POST',
+            beforeSend: function(request) {
+              request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
+            },
             success: function (data: any, status: any, xhr: any) {
               //alert('Wstawiono nowy rekord - id: ' + data.id);
               rowdata.id = data.id;
@@ -828,14 +850,15 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
 
       };
 
-      usersrolerusersdataAdapter = new $.jqx.dataAdapter(this.usersroleruserssource,
-        
+      usersrolerusersdataAdapter = new $.jqx.dataAdapter(this.usersroleruserssource, 
         {formatData: (data)=> {
           $.extend(data, {
             id: this.selectedUserUser
           });
           return data;
-        }
+        },
+        beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}
+
       });
 
       usersrolerusersgridoptions: jqwidgets.GridOptions ={    
@@ -900,6 +923,9 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
               url: this.sg['SERVICE_URL'] + 'ADAuthentication/RemoveRoleFromUser',
               data: t,
               type: 'POST',
+              beforeSend: function(request) {
+                request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));
+              },
               success: function (data: any, status: any, xhr: any) { 
               
                 rowdata.id = data.id;
@@ -926,14 +952,16 @@ export class SecurityComponent implements AfterViewInit,OnInit  {
       };
 
       allroleusersdataAdapter = new $.jqx.dataAdapter(this.allroleuserssource,
-      
-        {formatData: (data)=> {
-          $.extend(data, {
-            id: this.selectedUserUser
-          });
-          return data;
+        {
+          formatData: (data)=> {
+            $.extend(data, {
+              id: this.selectedUserUser
+            });
+            return data;
+          },
+          beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}
         }
-      });
+      );
 
       
       allroleusersgridoptions: jqwidgets.GridOptions ={    
