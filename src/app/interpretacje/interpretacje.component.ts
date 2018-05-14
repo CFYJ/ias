@@ -36,7 +36,7 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
      }
 
   ngOnInit() {
-    this.fileUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
+    //this.fileUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
   }
 
   ngAfterViewInit(): void {
@@ -165,7 +165,7 @@ export class InterpretacjeComponent implements OnInit, AfterViewInit {
 
 
 
-  fileUrl:any=this.sanitizer.bypassSecurityTrustResourceUrl(this.sg['SERVICE_URL']+'interpretacje');
+  fileUrl:any=null;//this.sanitizer.bypassSecurityTrustResourceUrl(this.sg['SERVICE_URL']+'interpretacje');
 
   editCellclick(event: any): void {
     if (event.args.datafield === 'edycja') {

@@ -24,7 +24,7 @@
 
 <jqxWindow #jqxwindowFile [auto-create]='false' [height]="'90%'" [width]="'70%'" style="padding-top:5px">
   <div >
-   <iframe style="width:98%; height:98%; margin: auto" [src]="fileUrl" frameborder="0"></iframe>
+   <iframe *ngIf="fileUrl!=null" style="width:98%; height:98%; margin: auto" [src]="fileUrl" frameborder="0"></iframe>
   </div>
 </jqxWindow>  
 

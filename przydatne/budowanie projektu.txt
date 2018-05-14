@@ -1,1 +1,1 @@
-ng build --output-hashing=all --bh /wiskas/
+ng build --prod --aot=false --output-hashing=all --bh /wiskas/
