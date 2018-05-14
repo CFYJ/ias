@@ -415,17 +415,18 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
     this.setUnitInfo(obj);
   }
 
-  
-  // Tabclick(event: any){
-  //   //console.log(this.mapLoaded);
-  //   if(Number(event.args.item)==1 && !this.mapLoaded)   
-  //    {   
-  //     //this.mapLoaded = true; 
-  //     //this.prepareMap();    
-  //    }
-  //   //  else
-  //   //   this.mapLoaded = false;
-  // }
+  mapTabOpen: boolean = false;
+  Tabclick(event: any){
+    //console.log(event);
+    if(Number(event.args.item)==1 && !this.mapTabOpen)   
+     {   
+      this.mapTabOpen = true;
+      this.loadMarkers(); 
+      //this.prepareMap();    
+     }
+    // //  else
+    // //   this.mapLoaded = false;
+  }
 
   source =
   {
@@ -666,7 +667,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
 
   ngOnInit():void {
     
-    this.loadMarkers();
+   // this.loadMarkers();
 
    this.columns[1]['hidden'] = !this.authService.checkIfUserIsInRole('kontakty_administrator');
   }
