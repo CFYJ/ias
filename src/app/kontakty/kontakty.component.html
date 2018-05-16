@@ -1,5 +1,4 @@
-  <jqxTabs #tabsReference
-   [position]='"top"' [height]="'90%'" [autoHeight]="true" [width]='"100%"'
+  <jqxTabs #tabsReference   [position]='"top"' [height]="'90%'" [autoHeight]="true" [width]="'100%'"
   [animationType]='"none"' [selectionTracker]='false' (onTabclick)="Tabclick($event)" >
  
     <ul>  
@@ -8,116 +7,15 @@
 
     </ul>
 
-    <div >
+    <div style="padding: 3px;" >
 
-      <jqxGrid #gridReference id="jqxgrid" [auto-create]='false' [sortable]="false" (onCellclick)='editCellclick($event)'></jqxGrid>
+      <jqxGrid #gridReference id="jqxgrid" [auto-create]='false' [sortable]="false" (onCellclick)='editCellclick($event)' [width]="'100%'" [height]="'95%'" ></jqxGrid>
 
-      <jqxWindow #jqxwindow1 [auto-create]='false'>
-        <div>Edycja</div>
-        <div style="overflow: hidden;">
-          <table>
-            <tr>
-              <td align="right">Login</td>
-              <td align="left">
-                <jqxInput #login [auto-create]='false' [disabled]="!authService.checkIfUserBelongsToITStaff()"></jqxInput>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Imię</td>
-              <td align="left">
-                <jqxInput #imie [auto-create]='false'></jqxInput>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Nazwisko</td>
-              <td align="left">
-                <jqxInput #nazwisko [auto-create]='false'></jqxInput>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Jednostka</td>
-              <td align="left">
-                <jqxDropDownList #cbJednostka [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Miejsce pracy</td>
-              <td align="left">
-                <jqxDropDownList #cbMiejscePracy [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Pion</td>
-              <td align="left">
-                <jqxDropDownList #cbPion [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Wydział</td>
-              <td align="left">
-                <jqxDropDownList #cbWydzial [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Wydział podległy</td>
-              <td align="left">
-                <jqxDropDownList #cbWydzialPodlegly [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Stanowisko</td>
-              <td align="left">
-                <jqxDropDownList #cbStanowisko [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Pokój</td>
-              <td align="left">
-                <jqxInput #pokoj [auto-create]='false'></jqxInput>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Email</td>
-              <td align="left">
-                <jqxInput #email [auto-create]='false'></jqxInput>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Telefon</td>
-              <td align="left">
-                <jqxInput #telefon [auto-create]='false'></jqxInput>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Tel. kom.</td>
-              <td align="left">
-                <jqxInput #komorka [auto-create]='false'></jqxInput>
-              </td>
-            </tr>
-            <tr>
-              <td align="right">Wewnętrzny</td>
-              <td align="left">
-                <jqxInput #wewnetrzny [auto-create]='false'></jqxInput>
-              </td>
-            </tr>
-            <tr>
-              <td align="right"></td>
-              <td style="padding-top: 10px;" align="right">
-                <jqxButton #buttonReference [auto-create]='false' (onClick)="buttonClicked()">Zapisz</jqxButton>
-                <jqxButton #buttonReference1 [auto-create]='false' (onClick)="button1Clicked()">Anuluj</jqxButton>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </jqxWindow>
-      <jqxNotification #msgNotification [width]='300' [position]='"top-right"' [opacity]='0.9' [autoOpen]='false' [autoClose]='true'
-        [animationOpenDelay]='800' [autoCloseDelay]='3000' [template]='"info"' [theme]='"metro"' [auto-create]='false'>
-        <!--div *ngIf="message">{{message}}</div-->
-        <div id="notificationContent"></div>
-      </jqxNotification>
 
-      <jqxButton *ngIf="authService.checkIfUserIsInRole('kontakty_administrator')" #buttonReference2 [auto-create]='false' (onClick)="button2Clicked()">Wstaw nowy rekord</jqxButton>
+      <jqxButton *ngIf="authService.checkIfUserIsInRole('kontakty_administrator')" #buttonReference2 [auto-create]='false' (onClick)="button2Clicked()" >Wstaw nowy rekord</jqxButton>
       <!-- authService.checkIfUserBelongsToITStaff() -->
+
+
     </div>
 
     <div>
@@ -204,9 +102,114 @@
       </jqxSplitter>
 
     </div>
-    <!-- <div></div> -->
 
   </jqxTabs>  
+
+  <jqxWindow #jqxwindow1 [auto-create]='false'>
+    <div>Edycja</div>
+    <div style="overflow: hidden;">
+      <table>
+        <tr>
+          <td align="right">Login</td>
+          <td align="left">
+            <jqxInput #login [auto-create]='false' [disabled]="!authService.checkIfUserBelongsToITStaff()"></jqxInput>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Imię</td>
+          <td align="left">
+            <jqxInput #imie [auto-create]='false'></jqxInput>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Nazwisko</td>
+          <td align="left">
+            <jqxInput #nazwisko [auto-create]='false'></jqxInput>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Jednostka</td>
+          <td align="left">
+            <jqxDropDownList #cbJednostka [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Miejsce pracy</td>
+          <td align="left">
+            <jqxDropDownList #cbMiejscePracy [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Pion</td>
+          <td align="left">
+            <jqxDropDownList #cbPion [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Wydział</td>
+          <td align="left">
+            <jqxDropDownList #cbWydzial [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Wydział podległy</td>
+          <td align="left">
+            <jqxDropDownList #cbWydzialPodlegly [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Stanowisko</td>
+          <td align="left">
+            <jqxDropDownList #cbStanowisko [auto-create]='false' [theme]='"metro"'></jqxDropDownList>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Pokój</td>
+          <td align="left">
+            <jqxInput #pokoj [auto-create]='false'></jqxInput>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Email</td>
+          <td align="left">
+            <jqxInput #email [auto-create]='false'></jqxInput>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Telefon</td>
+          <td align="left">
+            <jqxInput #telefon [auto-create]='false'></jqxInput>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Tel. kom.</td>
+          <td align="left">
+            <jqxInput #komorka [auto-create]='false'></jqxInput>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">Wewnętrzny</td>
+          <td align="left">
+            <jqxInput #wewnetrzny [auto-create]='false'></jqxInput>
+          </td>
+        </tr>
+        <tr>
+          <td align="right"></td>
+          <td style="padding-top: 10px;" align="right">
+            <jqxButton #buttonReference [auto-create]='false' (onClick)="buttonClicked()">Zapisz</jqxButton>
+            <jqxButton #buttonReference1 [auto-create]='false' (onClick)="button1Clicked()">Anuluj</jqxButton>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </jqxWindow>
+  <jqxNotification #msgNotification [width]='300' [position]='"top-right"' [opacity]='0.9' [autoOpen]='false' [autoClose]='true'
+    [animationOpenDelay]='800' [autoCloseDelay]='3000' [template]='"info"' [theme]='"metro"' [auto-create]='false'>
+    <!--div *ngIf="message">{{message}}</div-->
+    <div id="notificationContent"></div>
+  </jqxNotification>
+  
+ 
 
 <!-- przycisk do pobrania pliku csv z adresami do geocodowania z mf
    <input id="file-field" name="file-field" (change)="uploadFile($event)" type="file" > -->

@@ -9,7 +9,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { Router, Routes, RouterModule } from '@angular/router';
+import { Router, Routes, RouterModule, CanActivate } from '@angular/router';
 import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -64,15 +64,14 @@ export const appRoutes: Routes = [
   // { path: 'delegacje', component: DelegacjeComponent, canActivate: [AuthGuardService] },
   { path: '', redirectTo: '/kontakty', pathMatch: 'full' },
   { path: 'wiskas', redirectTo: '/kontakty', pathMatch: 'full' },
-  // { path: '', component: LoginComponent },
   { path: 'kontakty', component: KontaktyComponent },
   { path: 'login', component: LoginComponent },
   { path: 'about', component: KontaktyComponent },
   { path: 'upowaznienia', component: UpowaznieniaComponent },
-  { path: 'security', component: SecurityComponent},
+  { path: 'security', component: SecurityComponent,  canActivate: [AuthGuardService], data:{role: ['system_admin']}},
   { path: 'analizagraficzna', component: AnalizaGraficznaComponent},
-  { path: 'interpretacje', component: InterpretacjeComponent},
-  { path: 'helpdesk', component: HelpdeskComponent},
+  { path: 'interpretacje', component: InterpretacjeComponent, canActivate: [AuthGuardService], data:{role: ['interpretacje']}},
+  { path: 'helpdesk', component: HelpdeskComponent, canActivate: [AuthGuardService], data:{role: ['helpdesk']}},
 ];
 
 @NgModule({

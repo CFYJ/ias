@@ -32,16 +32,6 @@ declare var google: any;
 export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
-  
-  constructor(private kontaktyService: KontaktyService, private auth: AuthenticationService,
-    private messageService: MessageService, private sg: SimpleGlobal, private _mapsAPILoader: MapsAPILoader) {
-
-    this.authService = auth;
-   
-  }
-
-
-
   message: any = 'message';
   subscription: Subscription;
   jednostki: string[];
@@ -55,6 +45,79 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
   public agmMap: AgmMap
 
   authService: any;
+  
+  constructor(private kontaktyService: KontaktyService, private auth: AuthenticationService,
+    private messageService: MessageService, private sg: SimpleGlobal, private _mapsAPILoader: MapsAPILoader) {
+
+    this.authService = auth;
+   
+  }
+
+  ngOnInit():void {
+  
+    // this.loadMarkers();
+
+    this.columns[1]['hidden'] = !this.authService.checkIfUserIsInRole('kontakty_administrator');
+  }
+
+  ngAfterViewInit(): void {
+  
+    $(()=>{ $("#mapSearch").keydown((event)=>{this.mapSearchChange(event);})});
+    
+  
+
+    const _self = this;
+    const inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro' };
+    const disabledSettings: jqwidgets.InputOptions = {
+      width: '300px', height: '25px', theme: 'metro' // , disabled: true
+      // disabled: !this.authService.checkIfUserBelongsToITStaff()
+    };
+    this.myGrid.createComponent(this.options);
+    this.editWindow.createWidget({
+      width: 450, height: 530, theme: 'metro',
+      resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5
+    });
+
+    const buttonOptions: jqwidgets.ButtonOptions = { theme: 'metro' };
+    // let mySaveButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Save'), 'jqxButton', buttonOptions);
+    // let myCancelButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Cancel'), 'jqxButton', buttonOptions);
+
+    this.myNazwisko.createComponent(inputSettings);
+    this.myImie.createComponent(inputSettings);
+    this.myLogin.createComponent(disabledSettings);
+    this.myTelefon.createComponent(inputSettings);
+    this.myPokoj.createComponent(inputSettings);
+    this.myWewnetrzny.createComponent(inputSettings);
+    this.myKomorka.createComponent(inputSettings);
+    this.myEmail.createComponent(inputSettings);
+
+    this.mySaveButton1.createComponent(buttonOptions);
+    this.myCancelButton1.createComponent(buttonOptions);
+    if (this.authService.checkIfUserIsInRole('kontakty_administrator')) { this.myInsertButton1.createComponent(buttonOptions); }
+
+    this.msgNotification.createComponent();
+    this.myTree.createComponent();
+    this.mySplitter.createComponent();
+    this.mySplitter2.createComponent();
+    this.myListBox.createComponent();
+    this.mapSearch.createComponent();
+    this.tabsReference.createComponent();
+
+    //#region okno edycji
+    this.myJednostka.createComponent({source:[], width: '300px', placeHolder: 'Wybierz wartość', selectedIndex: 0 });
+    this.myStanowisko.createComponent({ width: '300px', placeHolder: 'Wybierz wartość', selectedIndex: 0 });
+    this.myWydzial.createComponent({width: '300px', placeHolder: 'Wybierz wartość', selectedIndex: 0 });
+    this.myWydzialPodlegly.createComponent({width: '300px', placeHolder: 'Wybierz wartość' });
+    this.myPion.createComponent({width: '300px', placeHolder: 'Wybierz wartość', selectedIndex: 0 });
+    this.myMiejscePracy.createComponent({ width: '300px', placeHolder: 'Wybierz wartość', selectedIndex: 16 });
+
+    //this.loadDropDownValues();
+    //if (this.initialLoad) { this.loadDropDownValues(); }
+    //#endregion
+  };
+
+  ngOnDestroy() {
+  }
 
   //#region ************* geocodowanie adresow z pliku, najlepiej w paczkach max 200 adresow ***************** */
   lines: any;
@@ -214,6 +277,8 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
 
   //#endregion ******************************************************************************************************************* */
 
+
+  //#region *************************************** obsługa mapy */
 
   markers: marker[]=[];
   //mclusterers: mclusterer[]=[];//new Array(16);
@@ -428,6 +493,11 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
     // //   this.mapLoaded = false;
   }
 
+
+  //#endregion *********************************************** */
+
+  //#region grid kontakty
+
   source =
   {
     datatype: 'json',
@@ -543,9 +613,9 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
       sortremovestring: 'Wyczyść sortowanie'
     },
     // enablebrowserselection: true,
-    autoheight: true,
+    //autoheight: true,
     theme: 'metro', 
-    width:'100%',
+    //width:'100%',
     pageable: true,
     pagesize: 20,
     filterable: true,
@@ -568,6 +638,8 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
         return data.data;
     },
   };
+
+  //#endregion
 
   //#region chiledviews
   @ViewChild('gridReference') myGrid: jqxGridComponent;
@@ -597,21 +669,6 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('mapSearch') mapSearch: jqxInputComponent;
   @ViewChild('tabsReference') tabsReference: jqxTabsComponent;
   //#endregion
-
-  // constructor(private kontaktyService: KontaktyService, private auth: AuthenticationService,
-  //   private messageService: MessageService, private sg: SimpleGlobal, private _mapsAPILoader: MapsAPILoader) {
-  //     this.authService = auth;
-  // }
-
-  // createInsertButtonContainer(statusbar: any): void {
-  //   const buttonsContainer = document.createElement('div');
-  //   buttonsContainer.style.cssText = 'overflow: hidden; position: relative; margin: 5px;';
-  //   const addButtonContainer = document.createElement('div');
-  //   addButtonContainer.id = 'buttonReference2';
-  //   addButtonContainer.style.cssText = 'float: left; margin-left: 5px;';
-  //   buttonsContainer.appendChild(addButtonContainer);
-  //   statusbar[0].appendChild(buttonsContainer);
-  // }
 
 
   saveEdited : boolean=false;
@@ -660,83 +717,24 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
     // if (this.initialLoad) { this.loadDropDownValues(); }
     this.isInsertOperation = true;
     // this.myLogin.disabled(!this.authService.checkIfUserBelongsToITStaff());
+    this.loadDropDownValues();
     this.setDropDownValues(datarow);
     this.editWindow.title('Dodawanie');
     this.editWindow.open();
   }
 
-  ngOnInit():void {
-    
-   // this.loadMarkers();
-
-   this.columns[1]['hidden'] = !this.authService.checkIfUserIsInRole('kontakty_administrator');
-  }
-
-  ngAfterViewInit(): void {
-   
-    $(()=>{ $("#mapSearch").keydown((event)=>{this.mapSearchChange(event);})});
-    
-   
-
-    const _self = this;
-    const inputSettings: jqwidgets.InputOptions = { width: '300px', height: '25px', theme: 'metro' };
-    const disabledSettings: jqwidgets.InputOptions = {
-      width: '300px', height: '25px', theme: 'metro' // , disabled: true
-      // disabled: !this.authService.checkIfUserBelongsToITStaff()
-    };
-    this.myGrid.createComponent(this.options);
-    this.editWindow.createWidget({
-      width: 450, height: 530, theme: 'metro',
-      resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5
-    });
-
-    const buttonOptions: jqwidgets.ButtonOptions = { theme: 'metro' };
-    // let mySaveButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Save'), 'jqxButton', buttonOptions);
-    // let myCancelButton: jqwidgets.jqxButton = jqwidgets.createInstance($('#Cancel'), 'jqxButton', buttonOptions);
-
-    this.myNazwisko.createComponent(inputSettings);
-    this.myImie.createComponent(inputSettings);
-    this.myLogin.createComponent(disabledSettings);
-    this.myTelefon.createComponent(inputSettings);
-    this.myPokoj.createComponent(inputSettings);
-    this.myWewnetrzny.createComponent(inputSettings);
-    this.myKomorka.createComponent(inputSettings);
-    this.myEmail.createComponent(inputSettings);
-
-    this.mySaveButton1.createComponent(buttonOptions);
-    this.myCancelButton1.createComponent(buttonOptions);
-    if (this.authService.checkIfUserIsInRole('kontakty_administrator')) { this.myInsertButton1.createComponent(buttonOptions); }
-
-    this.msgNotification.createComponent();
-    this.myTree.createComponent();
-    this.mySplitter.createComponent();
-    this.mySplitter2.createComponent();
-    this.myListBox.createComponent();
-    this.mapSearch.createComponent();
-    this.tabsReference.createComponent();
-
-    if (this.initialLoad) { this.loadDropDownValues(); }
-    // this.createInsertButton();
-  };
-
-  ngOnDestroy() {
-  }
+ 
   editCellclick(event: any): void {
     if (event.args.datafield === 'edycja') {
       //console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
       if (this.authService.loggedIn()) {
         const datarow = event.args.row.bounddata;
-        // if (this.authService.checkIfUserHasPermissionToEdit(datarow)) {
-        //   this.setDropDownValues(datarow);
-        //   this.editWindow.title('Edycja');
-        //   this.editWindow.open();
-        // } 
-
-        //console.log(datarow.wydzial+' '+this.authService.getUserData().Login);
-
+  
         if (this.authService.checkIfUserIsInRole('kontakty_administrator') || 
         (this.authService.checkIfUserIsInRole('kontakty_kierownik') && this.authService.getUserData().Wydzial==datarow.wydzial && this.authService.getUserData().Pion==datarow.pion) ||
         (this.authService.getUserData().Login==datarow.login)) {
+
+          this.loadDropDownValues();       
           this.setDropDownValues(datarow);
           this.editWindow.title('Edycja');
           this.editWindow.open();
@@ -753,7 +751,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
 
-  loadDropDownValues(): void {
+  loadDropDownValues2(): void {
     this.kontaktyService.getJednostki().subscribe(
       jed => {
         // jed.push('');
@@ -793,22 +791,48 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
 
   }
 
-  setDropDownValues(datarow: any): any {
-    this.myJednostka.val(datarow.jednostka);
-    this.myStanowisko.val(datarow.stanowisko);
-    this.myWydzial.val(datarow.wydzial);
-    this.myWydzialPodlegly.val(datarow.wydzial_podlegly);
-    this.myPion.val(datarow.pion);
-    this.myMiejscePracy.val(datarow.miejsce_pracy);
 
-    this.myImie.val(datarow.imie);
-    this.myNazwisko.val(datarow.nazwisko);
-    this.myPokoj.val(datarow.pokoj);
-    this.myEmail.val(datarow.email);
-    this.myTelefon.val(datarow.telefon);
-    this.myKomorka.val(datarow.komorka);
-    this.myLogin.val(datarow.login);
-    this.myWewnetrzny.val(datarow.wewnetrzny);
+  loadedSourceCounter:number=0;
+  loadedSourceIndicator:any=null;
+  loadDropDownValues(): void {
+    
+    if(this.initialLoad){
+      this.kontaktyService.getPiony().subscribe(jed => {this.myPion.source(jed); this.loadedSourceCounter++;});
+      this.kontaktyService.getJednostki().subscribe(jed => {this.myJednostka.source(jed); this.loadedSourceCounter++;});
+      this.kontaktyService.getStanowiska().subscribe(jed => {this.myStanowisko.source(jed); this.loadedSourceCounter++;});
+      this.kontaktyService.getWydzialy().subscribe(jed => {this.myWydzial.source(jed); this.loadedSourceCounter++;});
+      this.kontaktyService.getWydzialyPodlegle().subscribe(jed => {this.myWydzialPodlegly.source(jed); this.loadedSourceCounter++;});    
+      this.kontaktyService.getMiejscaPracy().subscribe(jed => {this.myMiejscePracy.source(jed); this.loadedSourceCounter++;});
+    }
+
+    this.initialLoad = false;
+  }
+
+  setDropDownValues(datarow: any): any {
+
+    this.loadedSourceIndicator = setInterval(()=>{ 
+      if(this.loadedSourceCounter==6){
+        
+        this.myJednostka.val(datarow.jednostka);
+        this.myStanowisko.val(datarow.stanowisko);
+        this.myWydzial.val(datarow.wydzial);
+        this.myWydzialPodlegly.val(datarow.wydzial_podlegly);
+        this.myPion.val(datarow.pion);
+        this.myMiejscePracy.val(datarow.miejsce_pracy);
+
+        this.myImie.val(datarow.imie);
+        this.myNazwisko.val(datarow.nazwisko);
+        this.myPokoj.val(datarow.pokoj);
+        this.myEmail.val(datarow.email);
+        this.myTelefon.val(datarow.telefon);
+        this.myKomorka.val(datarow.komorka);
+        this.myLogin.val(datarow.login);
+        this.myWewnetrzny.val(datarow.wewnetrzny);
+
+        clearTimeout(this.loadedSourceIndicator);
+      }
+    },500);
+
   }
 
 }

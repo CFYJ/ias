@@ -18,124 +18,82 @@ export class User {
 export class AuthenticationService {
 
   constructor(
+    
     private _router: Router,
     private http: Http,
     private jwtHelper: JwtHelper = new JwtHelper(),
-    private sg: SimpleGlobal
-  ) { }
+    private sg: SimpleGlobal,  
+  ) {}
+
+  public getRoles():string{
+    return 'system_admin';
+  }
+
 
   logout() {
+    sessionStorage.clear();
     localStorage.removeItem('user');
   }
 
   loggedIn(): boolean {
-    const token = localStorage.getItem('user');
-    if (tokenNotExpired(null, token)) {
-        return true;
-      } else {
-        this.logout();
-        return false;
-      }
-    // return tokenNotExpired(null, token);
+    if(sessionStorage.isLogged)
+      return true;
+
+    return false;
   }
 
   getUser(): string {
-    if (this.loggedIn) {
-      const token = localStorage.getItem('user');
-      if (token) {
-        const user = this.jwtHelper.decodeToken(token).name;
-        return user;
-      } else {
-        return '';
-      }
-    }
+    if (this.loggedIn)
+      return sessionStorage.userName? sessionStorage.userName: '';    
+    return '';
   }
 
   getUserData(): any {
-    if (this.loggedIn) {
-      const token = localStorage.getItem('user');
-      if (token) {
-        const userData = this.jwtHelper.decodeToken(token).userData;
-        //const userData = this.jwtHelper.decodeToken(token)["http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata"];
-        //console.log(userData);
-        return userData;
-      } else {
-        return '';
-      }
-    }
+    if (this.loggedIn)
+      return sessionStorage.userData? sessionStorage.userData: '';
+    return '';
   }
 
- 
-  getUserRole(): string {
-    if (this.loggedIn) {
-      const token = localStorage.getItem('user');
-      if (token) {
-        const role = this.jwtHelper.decodeToken(token).role;
-        return role;
-      } else {
-        return '';
-      }
-    }
-  }
-
-  checkIfUserIsInRole(dataRow: any): boolean{
-
-    if(this.loggedIn){
-      const token = localStorage.getItem('user');
-
-      if (token) {
-        var role = this.jwtHelper.decodeToken(token)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-
-        if(role){
-          if(role instanceof Array)
-            var result = role.find(function(rola){ return rola.trim().toUpperCase() === dataRow.toUpperCase();});
-          else
-            var result = role.trim().toUpperCase() === dataRow.toUpperCase()?role.trim().toUpperCase():'';
-        }
-        // console.log(result + ' wasl');
-        if(result!='' && result!=null)                  
-          {  
-            return true;
-          }
-      }
-
-
-    //************************************** obsługa starego tokena */
-    //   if (token) {
-    //     var role = this.jwtHelper.decodeToken(token).securityrole;
-    //     if(role===null)
-    //       return false;
-    //     var role = role.split(",");
-    //  // console.log(role);
-    //     var result = role.find(function(rola){
-    //                         return rola.trim().toUpperCase() === dataRow.toUpperCase();
-    //                       });
-    //     //console.log(result);
-    //     if(result!='' && result!=null)                  
-    //       {  
-    //         return true;
-    //       }
-      
-    //   }
-    }
+  checkIfUserIsInRole(dataRow: any): boolean{ 
+    if(sessionStorage.isLogged)
+      if(sessionStorage.getItem(dataRow.trim().toUpperCase())==='1')
+        return true;    
+    
     return false;
   }
 
 //#region metody uprawnien stare Piotrka do kontaktow
-  checkIfUserHasPermissionToEdit(dataRow: any): boolean {
-    const user = this.getUser();
-    const userData = this.getUserData();
-    const role = this.getUserRole();
 
-    if (dataRow.pion === userData.Pion && dataRow.wydzial === userData.Wydzial
-      && (role === 'Supervisor' || dataRow.login === user)) {
-      return true;
-    }
-    if (role === 'Admin' || dataRow.login === user) {
-      return true;
-    }
-    return false;
-  }
+ 
+  // getUserRole(): string {
+    
+  //   if (this.loggedIn) {
+  //     const token = localStorage.getItem('user');
+  //     //const token = sessionStorage.getItem('user');
+  //     if (token) {
+  //       const role = this.jwtHelper.decodeToken(token).role;
+  //       return role;
+  //     } else {
+  //       return '';
+  //     }
+  //   }
+  // }
+
+
+  // checkIfUserHasPermissionToEdit(dataRow: any): boolean {
+  //   const user = this.getUser();
+  //   const userData = this.getUserData();
+  //   const role = this.getUserRole();
+
+  //   if (dataRow.pion === userData.Pion && dataRow.wydzial === userData.Wydzial
+  //     && (role === 'Supervisor' || dataRow.login === user)) {
+  //     return true;
+  //   }
+  //   if (role === 'Admin' || dataRow.login === user) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   checkIfUserBelongsToITStaff(): boolean {
     const userData = this.getUserData();
@@ -147,8 +105,19 @@ export class AuthenticationService {
     return false;
   }
 
+  // checkCredential() {
+  //   if (localStorage.getItem('user') === null) {
+  //     this._router.navigate(['Login']);
+  //   }
+  // }
+
+  // isEditAllowed(data: any) {
+  //   const user = localStorage.getItem('user');
+  // }
+
   //#endregion
 
+  authorizationState:any =null;
   login(user) {
     const headers = new Headers();
     headers.append('Content-Type', 'application/json')
@@ -156,21 +125,51 @@ export class AuthenticationService {
       .map((response: Response) => {
         user = response.json();
         if (user && user.token) {
-          localStorage.setItem('user', user.token);
-         // console.log(localStorage.getItem('user'))
-        }
+          localStorage.setItem('user', user.token);   
+         
+          //*********************** set isLogged */
+
+          if (tokenNotExpired(null, user.token)){
+          
+            sessionStorage.setItem('isLogged','true');
+            this.authorizationState = setInterval(()=>{        
+              const token = localStorage.getItem('user');
+              
+              if (!tokenNotExpired(null, token) || sessionStorage.isLogged !=='true') {
+                //sessionStorage.clear();//removeItem('isLogged');
+                this.logout();
+                clearTimeout(this.authorizationState);
+                }
+              
+            }, 30000)
+           }
+                            
+          //********************* get users roles */
+
+          if(sessionStorage.isLogged){
+            var role = this.jwtHelper.decodeToken(user.token)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+       
+            if(role){
+                  if(role instanceof Array){
+                    role.forEach((value:string, index:number, array:string[])=>{sessionStorage.setItem(array[index].trim().toUpperCase(),'1');});
+                  }
+                  else           
+                    sessionStorage.setItem(role.trim().toUpperCase(),'1');
+            }
+          } 
+          
+          //***************************** userdata */
+          sessionStorage.setItem('userData',this.jwtHelper.decodeToken(user.token).userData);
+
+          //******************************username  */
+          sessionStorage.setItem('userName', this.jwtHelper.decodeToken(user.token).name)
+ 
+        
+        }                   
       });
   }
 
-  checkCredential() {
-    if (localStorage.getItem('user') === null) {
-      this._router.navigate(['Login']);
-    }
-  }
 
-  isEditAllowed(data: any) {
-    const user = localStorage.getItem('user');
-  }
 
 
 }
