@@ -729,7 +729,7 @@ export class KontaktyComponent implements AfterViewInit, OnDestroy, OnInit {
       //console.log('cell clicked: ' + event.args.rowindex + ': ' + event.args.datafield);
       if (this.authService.loggedIn()) {
         const datarow = event.args.row.bounddata;
-  
+
         if (this.authService.checkIfUserIsInRole('kontakty_administrator') || 
         (this.authService.checkIfUserIsInRole('kontakty_kierownik') && this.authService.getUserData().Wydzial==datarow.wydzial && this.authService.getUserData().Pion==datarow.pion) ||
         (this.authService.getUserData().Login==datarow.login)) {

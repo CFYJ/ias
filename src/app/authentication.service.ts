@@ -50,7 +50,7 @@ export class AuthenticationService {
 
   getUserData(): any {
     if (this.loggedIn)
-      return sessionStorage.userData? sessionStorage.userData: '';
+      return sessionStorage.userData? JSON.parse(sessionStorage.userData): '';
     return '';
   }
 
