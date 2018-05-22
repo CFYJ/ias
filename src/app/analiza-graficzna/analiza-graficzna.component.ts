@@ -1128,13 +1128,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         if(value!=null){
           //console.log(value.target.files[0]);
 
-          var reader = new FileReader();
-          reader.onload = (e)=> {
-            var content = reader.result;
-            //console.log(contents);
-            this.fileContent = content;
-          };
-          reader.readAsText(value.target.files[0],'Windows-1250');
+         
         }
         else{
 
@@ -1151,6 +1145,16 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   loadFile(){
     this.fileWindow.title("Generowanie grafu na podstawie pliku");
     this.fileWindow.open();
+  }
+
+  readFile(event: any){
+    var reader = new FileReader();
+    reader.onload = (e)=> {
+      var content = reader.result;
+      //console.log(contents);
+      this.fileContent = content;
+    };
+    reader.readAsText(event.target.files[0],'Windows-1250');
   }
 
   //#endregion
@@ -2165,7 +2169,15 @@ export class GRectClass extends GObjectBaseClass{
     $("#"+this.id).attr({x:this.x, y: this.y});
 
     //super.move(x,y);
-    this.create_multiline();
+    //this.create_multiline();
+
+    let infoob = this.parent.s.select('#id_info_'+this.uid);
+    infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
+    infoob.selectAll("tspan").forEach((el)=>{
+      el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
+     });
+
+
     super.move(x,y);
   }
 
