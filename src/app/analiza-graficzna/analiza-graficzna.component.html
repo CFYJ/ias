@@ -89,7 +89,7 @@
               <tr>
                 <td colspan="3"><textarea id='g_displaytext'  value={{selectedText}} (keyup)="textmodyfied($event)" style="width:99%; height:70px"></textarea></td> 
               </tr>
-              <tr>
+              <tr [hidden]="isInType(lineClass)">
                 <td>Wielkość czcionki</td>
                 <td colspan="3"><input  id='g_fontsize' type="number"  value={{selectedFontSize}}  name="points" step="1" style="width:150px" (change)="changeFontSize($event)" (click)="changeFontSize($event)"></td>
               </tr>

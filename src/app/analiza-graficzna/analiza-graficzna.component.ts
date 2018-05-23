@@ -18,6 +18,7 @@ import * as Xml from 'xml2js';
 import { HtmlTagDefinition } from '@angular/compiler';
 import { element } from 'protractor';
 import { reverse } from 'dns';
+import { select } from 'snapsvg';
 
 // { parseString, Builder }
 declare var Snap: any;
@@ -186,14 +187,18 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
           this.lastSelected = this.selected = this.gObjects.getByInfoId(event['target'].id);
         }
         else if(event['target'].tagName=='tspan'){
-          this.lastSelected = this.selected = this.gObjects.getByInfoId(event['target'].parentNode.id);          
+          if(event['target'].parentNode.id.indexOf('info')!=-1)
+            this.lastSelected = this.selected = this.gObjects.getByInfoId(event['target'].id);
+          else
+            this.lastSelected = this.selected = event['target'].parentNode;          
         }
         else{
           this.selected = document.getElementById(event['target'].id);
           this.lastSelected = this.selected;
         }
   
-        //console.log(event);
+
+        if(this.selected)
         this.gObjects.setToEdit(this.selected.id);
 
       
@@ -205,11 +210,12 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         this.isDragged = true;
 
         //wyciaga element na wierzch
+        if(this.selected)
         if(!this.selected.id.includes('line')){
           this.gObjects.updateLayout(this.selected.id);
         }
 
-
+       if( this.selected)
         if(this.selected.tagName!=null){      
             this.resize = this.gObjects.isOnBorder(this.selected.id, event);
         }      
@@ -1135,6 +1141,14 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
           
           console.log('ddd');
         }
+      }
+
+      isInType(object: any): boolean{
+        if(this.selected)
+          if(this.selected instanceof object)
+          return true;
+
+        return false;
       }
   
     //#endregion
@@ -2502,7 +2516,8 @@ export class GTextClass extends GObjectBaseClass{
 
   changeInfo(tresc: string){
     this.info = tresc;
-    $('#'+this.id).text(tresc);
+    //$('#'+this.id).text(tresc);
+    this.create_multiline();
   }
 
   changeFontSize(size: string){
@@ -2559,6 +2574,8 @@ export class GTextClass extends GObjectBaseClass{
     // let result = this.info.replace(/\n/g, " \n ").split(' ');
     let result = this.info.split('\n');
 
+    $('#id_text_'+this.uid).remove();
+
     let wyn = this.parent.s.text(startP.x+5,startP.y,result);
     wyn.attr({"id":"id_text_"+this.uid, "font-size":this.fontsize,'fill':this.fontcolor});
     let size = 1;
@@ -2566,6 +2583,8 @@ export class GTextClass extends GObjectBaseClass{
       if(i==0)
       size = parseInt(tspan.getBBox().height);
     
+      tspan.node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "xml:space", "preserve");
+
       tspan.attr({x:startP.x+5, y:startP.y+(i*size)+size}); 
      });
 
@@ -2840,8 +2859,15 @@ export class GTextClass extends GObjectBaseClass{
 
     this.calculateRadius();
 
-    $("#"+this.id).attr({x:this.x, y: this.y});
+    //$("#"+this.id).attr({x:this.x, y: this.y});
     //this.create_multiline();
+
+    let infoob = this.parent.s.select('#'+this.id);
+    infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
+    infoob.selectAll("tspan").forEach((el)=>{
+      el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
+     });
+
 
     super.move(x,y);
   }
