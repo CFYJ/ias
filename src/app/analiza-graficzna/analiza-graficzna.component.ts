@@ -1161,17 +1161,17 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
 
   filecolumns: any[] =[
-    {text: 'id', datafield:'id', width:100 }
+
   ]
 
   filesource={
-    datatype: 'json',
+    datatype: 'array',
 
       datafields:[  
-        {name: 'id'},
+     
      
       ],
-      id:'id',     
+     
   };
 
   filedataAdapter = new $.jqx.dataAdapter(this.filesource);
@@ -1209,12 +1209,11 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         rows.forEach((row:any)=>{
 
           let tmpsource= []=[];
-          tmpsource['id']=rowcounter;
           for(let i =0; i<columnsCounter; i++){
             //let column = 'columna'+i;
             //tmpsource.push((val)=>{ val[column]= row.split(this.separator)[i]; return val; });
 
-            tmpsource['column'+i]= row.split(this.separator)[i];
+            tmpsource.push(row.split(this.separator)[i]);
           }
 
           rowcounter++;
@@ -1222,11 +1221,11 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
         })
        
-        this.filecolumns[0]={ text: 'id', datafield: 'id',  width: 120};
+       
         for(let i =0; i<columnsCounter; i++){
-          this.filecolumns[i+1] = { text: 'column'+i, datafield: 'column'+i,  width: 120};
+          this.filecolumns[i] = { text: 'column'+i, datafield: 'column'+i,  width: 120};
 
-          this.filesource.datafields.push({name: 'column'+i});
+          this.filesource.datafields.push({name: 'column'+i, 'type':'string', 'map':i});
         }
 
 
@@ -1235,13 +1234,13 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         this.filedataAdapter = new $.jqx.dataAdapter(this.filesource);
        
         this.fileGrid.source=this.filedataAdapter;
-        //this.fileGrid.refresh();
+        this.fileGrid.refresh();
 
         this.fileGrid.hideloadelement();
         
         
   
-        console.log(resultSource);
+        console.log(this.filesource.datafields);
 
       }
     }
