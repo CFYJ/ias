@@ -1877,10 +1877,10 @@ export class GObjectBaseClass extends CVObject{
        }
 
       let rez = new coordPoint(x,y);
-      console.log(rez);
+  
       return rez;
     }
-    console.log('hh');
+
     return null;
 
   }
@@ -2455,7 +2455,13 @@ export class GCircleClass extends GObjectBaseClass{
     $("#"+this.id).attr({cx:this.x, cy: this.y});
 
     //$("#id_info_"+this.uid).attr({x:this.x-(this.r-10), y: this.y-10});//-(this.r-10)
-    this.create_multiline();
+    //this.create_multiline();
+
+    let infoob = this.parent.s.select('#id_info_'+this.uid);
+    infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
+    infoob.selectAll("tspan").forEach((el)=>{
+      el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
+     });
 
     super.move(x,y);
 
