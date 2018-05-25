@@ -206,7 +206,7 @@
   </div>
 </jqxWindow>  
 
-
+<!-- okno udostępniania grafu -->
 <jqxWindow #shareWindow [auto-create]='false'
             [width]="870" [height]="480" [title]="'Udostępnianie'"
           [minHeight]="30" [minWidth]="250"
@@ -269,6 +269,9 @@
   </div>
 </jqxWindow>  
 
+
+
+<!-- okno wczytywania z pliku -->
 <jqxWindow #fileWindow [auto-create]='false'
           [width]="670" [height]="655"          
           [isModal]="true" [modalOpacity]="0.3" 
@@ -280,12 +283,25 @@
 
         <div [innerHTML]="fileContent"></div>
 
-    
-      
+        <!-- [hidden]="fileContent!=null" -->
+        <table style="width: 100%">
+          <tr>
+
+          </tr>
+
+          <tr>Rozpoznana zawartość pliku:</tr>
+
+          <tr>
+              <jqxGrid  #fileGrid [width]="'100%'" [height]="'400px'"
+              [columns]="filecolumns"  [auto-create]='false'
+              [autoheight]="true" [sortable]="false" 
+              [editable]="false"  [selectionmode]="'multiplecellsadvanced'"
+              ></jqxGrid>
+          </tr>
 
 
-
-
+        </table>
+          
     </div>
 
     <div style="float: right; bottom: 10px;">        

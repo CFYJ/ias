@@ -60,6 +60,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   @ViewChild('sharesGrid') sharesGrid: jqxGridComponent;
 
   @ViewChild('fileWindow') fileWindow: jqxWindowComponent;
+  @ViewChild('fileGrid') fileGrid: jqxGridComponent;
 
   constructor(public auth: AuthenticationService,
     private sg: SimpleGlobal) { }
@@ -100,6 +101,8 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.allusersGrid.createComponent(this.gridoptions);
 
     this.sharesGrid.createComponent(this.gridoptions);
+
+    this.fileGrid.createComponent(this.gridoptions);
     
     this.windowNewGraf.createWidget({
       width: 350, height:280, theme: 'metro',
@@ -1155,6 +1158,25 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   
 
   //#region file operations
+
+
+  filecolumns: any[] =[
+    {text: 'id', datafield:'id', width:100 }
+  ]
+
+  filesource={
+    datatype: 'json',
+
+      datafields:[  
+        {name: 'id'},
+     
+      ],
+      id:'id',     
+  };
+
+  filedataAdapter = new $.jqx.dataAdapter(this.filesource);
+
+
   fileContent=""
   loadFile(){
     this.fileWindow.title("Generowanie grafu na podstawie pliku");
@@ -1167,9 +1189,65 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       var content = reader.result;
       //console.log(contents);
       this.fileContent = content;
+
+      this.prepareGrid(content);
     };
     reader.readAsText(event.target.files[0],'Windows-1250');
   }
+
+  separator=";";
+  prepareGrid(data: any){
+    if(data){
+      let rows = data.split('\n');
+      if(rows.length>0){
+
+        let columnsCounter = rows[0].split(this.separator).length;
+
+        let resultSource=[]=[];
+
+        let rowcounter=0;
+        rows.forEach((row:any)=>{
+
+          let tmpsource= []=[];
+          tmpsource['id']=rowcounter;
+          for(let i =0; i<columnsCounter; i++){
+            //let column = 'columna'+i;
+            //tmpsource.push((val)=>{ val[column]= row.split(this.separator)[i]; return val; });
+
+            tmpsource['column'+i]= row.split(this.separator)[i];
+          }
+
+          rowcounter++;
+          resultSource.push(tmpsource);
+
+        })
+       
+        this.filecolumns[0]={ text: 'id', datafield: 'id',  width: 120};
+        for(let i =0; i<columnsCounter; i++){
+          this.filecolumns[i+1] = { text: 'column'+i, datafield: 'column'+i,  width: 120};
+
+          this.filesource.datafields.push({name: 'column'+i});
+        }
+
+
+        this.fileGrid.columns(this.filecolumns);
+        this.filesource['localdata']= resultSource;
+        this.filedataAdapter = new $.jqx.dataAdapter(this.filesource);
+       
+        this.fileGrid.source=this.filedataAdapter;
+        //this.fileGrid.refresh();
+
+        this.fileGrid.hideloadelement();
+        
+        
+  
+        console.log(resultSource);
+
+      }
+    }
+
+  }
+
 
   //#endregion
 }
