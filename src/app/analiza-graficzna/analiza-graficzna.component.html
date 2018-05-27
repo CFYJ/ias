@@ -296,13 +296,40 @@
             <p>Należy ustawić kolumny na podstawie których powstanie graf. Elementy grafu składają się z klucz głównego i zawartości wyświetlanej wewnątrz elementu.
               Klucz musi być wartością unikatową, może być również wybrany jako zawartość elementu.</p>
            <p>
-              Połączenia pomiędzy elementami tworzone są na podstawie klucza dodakowego, który jest kluczem głównym drugiego elementu, z którym ma powstać połączenie
+              Połączenia pomiędzy elementami tworzone są na podstawie klucza dodakowego, będącego kluczem głównym elementu, z którym ma powstać połączenie.
             </p>
           </tr>
           <tr>
-            <td>Klucz główny elementu</td>
-            <td></td>
+            <td>
+              Klucz główny elementu
+            </td>
+            <td>
+              <select  [(ngModel)]="primaryKey" style="height:21px; width:110px">
+                  <option *ngFor="let obj of filecolumns" [value]='obj.text' style="height: 35px">{{obj.datafield}}</option>
+                </select>  
+            </td>
           </tr>
+          <tr>
+              <td>
+                Klucz elementu połączonego
+              </td>
+              <td>
+                <select  [(ngModel)]="secondaryKey" style="height:21px; width:110px">
+                    <option *ngFor="let obj of filecolumns" [value]='obj.text' style="height: 35px">{{obj.datafield}}</option>
+                  </select>  
+              </td>
+            </tr>
+          <tr>
+              <td>
+                Treść elementu
+              </td>
+              <td>
+                <select  [(ngModel)]="primaryContent" style="height:21px; width:110px">
+                    <option *ngFor="let obj of filecolumns" [value]='obj.text' style="height: 35px">{{obj.datafield}}</option>
+                  </select>  
+              </td>
+            </tr>
+            <tr>&nbsp;</tr>
 
           <tr>Rozpoznana zawartość pliku:</tr>
 

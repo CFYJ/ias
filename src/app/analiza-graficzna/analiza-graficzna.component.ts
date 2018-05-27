@@ -1176,10 +1176,10 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   }
 
   filecolumns: any[] =[
-      { text: 'kolumna-0', datafield: 'wydzial',  width: 120},
-      { text: 'kolumna-1', datafield: 'wydzial1',  width: 120},
-      { text: 'kolumna-2', datafield: 'wydzial2',  width: 120},
-      { text: 'kolumna-3', datafield: 'wydzial3',  width: 120}
+      { text: 'kolumna-0', datafield: 'column0',  width: 120},
+      { text: 'kolumna-1', datafield: 'column1',  width: 120},
+      { text: 'kolumna-2', datafield: 'column2',  width: 120},
+      { text: 'kolumna-3', datafield: 'column3',  width: 120}
   ]
 
   filesource={
@@ -1195,6 +1195,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   filedataAdapter = new $.jqx.dataAdapter(this.filesource);
 
   separator=";";
+  primarykey="";
+  primaryContent="";
+  secondaryKey="";
   prepareGrid(data: any){
     if(data){
 
