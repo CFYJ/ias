@@ -1159,25 +1159,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
   //#region file operations
 
-
-  filecolumns: any[] =[
-
-  ]
-
-  filesource={
-    datatype: 'array',
-
-      datafields:[  
-     
-     
-      ],
-     
-  };
-
-  filedataAdapter = new $.jqx.dataAdapter(this.filesource);
-
-
-  fileContent=""
+  fileContent: string="";
   loadFile(){
     this.fileWindow.title("Generowanie grafu na podstawie pliku");
     this.fileWindow.open();
@@ -1186,21 +1168,39 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   readFile(event: any){
     var reader = new FileReader();
     reader.onload = (e)=> {
-      var content = reader.result;
-      //console.log(contents);
+      let content = reader.result;
       this.fileContent = content;
-
       this.prepareGrid(content);
     };
     reader.readAsText(event.target.files[0],'Windows-1250');
   }
 
+  filecolumns: any[] =[
+      { text: 'kolumna-0', datafield: 'wydzial',  width: 120},
+      { text: 'kolumna-1', datafield: 'wydzial1',  width: 120},
+      { text: 'kolumna-2', datafield: 'wydzial2',  width: 120},
+      { text: 'kolumna-3', datafield: 'wydzial3',  width: 120}
+  ]
+
+  filesource={
+
+    datafields: [  
+       {name:'wydzial', type: 'string', map: '0'}     
+      ],
+
+    datatype: 'array',
+     
+  };
+
+  filedataAdapter = new $.jqx.dataAdapter(this.filesource);
+
   separator=";";
   prepareGrid(data: any){
     if(data){
-      let rows = data.split('\n');
-      if(rows.length>0){
 
+      let rows = data.split('\n');
+      
+      if(rows.length>0){
         let columnsCounter = rows[0].split(this.separator).length;
 
         let resultSource=[]=[];
@@ -1210,43 +1210,61 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
           let tmpsource= []=[];
           for(let i =0; i<columnsCounter; i++){
-            //let column = 'columna'+i;
-            //tmpsource.push((val)=>{ val[column]= row.split(this.separator)[i]; return val; });
-
             tmpsource.push(row.split(this.separator)[i]);
           }
 
           rowcounter++;
           resultSource.push(tmpsource);
-
-        })
+        });
        
        
         for(let i =0; i<columnsCounter; i++){
-          this.filecolumns[i] = { text: 'column'+i, datafield: 'column'+i,  width: 120};
+        
+          this.filecolumns[i] = { text: 'kolumna-'+i, datafield: 'column'+i,  width: 120};
 
-          this.filesource.datafields.push({name: 'column'+i, 'type':'string', 'map':i});
+          this.filesource['datafields'].push({name: 'column'+i, type:'string', map:i.toString()});
         }
 
-
-        this.fileGrid.columns(this.filecolumns);
         this.filesource['localdata']= resultSource;
-        this.filedataAdapter = new $.jqx.dataAdapter(this.filesource);
-       
-        this.fileGrid.source=this.filedataAdapter;
-        this.fileGrid.refresh();
-
-        this.fileGrid.hideloadelement();
-        
-        
+              
+        this.fileGrid['source']=new $.jqx.dataAdapter(this.filesource);
+         //this.fileGrid.refresh();
   
-        console.log(this.filesource.datafields);
-
+        this.fileGrid.updatebounddata(); 
       }
     }
 
   }
 
+  refreshFileGrid(){
+    this.prepareGrid(this.fileContent);
+  }
+
+  fileWindowClose(event: any){
+    this.separator =";"
+
+    this.filecolumns =[
+      { text: 'kolumna-0', datafield: 'wydzial',  width: 120},
+      { text: 'kolumna-1', datafield: 'wydzial1',  width: 120},
+      { text: 'kolumna-2', datafield: 'wydzial2',  width: 120},
+      { text: 'kolumna-3', datafield: 'wydzial3',  width: 120}
+    ]
+
+    this.filesource={
+
+      datafields: [  
+         {name:'wydzial', type: 'string', map: '0'}     
+        ],
+  
+      datatype: 'array',
+       
+    };
+
+    this.filedataAdapter = new $.jqx.dataAdapter(this.filesource);
+
+    $('#file-field').val('');
+
+  }
 
   //#endregion
 }

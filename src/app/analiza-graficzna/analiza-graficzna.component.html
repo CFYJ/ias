@@ -275,31 +275,44 @@
 <jqxWindow #fileWindow [auto-create]='false'
           [width]="670" [height]="655"          
           [isModal]="true" [modalOpacity]="0.3" 
-          [okButton]="'.fok'" [resizable]="true">
+          [okButton]="'.fok'" [resizable]="true" (onClose)="fileWindowClose($event)">
 
-  <div style="height:100%;">
-    <div style="bottom: 20px;overflow: hidden; min-height: 580px;" #windowContent>
+  <div style="height:100%;" #windowContent>
+    <div style="bottom: 20px;overflow: hidden; min-height: 580px;" >
         <input id="file-field"  (change)="readFile($event)" type="file" >
 
-        <div [innerHTML]="fileContent"></div>
+        <!-- <div [innerHTML]="fileContent"></div> -->
 
-        <!-- [hidden]="fileContent!=null" -->
-        <table style="width: 100%">
+        <table style="width: 100%" >
           <tr>
+           
+              Separator kolumn: <input id="columnSeparator" [(ngModel)]="separator" type="text" style="width:20px; font-weight: bold;"/>
+            
+              <button (click)="refreshFileGrid()" style="margin-left:20px">Odśwież</button>
+          
 
+          </tr>
+          <tr>
+            <p>Należy ustawić kolumny na podstawie których powstanie graf. Elementy grafu składają się z klucz głównego i zawartości wyświetlanej wewnątrz elementu.
+              Klucz musi być wartością unikatową, może być również wybrany jako zawartość elementu.</p>
+           <p>
+              Połączenia pomiędzy elementami tworzone są na podstawie klucza dodakowego, który jest kluczem głównym drugiego elementu, z którym ma powstać połączenie
+            </p>
+          </tr>
+          <tr>
+            <td>Klucz główny elementu</td>
+            <td></td>
           </tr>
 
           <tr>Rozpoznana zawartość pliku:</tr>
 
           <tr>
               <jqxGrid  #fileGrid [width]="'100%'" [height]="'400px'"
-              [columns]="filecolumns"  [auto-create]='false'
+              [auto-create]='false' [columns]="filecolumns" [source]="filedataAdapter"
               [autoheight]="true" [sortable]="false" 
               [editable]="false"  [selectionmode]="'multiplecellsadvanced'"
               ></jqxGrid>
           </tr>
-
-
         </table>
           
     </div>
