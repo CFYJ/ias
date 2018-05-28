@@ -1159,6 +1159,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
   //#region file operations
 
+  showFileInfo: boolean = false;
   fileContent: string="";
   loadFile(){
     this.fileWindow.title("Generowanie grafu na podstawie pliku");

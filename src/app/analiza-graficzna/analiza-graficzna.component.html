@@ -273,78 +273,84 @@
 
 <!-- okno wczytywania z pliku -->
 <jqxWindow #fileWindow [auto-create]='false'
-          [width]="670" [height]="655"          
+          [width]="670" [height]="555"          
           [isModal]="true" [modalOpacity]="0.3" 
           [okButton]="'.fok'" [resizable]="true" (onClose)="fileWindowClose($event)">
 
   <div style="height:100%;" #windowContent>
-    <div style="bottom: 20px;overflow: hidden; min-height: 580px;" >
-        <input id="file-field"  (change)="readFile($event)" type="file" >
+    <div style="bottom: 20px;overflow: hidden; min-height: 480px;" >
+      <p>
+        <input id="file-field" class="button buttonB" (change)="readFile($event)" type="file"  title="Wybierz plik">
+        <button class="button buttonB" (click)="showFileInfo=!showFileInfo"> Instrukcja</button>
+      </p>
 
-        <!-- <div [innerHTML]="fileContent"></div> -->
+      <div [hidden]="!showFileInfo" >
+        <p align="justify">Po wczytaniu pliku z danymi należy ustawić kolumny, na podstawie których powstanie graf. 
+            Elementy grafu składają się z klucza głównego i treści wyświetlanej wewnątrz elementu.
+            Klucz musi być wartością unikatową, ale może być także ustawiony jako zawartość elementu.
+        </p>
+        <p>
+          Połączenia pomiędzy elementami tworzone są na podstawie klucza głównego i klucza dodatkowego, będącego kluczem głównym elementu, z którym ma powstać połączenie.
+        </p>
+        <p>
+           Separator jest to dowolny znak, który ma na celu rozdzielenie kolumn we wczytywanym pliku. Najczęściej separatorem jest średnik lub przecinek.
+        </p>
+      </div>
 
-        <table style="width: 100%" >
-          <tr>
-           
-              Separator kolumn: <input id="columnSeparator" [(ngModel)]="separator" type="text" style="width:20px; font-weight: bold;"/>
-            
-              <button (click)="refreshFileGrid()" style="margin-left:20px">Odśwież</button>
-          
 
-          </tr>
-          <tr>
-            <p>Należy ustawić kolumny na podstawie których powstanie graf. Elementy grafu składają się z klucz głównego i zawartości wyświetlanej wewnątrz elementu.
-              Klucz musi być wartością unikatową, może być również wybrany jako zawartość elementu.</p>
-           <p>
-              Połączenia pomiędzy elementami tworzone są na podstawie klucza dodakowego, będącego kluczem głównym elementu, z którym ma powstać połączenie.
-            </p>
-          </tr>
-          <tr>
+      <table style="width: 100%" >  
+        <tr>
+          <td colspan="2">           
+            Separator kolumn: <input id="columnSeparator" [(ngModel)]="separator" type="text" style="width:20px; font-weight: bold; margin-left:20px"/>
+            <button class="button buttonB" (click)="refreshFileGrid()" style="margin-left:20px">Odśwież ustawienia</button>
+          </td>
+        </tr>
+        <tr>
+          <td style="width:300px">
+            Klucz główny elementu:
+          </td>
+          <td>
+            <select  [(ngModel)]="primaryKey" style="height:21px; width:110px">
+                <option *ngFor="let obj of filecolumns" [value]='obj.datafield' style="height: 35px">{{obj.text}}</option>
+              </select>  
+          </td>
+        </tr>
+        
+        <tr>
             <td>
-              Klucz główny elementu
+              Treść elementu:
             </td>
             <td>
-              <select  [(ngModel)]="primaryKey" style="height:21px; width:110px">
+              <select  [(ngModel)]="primaryContent" style="height:21px; width:110px">
                   <option *ngFor="let obj of filecolumns" [value]='obj.datafield' style="height: 35px">{{obj.text}}</option>
                 </select>  
             </td>
           </tr>
           <tr>
-              <td>
-                Klucz elementu połączonego
-              </td>
-              <td>
-                <select  [(ngModel)]="secondaryKey" style="height:21px; width:110px">
-                    <option *ngFor="let obj of filecolumns" [value]='obj.datafield' style="height: 35px">{{obj.text}}</option>
-                  </select>  
-              </td>
-            </tr>
-          <tr>
-              <td>
-                Treść elementu
-              </td>
-              <td>
-                <select  [(ngModel)]="primaryContent" style="height:21px; width:110px">
-                    <option *ngFor="let obj of filecolumns" [value]='obj.datafield' style="height: 35px">{{obj.text}}</option>
-                  </select>  
-              </td>
-            </tr>
-            <tr>&nbsp;</tr>
-
-            <tr>
-              <button (click)="startDrawingFromFile()">Rysuj graf</button>
-            </tr>
-
-          <tr>Rozpoznana zawartość pliku:</tr>
-
-          <tr>
-              <jqxGrid  #fileGrid [width]="'100%'" [height]="'400px'"
-              [auto-create]='false' [columns]="filecolumns" [source]="filedataAdapter"
-              [autoheight]="true" [sortable]="false" 
-              [editable]="false"  [selectionmode]="'multiplecellsadvanced'"
-              ></jqxGrid>
+            <td>
+              Klucz elementu połączonego:
+            </td>
+            <td>
+              <select  [(ngModel)]="secondaryKey" style="height:21px; width:110px">
+                  <option *ngFor="let obj of filecolumns" [value]='obj.datafield' style="height: 35px">{{obj.text}}</option>
+                </select>  
+            </td>
           </tr>
-        </table>
+          <tr>&nbsp;</tr>
+          <tr>                     
+            <button class="button buttonB" (click)="startDrawingFromFile()">Rysuj graf</button>        
+          </tr>
+
+        <tr>Rozpoznana zawartość pliku:</tr>
+      </table>
+         
+      <jqxGrid  #fileGrid [width]="'100%'" [height]="'400px'"
+      [auto-create]='false' [columns]="filecolumns" [source]="filedataAdapter"
+      [autoheight]="true" [sortable]="false" 
+      [editable]="false"  [selectionmode]="'multiplecellsadvanced'"
+      ></jqxGrid>
+         
+      
           
     </div>
 
