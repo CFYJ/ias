@@ -305,7 +305,7 @@
             </td>
             <td>
               <select  [(ngModel)]="primaryKey" style="height:21px; width:110px">
-                  <option *ngFor="let obj of filecolumns" [value]='obj.text' style="height: 35px">{{obj.datafield}}</option>
+                  <option *ngFor="let obj of filecolumns" [value]='obj.datafield' style="height: 35px">{{obj.text}}</option>
                 </select>  
             </td>
           </tr>
@@ -315,7 +315,7 @@
               </td>
               <td>
                 <select  [(ngModel)]="secondaryKey" style="height:21px; width:110px">
-                    <option *ngFor="let obj of filecolumns" [value]='obj.text' style="height: 35px">{{obj.datafield}}</option>
+                    <option *ngFor="let obj of filecolumns" [value]='obj.datafield' style="height: 35px">{{obj.text}}</option>
                   </select>  
               </td>
             </tr>
@@ -325,11 +325,15 @@
               </td>
               <td>
                 <select  [(ngModel)]="primaryContent" style="height:21px; width:110px">
-                    <option *ngFor="let obj of filecolumns" [value]='obj.text' style="height: 35px">{{obj.datafield}}</option>
+                    <option *ngFor="let obj of filecolumns" [value]='obj.datafield' style="height: 35px">{{obj.text}}</option>
                   </select>  
               </td>
             </tr>
             <tr>&nbsp;</tr>
+
+            <tr>
+              <button (click)="startDrawingFromFile()">Rysuj graf</button>
+            </tr>
 
           <tr>Rozpoznana zawartość pliku:</tr>
 

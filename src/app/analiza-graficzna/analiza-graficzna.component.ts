@@ -1195,9 +1195,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   filedataAdapter = new $.jqx.dataAdapter(this.filesource);
 
   separator=";";
-  primarykey="";
-  primaryContent="";
-  secondaryKey="";
+  primaryKey: any="";
+  primaryContent: any="";
+  secondaryKey: any="";
   prepareGrid(data: any){
     if(data){
 
@@ -1225,6 +1225,18 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         
           this.filecolumns[i] = { text: 'kolumna-'+i, datafield: 'column'+i,  width: 120};
 
+          switch (i){
+            case 0:
+              this.primaryKey = 'column0';
+              break;
+            case 1:
+              this.primaryContent='column1';
+              break;
+            case 2:
+              this.secondaryKey='column2';
+              break;
+          }
+
           this.filesource['datafields'].push({name: 'column'+i, type:'string', map:i.toString()});
         }
 
@@ -1234,6 +1246,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
          //this.fileGrid.refresh();
   
         this.fileGrid.updatebounddata(); 
+       
       }
     }
 
@@ -1245,6 +1258,10 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
   fileWindowClose(event: any){
     this.separator =";"
+    this.primaryKey= "";
+    this.primaryContent="";
+    this.secondaryKey="";
+    this.graphLevels =[];
 
     this.filecolumns =[
       { text: 'kolumna-0', datafield: 'wydzial',  width: 120},
@@ -1256,7 +1273,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.filesource={
 
       datafields: [  
-         {name:'wydzial', type: 'string', map: '0'}     
+         {name:'kolumna', type: 'string', map: '0'}     
         ],
   
       datatype: 'array',
@@ -1268,6 +1285,81 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     $('#file-field').val('');
 
   }
+
+  graphLevels: any[][]=[];
+  pK: number=0;pC: number=0; sK: number=0;
+  startDrawingFromFile(){
+
+    this.wyczysc();
+
+    this.pK =parseInt(this.primaryKey.replace('column',''));
+    this.pC =parseInt(this.primaryContent.replace('column',''));
+    this.sK =parseInt(this.secondaryKey.replace('column',''));
+
+    this.graphLevels[0]=[];
+    this.filesource['localdata'].forEach((row: any)=>{
+     
+      if(row[this.sK]===""){
+        this.graphLevels[0].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
+        this.prepareGraphFromFile(row[this.pK],1);
+      }
+    })
+
+    this.drawElementsFromFile();
+
+
+
+    
+  }
+
+  prepareGraphFromFile(element: string, level: number){
+  
+    if(!this.graphLevels[level])
+      this.graphLevels[level]=[];
+
+    this.filesource['localdata'].forEach((row: any)=>{
+      if(row[this.sK]===element){
+        this.graphLevels[level].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
+        this.prepareGraphFromFile(row[this.pK],level+1);
+      }
+    });
+  }
+
+  drawElementsFromFile(){
+    let maxCount=0;
+    this.graphLevels.forEach((el:any)=>{ 
+      maxCount<el.length?maxCount=el.length:false;
+    })
+
+    let w = 150;
+    let h = 50;
+
+    if(maxCount>0)
+    this.graphLevels.forEach((item, index)=>{
+      item.forEach((el,elindex)=>{
+      
+        this.gObjects.drawFromFile({x: (maxCount/item.length)*w +2*w*elindex,
+                                    y: 2*h*index+h,
+                                    w: w,
+                                    h: h,
+                                    uid: el['id'],
+                                    info: el['content'] })
+      });
+
+    });
+
+
+    this.graphLevels.forEach((item, index)=>{
+      item.forEach((el,elindex)=>{
+        if(el['parent']!=='')
+          this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+elindex+index, start: 'id_rect_'+el['parent'], stop: 'id_rect_'+el['id']});
+      });
+    });
+
+    this.gObjects.updateLayout();
+    
+  }
+
 
   //#endregion
 }
@@ -1383,6 +1475,12 @@ export class linesContainerClass{
     });
   }
 
+  drawFromFile(object:any){
+    let line = new lineClass(null,null,null);
+    this.addline(line);
+    line.createFromFile(object, this.parent);
+  }
+
 }
 
 export class lineClass{
@@ -1439,6 +1537,26 @@ export class lineClass{
     this.id = object.id[0];
     this.startid=object.startid[0];
     this.stopid=object.stopid[0];
+    
+    this.createLine(); 
+
+    this.drawArrow();
+  }
+
+  createFromFile(object: any, parent: any){
+    this.parent=parent;
+    
+    let start= this.parent.gObjects.get(object.start).getCenter();
+    let stop = this.parent.gObjects.get(object.stop).getCenter();
+
+    this.x1=start.x;
+    this.x2=stop.x;
+    this.y1=start.y;
+    this.y2=stop.y;
+    
+    this.id =object.id;
+    this.startid=object.start;
+    this.stopid=object.stopid;
     
     this.createLine(); 
 
@@ -1616,6 +1734,12 @@ export class GObjectContainerClass{
           break;        
       }
     });
+  }
+
+  drawFromFile(object: any){
+    let tmpr = new GRectClass(null,null,null);
+    this.add(tmpr);
+    (tmpr).createFromFile(object, this.parent);
   }
 
   del(id:string){
@@ -2192,6 +2316,21 @@ export class GRectClass extends GObjectBaseClass{
     this.createObject();
     this.parent.svgObjects.push(this.id);   
 
+  }
+
+  createFromFile(object: any, parent: any){
+    this.x = parseInt(object.x);
+    this.y = parseInt(object.y);
+    this.w = parseInt(object.w);
+    this.h = parseInt(object.h);
+    this.parent = parent;
+    this.shape = "rect";    
+    this.uid = object.uid;
+    this.id = 'id_rect_'+object.uid;
+    this.info = object.info;
+
+    this.createObject();
+    this.parent.svgObjects.push(this.id);   
   }
 
   checkIsOnBorder(event: any){        
