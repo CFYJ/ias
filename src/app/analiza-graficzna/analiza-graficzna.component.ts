@@ -1556,7 +1556,7 @@ export class lineClass{
     
     this.id =object.id;
     this.startid=object.start;
-    this.stopid=object.stopid;
+    this.stopid=object.stop;
     
     this.createLine(); 
 
@@ -1565,7 +1565,7 @@ export class lineClass{
 
   drawArrow(){
 
-    let tmp = this.parent.gObjects.get(this.stopid);
+    let tmp = this.parent.gObjects.get(this.stopid);   
     if(tmp)  
       tmp.drawArrow(this);
 
