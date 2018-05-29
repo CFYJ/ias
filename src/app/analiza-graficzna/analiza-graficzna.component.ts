@@ -2165,7 +2165,7 @@ export class GObjectBaseClass extends CVObject{
        if(i==0)
        size = parseInt(tspan.getBBox().height);
      
-       tspan.attr({x:startP.x+5, y:startP.y+(i*size)+size}); 
+       tspan.attr({x:startP.x+5, y:startP.y+(i*size)*(1/this.parent.scale)+size*(1/this.parent.scale)}); 
       });
      //wyn.selectAll("tspan").forEach((tspan, i)=>{tspan.attr({x:x, dy:i*18+5}); });     
 
@@ -2230,7 +2230,7 @@ export class GObjectBaseClass extends CVObject{
 
   }
 
-  resize(x:number, y:number){  } 
+  resize(x:number, y:number){   this.makeSelected();} 
 
   setToEdit(){
     this.parent.selectedText = this.info;
@@ -2420,14 +2420,14 @@ export class GRectClass extends GObjectBaseClass{
 
     $("#"+this.id).attr({x:this.x, y: this.y});
 
-    //super.move(x,y);
-    //this.create_multiline();
+    super.move(x,y);
+    this.create_multiline();
 
-    let infoob = this.parent.s.select('#id_info_'+this.uid);
-    infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
-    infoob.selectAll("tspan").forEach((el)=>{
-      el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
-     });
+    // let infoob = this.parent.s.select('#id_info_'+this.uid);
+    // infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
+    // infoob.selectAll("tspan").forEach((el)=>{
+    //   el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
+    //  });
 
 
     super.move(x,y);
@@ -2445,6 +2445,8 @@ export class GRectClass extends GObjectBaseClass{
       this.create_multiline();
 
     }
+
+    super.resize(x,y);
   }
 
 }
@@ -2693,15 +2695,15 @@ export class GCircleClass extends GObjectBaseClass{
     $("#"+this.id).attr({cx:this.x, cy: this.y});
 
     //$("#id_info_"+this.uid).attr({x:this.x-(this.r-10), y: this.y-10});//-(this.r-10)
-    //this.create_multiline();
+    this.create_multiline();
 
-    let infoob = this.parent.s.select('#id_info_'+this.uid);
-    infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
-    infoob.selectAll("tspan").forEach((el)=>{
-      el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
-     });
+    // let infoob = this.parent.s.select('#id_info_'+this.uid);
+    // infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
+    // infoob.selectAll("tspan").forEach((el)=>{
+    //   el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
+    //  });
 
-    super.move(x,y);
+     super.move(x,y);
 
     //#region old
       // let tmpcx =  parseInt($("#"+this.selected.id).attr("cx"));
@@ -2727,6 +2729,8 @@ export class GCircleClass extends GObjectBaseClass{
       this.r = tmpr+x;
       $("#"+this.id).attr({r:this.r});
     }
+  
+    super.resize(x,y);
   }
 }
 
