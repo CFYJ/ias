@@ -41,7 +41,7 @@
     </div>
   <div>
       <jqxSplitter #grafyTableSplitter  [height]="'99%'" width="'100%'"
-        [panels]="[{size:280}, {size:800}]">
+        [panels]="[{size:320}, {size:800}]">
         
         <div style="background:skyblue">
             <table width="'100%'">
@@ -60,6 +60,7 @@
                   <div class="button buttonImg" id="bs-circle" (click)="selectShape('circle', $event)"><img id="bs-circle" src="/images/grafy/circle.png" style="width:40px"/></div>
                   <div class="button buttonImg" id="bs-line" (click)="selectShape('line', $event)"><img id="bs-line" src="/images/grafy/line.png" style="width:40px"/></div>
                   <div class="button buttonImg" id="bs-text" (click)="selectShape('text', $event)"><img id="bs-text" src="/images/grafy/text.png" style="width:40px"/></div>
+                  
                 </td>
               </tr>
               <tr>
@@ -181,13 +182,13 @@
 <!-- [okButton]="'.ok'" [cancelButton]="'.cancel'"  
  [maxHeight]="280" [maxWidth]="380" [minHeight]="30" [minWidth]="250"-->
 <jqxWindow #questionWindow [auto-create]='false'
-          [width]="470" [height]="355"          
+          [width]="570" [height]="455"          
           [isModal]="true" [modalOpacity]="0.3"
           [okButton]="'.qok'" [cancelButton]="'.qcancel'" [resizable]="false">
 
   <div style="height:100%;">
     <div style="bottom: 40px;overflow: hidden; min-height: 280px;" #windowContent>
-        <div [innerHTML]="questionWindowParams.message" >     </div>
+        <div align="justify" [innerHTML]="questionWindowParams.message" >     </div>
     </div>
 
     <div style="float: right; bottom: 10px;">        
@@ -273,7 +274,7 @@
 
 <!-- okno wczytywania z pliku -->
 <jqxWindow #fileWindow [auto-create]='false'
-          [width]="670" [height]="555"          
+          [width]="550" [height]="555"          
           [isModal]="true" [modalOpacity]="0.3" 
           [okButton]="'.fok'" [resizable]="true" (onClose)="fileWindowClose($event)">
 
@@ -281,10 +282,10 @@
     <div style="bottom: 20px;overflow: hidden; min-height: 480px;" >
       <p>
         <input id="file-field" class="button buttonB" (change)="readFile($event)" type="file"  title="Wybierz plik">
-        <button class="button buttonB" (click)="showFileInfo=!showFileInfo"> Instrukcja</button>
+        <button class="button buttonB" style="float:right;" (click)="showFileInfo=!showFileInfo"> Instrukcja</button>
       </p>
 
-      <div [hidden]="!showFileInfo" >
+      <div [hidden]="!showFileInfo" style="background: rgb(247, 223, 200); border-radius: 10px; padding: 5px; color: black; font-family: Arial, Helvetica, sans-serif" >
         <p align="justify">Po wczytaniu pliku z danymi należy ustawić kolumny, na podstawie których powstanie graf. 
             Elementy grafu składają się z klucza głównego i treści wyświetlanej wewnątrz elementu.
             Klucz musi być wartością unikatową, ale może być także ustawiony jako zawartość elementu.
@@ -300,11 +301,20 @@
 
       <table style="width: 100%" >  
         <tr>
-          <td colspan="2">           
-            Separator kolumn: <input id="columnSeparator" [(ngModel)]="separator" type="text" style="width:20px; font-weight: bold; margin-left:20px"/>
-            <button class="button buttonB" (click)="refreshFileGrid()" style="margin-left:20px">Odśwież ustawienia</button>
+          <td >           
+            Separator kolumn: <input id="columnSeparator" [(ngModel)]="separator" type="text" style="width:20px; font-weight: bold; margin-left:10px"/>           
+          </td>
+          <td rowspan="2">
+              <button class="button buttonB" (click)="refreshFileGrid()" style="margin-left:20px; float:right;">Odśwież ustawienia</button>
           </td>
         </tr>
+        <tr>
+          <td colspan="2">           
+            Pierwszy wiersz zawiera nagłówki:
+            <input type="checkbox" style="margin-left: 10px" [(ngModel)]="firstRowHeaders">
+          </td>
+           
+          </tr>
         <tr>
           <td style="width:300px">
             Klucz główny elementu:
@@ -337,11 +347,12 @@
             </td>
           </tr>
           <tr>&nbsp;</tr>
-          <tr>                     
-            <button class="button buttonB" (click)="startDrawingFromFile()">Rysuj graf</button>        
+          <tr>
+                             
+            <!-- <button class="button buttonB" style="float:right;"  (click)="startDrawingFromFile()">Rysuj graf</button>         -->
           </tr>
 
-        <tr>Rozpoznana zawartość pliku:</tr>
+        <tr>Przykładowa zawartość pliku:</tr>
       </table>
          
       <jqxGrid  #fileGrid [width]="'100%'" [height]="'400px'"
@@ -351,16 +362,20 @@
       ></jqxGrid>
          
       
-          
+      <button #okButton class="fok button buttonB" style="float:right;margin-top:20px;" *ngIf="questionWindowParams.byes"   (click)="startDrawingFromFile()">Rysuj graf</button> 
+      <!-- <jqxButton #okButton class="fok button buttonB" style="float:right;margin-top:20px;"   *ngIf="questionWindowParams.byes" 
+     
+      [width]="80" (click)="startDrawingFromFile()">
+Rysuj graf
+</jqxButton> -->
     </div>
 
-    <div style="float: right; bottom: 10px;">        
-          <jqxButton #okButton class="fok"  *ngIf="questionWindowParams.byes" 
-                    style="display: inline-block; margin-right: 10px;"
-                    [width]="80">
-            Zakończ
-          </jqxButton>
+    <!-- 
+       style="display: inline-block; margin-right: 10px;"
+      
+      <div style="float: right; bottom: 10px;">        
+          
 
-    </div>  
+    </div>   -->
   </div>
 </jqxWindow> 

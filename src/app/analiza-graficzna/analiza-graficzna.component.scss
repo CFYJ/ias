@@ -65,7 +65,7 @@ button[disabled]{
 }
 
 .infobutton {
-    background-color: skyblue;
+    background-color: #4CAF50;
     border: none;
     color: white;
     padding: 5px;
@@ -77,11 +77,12 @@ button[disabled]{
     /*margin: 4px 2px;*/
     margin-right: 10px;
     margin-top: 5px;
+    margin-left: 10px;
     border-radius: 50%;
  
   }
   .infobutton:hover {
-    background-color: #4CAF50;
+    background-color: green;
   }
 
 

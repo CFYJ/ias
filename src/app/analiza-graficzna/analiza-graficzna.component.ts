@@ -1184,7 +1184,6 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   ]
 
   filesource={
-
     datafields: [  
        {name:'wydzial', type: 'string', map: '0'}     
       ],
@@ -1196,6 +1195,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   filedataAdapter = new $.jqx.dataAdapter(this.filesource);
 
   separator=";";
+  firstRowHeaders: boolean = false;
   primaryKey: any="";
   primaryContent: any="";
   secondaryKey: any="";
@@ -1203,28 +1203,40 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     if(data){
 
       let rows = data.split('\n');
+
+      let rowcounter=0;
+      let startrow = this.firstRowHeaders?1:0;
       
-      if(rows.length>0){
+      if(rows.length>startrow){
         let columnsCounter = rows[0].split(this.separator).length;
 
         let resultSource=[]=[];
 
-        let rowcounter=0;
-        rows.forEach((row:any)=>{
+        
+        rows.forEach((row:any)=>{        
+            let tmpsource= []=[];
+            for(let i =startrow; i<columnsCounter; i++){            
+              tmpsource.push(row.split(this.separator)[i]);
+            
+            }
 
-          let tmpsource= []=[];
-          for(let i =0; i<columnsCounter; i++){
-            tmpsource.push(row.split(this.separator)[i]);
-          }
-
-          rowcounter++;
-          resultSource.push(tmpsource);
+            rowcounter++;
+            resultSource.push(tmpsource);      
         });
        
        
         for(let i =0; i<columnsCounter; i++){
         
-          this.filecolumns[i] = { text: 'kolumna-'+i, datafield: 'column'+i,  width: 120};
+          let col = 'kolumna-'+i;
+          if(this.firstRowHeaders){
+            console.log(resultSource[0][i].replace(this.separator+this.separator, this.separator+' '+this.separator))
+            col=resultSource[0][i].replace(this.separator+this.separator, this.separator+' '+this.separator).split(this.separator)[i];
+
+          }
+
+    
+            this.filecolumns[i] = i<columnsCounter-1?{ text: col, datafield: 'column'+i,  width: 120}: { text: col, datafield: 'column'+i,  minwidth: 120};
+
 
           switch (i){
             case 0:
@@ -1241,7 +1253,11 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
           this.filesource['datafields'].push({name: 'column'+i, type:'string', map:i.toString()});
         }
 
-        this.filesource['localdata']= resultSource;
+        // this.filecolumns[ this.filecolumns.length-1]['minwidth']=120;
+        // this.filecolumns[ this.filecolumns.length-1]['width']='auto';
+
+        let grid
+        this.filesource['localdata']= resultSource.slice(0,5);
               
         this.fileGrid['source']=new $.jqx.dataAdapter(this.filesource);
          //this.fileGrid.refresh();
