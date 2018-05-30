@@ -1213,30 +1213,27 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         let resultSource=[]=[];
 
         
-        rows.forEach((row:any)=>{        
+        rows.forEach((row:any, index)=>{  
+          if(index>=startrow){      
             let tmpsource= []=[];
-            for(let i =startrow; i<columnsCounter; i++){            
+            for(let i =0; i<columnsCounter; i++){            
               tmpsource.push(row.split(this.separator)[i]);
             
             }
 
             rowcounter++;
             resultSource.push(tmpsource);      
+          }
         });
-       
        
         for(let i =0; i<columnsCounter; i++){
         
           let col = 'kolumna-'+i;
-          if(this.firstRowHeaders){
-            console.log(resultSource[0][i].replace(this.separator+this.separator, this.separator+' '+this.separator))
-            col=resultSource[0][i].replace(this.separator+this.separator, this.separator+' '+this.separator).split(this.separator)[i];
-
+          if(this.firstRowHeaders){           
+            col=resultSource[0][i]?resultSource[0][i]:col;
           }
-
     
-            this.filecolumns[i] = i<columnsCounter-1?{ text: col, datafield: 'column'+i,  width: 120}: { text: col, datafield: 'column'+i,  minwidth: 120};
-
+          this.filecolumns[i] = i<columnsCounter-1?{ text: col, datafield: 'column'+i,  width: 120}: { text: col, datafield: 'column'+i};
 
           switch (i){
             case 0:
@@ -1270,6 +1267,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   }
 
   refreshFileGrid(){
+
     this.prepareGrid(this.fileContent);
   }
 
@@ -1279,6 +1277,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.primaryContent="";
     this.secondaryKey="";
     this.graphLevels =[];
+    this.firstRowHeaders= false;
 
     this.filecolumns =[
       { text: 'kolumna-0', datafield: 'wydzial',  width: 120},
