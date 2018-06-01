@@ -1615,16 +1615,23 @@ export class lineClass{
       {
         rez = true;
         if(object.attr('id') == this.startid){               
-            
-          let target = this.parent.gObjects.get(this.startid);
+           
+
+          let target =this.parent.gObjects.get(this.startid)
           if(target){
-               target.getLineTouchPoint(this);
-            let targetPoint  = this.getTarget(object);   
+               //target.getLineTouchPoint(this);
+              let l = new lineClass(this.x2, this.y2, this.parent);
+              let p = target.getCenter();
+              l.x2 = p.x;
+              l.y2 = p.y;
+            let targetPoint  = target.getLineTouchPoint(l);//.getLineTouchPoint(this);//this.getTarget(object);   
         
+            if(targetPoint){
             let tmp = $('#'+this.id); 
             this.x1 = targetPoint.x; //this.getTarget(object).x;
             this.y1 = targetPoint.y; //this.getTarget(object).y;
             tmp.attr({x1:this.x1,y1:this.y1});
+            }
           }
          
         }
@@ -2165,15 +2172,15 @@ export class GObjectBaseClass extends CVObject{
   }
 
   //punkt styku z linia
-  getLineTouchPoint(line: lineClass): coordPoint{
+  getLineTouchPoint_old(line: lineClass): coordPoint{
 
-    if(!((line.x1>this.x && line.x1<this.x+this.w) && (line.y1>this.y && line.y1<this.y+this.h)) )
+    //if(!((line.x1>this.x && line.x1<this.x+this.w) && (line.y1>this.y && line.y1<this.y+this.h)) )
     {
         // //linia przecinająca
        
-        let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);   
-        console.log(tmp); 
-        tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
+        // let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);   
+        
+        // tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
         //$('#tmp'+this.uid).remove();
         //określenie krawędź przecinanej
   
@@ -2224,6 +2231,76 @@ export class GObjectBaseClass extends CVObject{
       let rez = new coordPoint(x,y);
   
       return rez;
+    }
+
+    //return null;
+  
+  }
+
+  getLineTouchPoint(line: lineClass): coordPoint{
+
+    // let line = new lineClass(tmpline.x2,tmpline.y2, this.parent);
+    // line.x2 = this.x;
+    // line.y2 = this.y;
+    
+
+    if(!((line.x1>this.x && line.x1<this.x+this.w) && (line.y1>this.y && line.y1<this.y+this.h)) )
+    {
+            
+      let Ap, Bp= new coordPoint(0,0);
+
+      //współczynniki przekątnych
+
+      let x_l = this.x;
+      let x_r = this.x+this.w;
+      let y_u=this.y;
+      let y_d=this.y+this.h;
+
+      let Ar = (y_u-y_d)/(x_r-x_l);
+      let Br = -Ar*x_l+y_d;
+      let Al = (y_u-y_d)/(x_l-x_r);
+      let Bl = -Al*x_r+y_d;
+
+      //wyznaczenie przecinanej krawedzi
+      let Ak, Bk: number;
+      let x,y:number;
+      //y=Al*line.x1+Bl;
+    
+
+      //wspolczynnik dla linii
+      let Dt = (line.y2-line.y1)/(line.x2-line.x1);
+
+      //gora
+      if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)>line.y1){
+        y=this.y;
+        x=(y+Dt*line.x1-line.y1)/Dt;      
+      }
+      //prawa
+      if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)<line.y1 && line.x1>this.x+this.w){
+        x=this.x+this.w;
+        y=(Dt*x)-Dt*line.x1+line.y1;      
+      }
+      //dol
+      if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)<line.y1){
+        y=this.y+this.h;
+        x=(y+Dt*line.x1-line.y1)/Dt;      
+      }
+      //lewa
+      if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)>line.y1 && line.x1<this.x){
+        x=this.x;
+        y=(Dt*x)-Dt*line.x1+line.y1;      
+      }
+
+      if(x && y){
+    
+        let rez = new coordPoint(x,y);
+
+        $('#yy').remove();
+        let yy = this.parent.s.circle(x,y,2);
+        yy.attr({'id':'yy'});
+    
+        return rez;
+      }
     }
 
     return null;
