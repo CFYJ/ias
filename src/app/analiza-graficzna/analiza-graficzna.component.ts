@@ -1373,6 +1373,10 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     });
 
     this.gObjects.updateLayout();
+
+    this.myTree.selectItem(null);   
+    this.treeSelected=null;
+    this.selectedGraf=null;
     
   }
 
@@ -1611,18 +1615,26 @@ export class lineClass{
       {
         rez = true;
         if(object.attr('id') == this.startid){               
-          let tmp =   $('#'+this.id);
-          this.x1 = this.getTarget(object).x;
-          this.y1 = this.getTarget(object).y;
-          tmp.attr({x1:this.x1,y1:this.y1});
+            
+          let target = this.parent.gObjects.get(this.startid);
+          if(target){
+               target.getLineTouchPoint(this);
+            let targetPoint  = this.getTarget(object);   
+        
+            let tmp = $('#'+this.id); 
+            this.x1 = targetPoint.x; //this.getTarget(object).x;
+            this.y1 = targetPoint.y; //this.getTarget(object).y;
+            tmp.attr({x1:this.x1,y1:this.y1});
+          }
          
         }
         else{
-          let tmp =   $('#'+this.id);
-          let target =this.getTarget(object);
+         
+          let target = this.getTarget(object);
           if(target){
-            this.x2 = this.getTarget(object).x;
-            this.y2 = this.getTarget(object).y;
+            let tmp = $('#'+this.id);
+            this.x2 = target.x; //this.getTarget(object).x;
+            this.y2 = target.y; //this.getTarget(object).y;
             tmp.attr({x2:this.x2,y2:this.y2});
           }
         }
@@ -2049,78 +2061,17 @@ export class GObjectBaseClass extends CVObject{
             arrow.attr({'id':'arrow_'+line.id, 'fill':'black' });
             arrow.click(()=>{line.makeSelected();});
             $('#'+line.id).attr({'x2':joint_x, 'y2':joint_y});
+           
+         
           }
-        }      
+        } 
+        
+        $('#tmp'+this.uid).remove();
+
     }
     else
     $('#arrow_'+line.id).remove();
     
-  }
-
-  //punkt styku z linia
-  getLineTouchPoint(line: lineClass): coordPoint{
-
-    if(!((line.x1>this.x && line.x1<this.x+this.w) && (line.y1>this.y && line.y1<this.y+this.h)) )
-    {
- 
-
-       // //linia przecinająca
-       let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
-       tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
-       //$('#tmp'+this.uid).remove();
-       //określenie krawędź przecinanej
- 
-       let Ap, Bp= new coordPoint(0,0);
- 
-       //współczynniki przekątnych
- 
-       let x_l = this.x;
-       let x_r = this.x+this.w;
-       let y_u=this.y;
-       let y_d=this.y+this.h;
- 
-       let Ar = (y_u-y_d)/(x_r-x_l);
-       let Br = -Ar*x_l+y_d;
-       let Al = (y_u-y_d)/(x_l-x_r);
-       let Bl = -Al*x_r+y_d;
- 
-       //wyznaczenie przecinanej krawedzi
-       let Ak, Bk: number;
-       let x,y:number;
-       //y=Al*line.x1+Bl;
-     
- 
-       //wspolczynnik dla linii
-       let Dt = (line.y2-line.y1)/(line.x2-line.x1);
- 
-       //gora
-       if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)>line.y1){
-         y=this.y;
-         x=(y+Dt*line.x1-line.y1)/Dt;      
-       }
-       //prawa
-       if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)<line.y1 && line.x1>this.x+this.w){
-         x=this.x+this.w;
-         y=(Dt*x)-Dt*line.x1+line.y1;      
-       }
-       //dol
-       if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)<line.y1){
-         y=this.y+this.h;
-         x=(y+Dt*line.x1-line.y1)/Dt;      
-       }
-       //lewa
-       if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)>line.y1 && line.x1<this.x){
-         x=this.x;
-         y=(Dt*x)-Dt*line.x1+line.y1;      
-       }
-
-      let rez = new coordPoint(x,y);
-  
-      return rez;
-    }
-
-    return null;
-
   }
 
   checkIsOnBorder(event: any){  }
@@ -2179,7 +2130,7 @@ export class GObjectBaseClass extends CVObject{
      wyn.selectAll("tspan").forEach((tspan, i)=>{
        if(i==0)
        size = parseInt(tspan.getBBox().height);
-     
+       tspan.node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "xml:space", "preserve");
        tspan.attr({x:startP.x+5, y:startP.y+(i*size)*(1/this.parent.scale)+size*(1/this.parent.scale)}); 
       });
      //wyn.selectAll("tspan").forEach((tspan, i)=>{tspan.attr({x:x, dy:i*18+5}); });     
@@ -2204,9 +2155,7 @@ export class GObjectBaseClass extends CVObject{
   }
 
   getCenter(): coordPoint{ return new coordPoint(0,0);}
-
-  getXML(){}
-
+ 
   getFarrestPoint():coordPoint{
     return new coordPoint(0,0);
   }
@@ -2214,6 +2163,74 @@ export class GObjectBaseClass extends CVObject{
   getInfoPosition(): coordPoint{
     return new coordPoint(this.x,this.y);
   }
+
+  //punkt styku z linia
+  getLineTouchPoint(line: lineClass): coordPoint{
+
+    if(!((line.x1>this.x && line.x1<this.x+this.w) && (line.y1>this.y && line.y1<this.y+this.h)) )
+    {
+        // //linia przecinająca
+       
+        let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);   
+        console.log(tmp); 
+        tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
+        //$('#tmp'+this.uid).remove();
+        //określenie krawędź przecinanej
+  
+        let Ap, Bp= new coordPoint(0,0);
+  
+        //współczynniki przekątnych
+  
+        let x_l = this.x;
+        let x_r = this.x+this.w;
+        let y_u=this.y;
+        let y_d=this.y+this.h;
+  
+        let Ar = (y_u-y_d)/(x_r-x_l);
+        let Br = -Ar*x_l+y_d;
+        let Al = (y_u-y_d)/(x_l-x_r);
+        let Bl = -Al*x_r+y_d;
+  
+        //wyznaczenie przecinanej krawedzi
+        let Ak, Bk: number;
+        let x,y:number;
+        //y=Al*line.x1+Bl;
+      
+  
+        //wspolczynnik dla linii
+        let Dt = (line.y2-line.y1)/(line.x2-line.x1);
+  
+        //gora
+        if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)>line.y1){
+          y=this.y;
+          x=(y+Dt*line.x1-line.y1)/Dt;      
+        }
+        //prawa
+        if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)<line.y1 && line.x1>this.x+this.w){
+          x=this.x+this.w;
+          y=(Dt*x)-Dt*line.x1+line.y1;      
+        }
+        //dol
+        if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)<line.y1){
+          y=this.y+this.h;
+          x=(y+Dt*line.x1-line.y1)/Dt;      
+        }
+        //lewa
+        if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)>line.y1 && line.x1<this.x){
+          x=this.x;
+          y=(Dt*x)-Dt*line.x1+line.y1;      
+        }
+
+      let rez = new coordPoint(x,y);
+  
+      return rez;
+    }
+
+    return null;
+  
+  }
+
+  getXML(){}
 
   isContainingPoint(x:number, y:number){}
 
@@ -2786,6 +2803,7 @@ export class GTextClass extends GObjectBaseClass{
   changeFontSize(size: string){
     this.fontsize = parseInt(size);
     $('#'+this.id).css({'font-size':size+'px'});
+    this.makeSelected();
   }
 
   changeBgColor(color: string){
@@ -2797,7 +2815,7 @@ export class GTextClass extends GObjectBaseClass{
   }
 
   createObject(){   
-    let tmpobject = super.create_multiline(); // this.parent.s.text(this.x, this.y, this.info);
+    let tmpobject = this.create_multiline(); // this.parent.s.text(this.x, this.y, this.info);
     tmpobject.attr({'id':this.id,"fill": this.fontcolor, "font-size":this.fontsize+"px"});
     this.svgobject = tmpobject;
 
@@ -2837,10 +2855,12 @@ export class GTextClass extends GObjectBaseClass{
     // let result = this.info.replace(/\n/g, " \n ").split(' ');
     let result = this.info.split('\n');
 
-    $('#id_text_'+this.uid).remove();
+    // $('#id_text_'+this.uid).remove();
+    $('#'+this.id).remove();
 
     let wyn = this.parent.s.text(startP.x+5,startP.y,result);
-    wyn.attr({"id":"id_text_"+this.uid, "font-size":this.fontsize,'fill':this.fontcolor});
+    //wyn.attr({"id":"id_text_"+this.uid, "font-size":this.fontsize,'fill':this.fontcolor});
+    wyn.attr({"id":this.id, "font-size":this.fontsize,'fill':this.fontcolor});
     let size = 1;
     wyn.selectAll("tspan").forEach((tspan, i)=>{
       if(i==0)
@@ -2851,6 +2871,14 @@ export class GTextClass extends GObjectBaseClass{
       tspan.attr({x:startP.x+5, y:startP.y+(i*size)+size}); 
      });
 
+
+    this.h = wyn.getBBox().height;
+    this.w = wyn.getBBox().width;
+
+    this.svgobject = wyn;
+
+    this.makeSelected();
+
     return wyn;
   }
   
@@ -2858,112 +2886,116 @@ export class GTextClass extends GObjectBaseClass{
     $('#'+this.id).remove();
   }
 
-  drawArrow(line: lineClass){
+  //#region stary drawarrow  nie dziala
+  // drawArrow(line: lineClass){
 
-    let bbox = this.svgobject.getBBox();
+  //   let bbox = this.svgobject.getBBox();
 
-    if(!((line.x1>bbox.x && line.x1<bbox.x+bbox.width) && (line.y1>bbox.y && line.y1<bbox.y+bbox.height)) )
-    {
+  //   if(!((line.x1>bbox.x && line.x1<bbox.x+bbox.width) && (line.y1>bbox.y && line.y1<bbox.y+bbox.height)) )
+  //   {
       
       
-      // //linia przecinająca
-      let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
-      tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
-      //$('#tmp'+this.uid).remove();
-      //określenie krawędź przecinanej
+  //     // //linia przecinająca
+  //     let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
+  //     tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
+  //     //$('#tmp'+this.uid).remove();
+  //     //określenie krawędź przecinanej
 
-      let Ap, Bp= new coordPoint(0,0);
+  //     let Ap, Bp= new coordPoint(0,0);
 
-      //współczynniki przekątnych
+  //     //współczynniki przekątnych
 
-      let x_l = bbox.x;
-      let x_r = bbox.x+bbox.width;
-      let y_u=bbox.y;
-      let y_d=bbox.y+bbox.height;
+  //     let x_l = bbox.x;
+  //     let x_r = bbox.x+bbox.width;
+  //     let y_u=bbox.y;
+  //     let y_d=bbox.y+bbox.height;
 
-      let Ar = (y_u-y_d)/(x_r-x_l);
-      let Br = -Ar*x_l+y_d;
-      let Al = (y_u-y_d)/(x_l-x_r);
-      let Bl = -Al*x_r+y_d;
+  //     let Ar = (y_u-y_d)/(x_r-x_l);
+  //     let Br = -Ar*x_l+y_d;
+  //     let Al = (y_u-y_d)/(x_l-x_r);
+  //     let Bl = -Al*x_r+y_d;
 
-      //wyznaczenie przecinanej krawedzi
-      let Ak, Bk: number;
-      let x,y:number;
-      //y=Al*line.x1+Bl;
+  //     //wyznaczenie przecinanej krawedzi
+  //     let Ak, Bk: number;
+  //     let x,y:number;
+  //     //y=Al*line.x1+Bl;
     
 
-      //wspolczynnik dla linii
-      let Dt = (line.y2-line.y1)/(line.x2-line.x1);
+  //     //wspolczynnik dla linii
+  //     let Dt = (line.y2-line.y1)/(line.x2-line.x1);
 
-      //gora
-      if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)>line.y1){
-        y=bbox.y;
-        x=(y+Dt*line.x1-line.y1)/Dt;      
-      }
-      //prawa
-      if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)<line.y1 && line.x1>bbox.x+bbox.width){
-        x=bbox.x+bbox.width;
-        y=(Dt*x)-Dt*line.x1+line.y1;      
-      }
-      //dol
-      if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)<line.y1){
-        y=bbox.y+bbox.height;
-        x=(y+Dt*line.x1-line.y1)/Dt;      
-      }
-      //lewa
-      if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)>line.y1 && line.x1<bbox.x){
-        x=bbox.x;
-        y=(Dt*x)-Dt*line.x1+line.y1;      
-      }
+  //     //gora
+  //     if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)>line.y1){
+  //       y=bbox.y;
+  //       x=(y+Dt*line.x1-line.y1)/Dt;      
+  //     }
+  //     //prawa
+  //     if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)<line.y1 && line.x1>bbox.x+bbox.width){
+  //       x=bbox.x+bbox.width;
+  //       y=(Dt*x)-Dt*line.x1+line.y1;      
+  //     }
+  //     //dol
+  //     if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)<line.y1){
+  //       y=bbox.y+bbox.height;
+  //       x=(y+Dt*line.x1-line.y1)/Dt;      
+  //     }
+  //     //lewa
+  //     if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)>line.y1 && line.x1<bbox.x){
+  //       x=bbox.x;
+  //       y=(Dt*x)-Dt*line.x1+line.y1;      
+  //     }
 
-      if(x && y){
+  //     if(x && y){
     
 
-        let joint_x = x;
-        let joint_y = y;
+  //       let joint_x = x;
+  //       let joint_y = y;
 
-        //wyznaczenie odleglosci od poczatku linii  do punktu styku
-        let len = Snap.len(joint_x, joint_y, line.x1, line.y1);
-        if(len>20){
+  //       //wyznaczenie odleglosci od poczatku linii  do punktu styku
+  //       let len = Snap.len(joint_x, joint_y, line.x1, line.y1);
+  //       if(len>20){
 
-          //**************** punkt podstawy strzałki */
-          let top = tmp.getPointAtLength(len-15);
-          $('#tmp'+this.uid).remove();
+  //         //**************** punkt podstawy strzałki */
+  //         let top = tmp.getPointAtLength(len-15);
+  //         $('#tmp'+this.uid).remove();
 
-          //********** współczynnik a prostej prostopadłej do linii */
-          if(line.y2-line.y1!=0){
-            let A:number = (line.x2-line.x1)/(line.y2-line.y1);        
+  //         //********** współczynnik a prostej prostopadłej do linii */
+  //         if(line.y2-line.y1!=0){
+  //           let A:number = (line.x2-line.x1)/(line.y2-line.y1);        
             
-            //*********** wyznaczanie pierwszego narożnika strzałki */
-            let x1 :number= top.x+50;
-            let y1 :number= -A*x1+top.y+top.x*A;
+  //           //*********** wyznaczanie pierwszego narożnika strzałki */
+  //           let x1 :number= top.x+50;
+  //           let y1 :number= -A*x1+top.y+top.x*A;
 
-            tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x1+" "+y1);
-            tmp.attr({'id':'tmp'+this.uid});
-            let p1 = tmp.getPointAtLength(5);
-            $('#tmp'+this.uid).remove();
+  //           tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x1+" "+y1);
+  //           tmp.attr({'id':'tmp'+this.uid});
+  //           let p1 = tmp.getPointAtLength(5);
+  //           $('#tmp'+this.uid).remove();
 
-            //*********** wyznaczanie drugiego narożnika strzałki */
-            let x2 :number= top.x-50;
-            let y2 :number= -A*x2+top.y+top.x*A;
+  //           //*********** wyznaczanie drugiego narożnika strzałki */
+  //           let x2 :number= top.x-50;
+  //           let y2 :number= -A*x2+top.y+top.x*A;
             
-            tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
-            tmp.attr({'id':'tmp'+this.uid});
-            let p2 = tmp.getPointAtLength(5);
-            $('#tmp'+this.uid).remove();
+  //           tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
+  //           tmp.attr({'id':'tmp'+this.uid});
+  //           let p2 = tmp.getPointAtLength(5);
+  //           $('#tmp'+this.uid).remove();
 
-            $('#arrow_'+line.id).remove();
-            let arrow=this.parent.s.path('M'+p1.x+" "+p1.y+"L"+p2.x+" "+p2.y+" L"+joint_x+" "+joint_y+" Z");
-            arrow.attr({'id':'arrow_'+line.id, 'fill':'black' });
-            $('#'+line.id).attr({'x2':joint_x, 'y2':joint_y});
-          }
-        }
-      }
-    }
-    else
-    $('#arrow_'+line.id).remove();
+  //           $('#arrow_'+line.id).remove();
+  //           let arrow=this.parent.s.path('M'+p1.x+" "+p1.y+"L"+p2.x+" "+p2.y+" L"+joint_x+" "+joint_y+" Z");
+  //           arrow.attr({'id':'arrow_'+line.id, 'fill':'black' });
+  //           $('#'+line.id).attr({'x2':joint_x, 'y2':joint_y});
+  //         }
+  //       }
+  //     }
+  //     $('#tmp'+this.uid).remove();
+  //   }
+  //   else
+  //   $('#arrow_'+line.id).remove();
     
-  }
+  // }
+
+  //#endregion
 
   drawArrow2(crossPoint:coordPoint, line: lineClass){
  
@@ -3010,7 +3042,9 @@ export class GTextClass extends GObjectBaseClass{
             arrow.attr({'id':'arrow_'+line.id, 'fill':'black' });
             $('#'+line.id).attr({'x2':joint_x, 'y2':joint_y});
           }
-        }      
+        }  
+        
+        $('#tmp'+this.uid).remove();
     }
     else
     $('#arrow_'+line.id).remove();
@@ -3085,8 +3119,19 @@ export class GTextClass extends GObjectBaseClass{
   }
 
   getCenter(){
-    let bbox = this.svgobject.getBBox();
-    return new coordPoint(bbox.x+bbox.width/2, bbox.y+bbox.height/2);
+    // let h=0;
+    // let w=0;
+
+    //let bbox = this.svgobject.getBBox();
+    //console.log(bbox)
+    // this.svgobject.selectAll("tspan").forEach((el)=>{
+    //   let b =el.getBBox();
+    //   h+=parseInt(b.height)/2;
+    //   w=b.width>w?b.width:w;
+    //   //console.log(el);
+    //  });
+     return new coordPoint(this.x+this.w/2, this.y+this.h/2);
+    // return new coordPoint(bbox.x+bbox.width/2, bbox.y+bbox.height/2);
     //return new coordPoint(this.x+this.svgobject.getBBox().width/2, this.y+this.svgobject.getBBox().height/4)
   }
 
@@ -3120,16 +3165,16 @@ export class GTextClass extends GObjectBaseClass{
     this.x+=x;
     this.y+=y;
 
-    this.calculateRadius();
+    //this.calculateRadius();
 
-    //$("#"+this.id).attr({x:this.x, y: this.y});
-    //this.create_multiline();
+    // $("#"+this.id).attr({x:this.x, y: this.y});
+  this.create_multiline();
 
-    let infoob = this.parent.s.select('#'+this.id);
-    infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
-    infoob.selectAll("tspan").forEach((el)=>{
-      el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
-     });
+    // let infoob = this.parent.s.select('#'+this.id);
+    // infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
+    // infoob.selectAll("tspan").forEach((el)=>{
+    //   el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
+    //  });
 
 
     super.move(x,y);

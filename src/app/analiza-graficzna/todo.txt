@@ -10,7 +10,7 @@
 
 - obsługa drzewka - przciaganie
 - dorobić przyciski powiększenia bo nie działa na firefoxie z wykorzystaniem shifta
-- wczytywanie z pliku
++ wczytywanie z pliku
 + klonowanie
 + udostępnianie
 - zaznaczanie fragmentów i kopiowanie
