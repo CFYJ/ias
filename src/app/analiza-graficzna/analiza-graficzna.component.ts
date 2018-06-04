@@ -1625,7 +1625,7 @@ export class lineClass{
               l.x2 = p.x;
               l.y2 = p.y;
             let targetPoint  = target.getLineTouchPoint(l);//.getLineTouchPoint(this);//this.getTarget(object);   
-        
+            this.parent.linesContainer.removeline(l);
             if(targetPoint){
             let tmp = $('#'+this.id); 
             this.x1 = targetPoint.x; //this.getTarget(object).x;
@@ -2299,10 +2299,11 @@ export class GObjectBaseClass extends CVObject{
         let yy = this.parent.s.circle(x,y,2);
         yy.attr({'id':'yy'});
     
+        this.parent.linesContainer.removeline(line);
         return rez;
       }
     }
-
+    this.parent.linesContainer.removeline(line);
     return null;
   
   }
