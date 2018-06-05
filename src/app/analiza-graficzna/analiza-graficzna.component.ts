@@ -1455,7 +1455,7 @@ export class linesContainerClass{
     if(tmp)
       line.extendLine(tmp.getCenter());
 
-    line.drawArrow();
+    //line.drawArrow();
   }
 
   updatePos(object: any){
@@ -1560,7 +1560,7 @@ export class lineClass{
     
     this.createLine(); 
 
-    this.drawArrow();
+    //this.drawArrow();
   }
 
   createFromFile(object: any, parent: any){
@@ -1580,10 +1580,10 @@ export class lineClass{
     
     this.createLine(); 
 
-    this.drawArrow();
+    //this.drawArrow();
   }
 
-  drawArrow(){
+  drawArrow_old(){
 
     let tmp = this.parent.gObjects.get(this.stopid);   
     if(tmp)  
@@ -1602,6 +1602,61 @@ export class lineClass{
     
   }
 
+  drawArrow(touchPoint:coordPoint){
+
+ 
+    let tmp = this.parent.s.path('M'+this.x1+" "+this.y1+"L"+touchPoint.x+" "+touchPoint.y);
+    tmp.attr({'id':'tmp'+this.id});
+    
+
+        let joint_x = touchPoint.x;
+        let joint_y = touchPoint.y;
+
+        //wyznaczenie odleglosci od poczatku linii  do punktu styku
+        let len = Snap.len(joint_x, joint_y, this.x1, this.y1);
+        if(len>20){
+
+          //**************** punkt podstawy strzałki */
+          let top = tmp.getPointAtLength(len-15);
+          $('#tmp'+this.id).remove();
+
+          //********** współczynnik a prostej prostopadłej do linii */
+          if(this.y2-this.y1!=0){
+            let A:number = (this.x2-this.x1)/(this.y2-this.y1);        
+            
+            //*********** wyznaczanie pierwszego narożnika strzałki */
+            let x1 :number= top.x+50;
+            let y1 :number= -A*x1+top.y+top.x*A;
+
+            tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x1+" "+y1);
+            tmp.attr({'id':'tmp'+this.id});
+            let p1 = tmp.getPointAtLength(5);
+            $('#tmp'+this.id).remove();
+
+            //*********** wyznaczanie drugiego narożnika strzałki */
+            let x2 :number= top.x-50;
+            let y2 :number= -A*x2+top.y+top.x*A;
+            
+            tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
+            tmp.attr({'id':'tmp'+this.id});
+            let p2 = tmp.getPointAtLength(5);
+            $('#tmp'+this.id).remove();
+
+            $('#arrow_'+this.id).remove();
+            let arrow=this.parent.s.path('M'+p1.x+" "+p1.y+"L"+p2.x+" "+p2.y+" L"+joint_x+" "+joint_y+" Z");
+            
+            arrow.attr({'id':'arrow_'+this.id, 'fill':'black' });
+            arrow.click(()=>{this.makeSelected();});
+            $('#'+this.id).attr({'x2':joint_x, 'y2':joint_y});
+          }
+        }
+      
+   
+    else
+    $('#arrow_'+this.id).remove();
+    
+  }
+
   extendLine(point: coordPoint){
     this.x2 = point.x;
     this.y2 = point.y;
@@ -1609,7 +1664,7 @@ export class lineClass{
   }
 
 
-  public move(object: any): boolean{
+  public move_old(object: any): boolean{
     let rez = false;
       if(object.attr('id') == this.startid || object.attr('id')==this.stopid)
       {
@@ -1624,7 +1679,7 @@ export class lineClass{
               let p = target.getCenter();
               l.x2 = p.x;
               l.y2 = p.y;
-            let targetPoint  = target.getLineTouchPoint(l);//.getLineTouchPoint(this);//this.getTarget(object);   
+            let targetPoint  = null;//target.getLineTouchPoint(l);//.getLineTouchPoint(this);//this.getTarget(object);   
             this.parent.linesContainer.removeline(l);
             if(targetPoint){
             let tmp = $('#'+this.id); 
@@ -1647,14 +1702,47 @@ export class lineClass{
         }
 
       }
-      this.drawArrow();    
+      //this.drawArrow();    
     return true;
+  }
+
+  public move(object: any){
+   
+      if(object.attr('id') == this.startid || object.attr('id')==this.stopid)
+      {    
+        let gobject = this.parent.gObjects.get(object.attr('id'));
+        let center = gobject.getCenter();
+        let isstartpoint: boolean = (object.attr('id') == this.startid);
+
+        if(isstartpoint){
+          this.x1 = center.x;
+          this.y1 = center.y;  
+        }
+        else{
+          this.x2 = center.x;
+          this.y2 = center.y;
+        }  
+
+
+        let startpoint = this.parent.gObjects.get(this.startid).getLineTouchPoint(new coordPoint(this.x2,this.y2));
+        let stoppoint = this.stopid?this.parent.gObjects.get(this.stopid).getLineTouchPoint(new coordPoint(this.x1,this.y1)): new coordPoint(this.x2,this.y2);
+
+       
+        if(startpoint && stoppoint){
+          $('#'+this.id).attr({x1:startpoint.x,y1: startpoint.y, x2: stoppoint.x, y2: stoppoint.y});
+
+          this.drawArrow(stoppoint);  
+        }
+      }
   }
 
   makeSelected(){
     $('#id_selected').remove();
 
-    let frame = this.parent.s.line(this.x1,this.y1,this.x2,this.y2);  
+    let tmp = $('#'+this.id);
+   
+
+    let frame = this.parent.s.line(tmp.attr('x1'),tmp.attr('y1'),tmp.attr('x2'),tmp.attr('y2'));  
     frame.attr({id:'id_selected','stroke':'gold','stroke-width':2, 'fill':'none'});
 
     // let bb =this.svgobject.getBBox();
@@ -2237,14 +2325,11 @@ export class GObjectBaseClass extends CVObject{
   
   }
 
-  getLineTouchPoint(line: lineClass): coordPoint{
+  getLineTouchPoint(startPoint: coordPoint): coordPoint{
 
-    // let line = new lineClass(tmpline.x2,tmpline.y2, this.parent);
-    // line.x2 = this.x;
-    // line.y2 = this.y;
-    
+    let endPoint = this.getCenter();
 
-    if(!((line.x1>this.x && line.x1<this.x+this.w) && (line.y1>this.y && line.y1<this.y+this.h)) )
+    if(!((startPoint.x>this.x && startPoint.x<this.x+this.w) && (startPoint.y>this.y && startPoint.y<this.y+this.h)) )
     {
             
       let Ap, Bp= new coordPoint(0,0);
@@ -2268,44 +2353,36 @@ export class GObjectBaseClass extends CVObject{
     
 
       //wspolczynnik dla linii
-      let Dt = (line.y2-line.y1)/(line.x2-line.x1);
+      let Dt = (endPoint.y-startPoint.y)/(endPoint.x-startPoint.x);
 
       //gora
-      if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)>line.y1){
+      if((Al*startPoint.x+Bl)>startPoint.y && (Ar*startPoint.x+Br)>startPoint.y){
         y=this.y;
-        x=(y+Dt*line.x1-line.y1)/Dt;      
+        x=(y+Dt*startPoint.x-startPoint.y)/Dt;      
       }
       //prawa
-      if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)<line.y1 && line.x1>this.x+this.w){
+      if((Al*startPoint.x+Bl)>startPoint.y && (Ar*startPoint.x+Br)<startPoint.y && startPoint.x>this.x+this.w){
         x=this.x+this.w;
-        y=(Dt*x)-Dt*line.x1+line.y1;      
+        y=(Dt*x)-Dt*startPoint.x+startPoint.y;      
       }
       //dol
-      if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)<line.y1){
+      if((Al*startPoint.x+Bl)<startPoint.y && (Ar*startPoint.x+Br)<startPoint.y){
         y=this.y+this.h;
-        x=(y+Dt*line.x1-line.y1)/Dt;      
+        x=(y+Dt*startPoint.x-startPoint.y)/Dt;      
       }
       //lewa
-      if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)>line.y1 && line.x1<this.x){
+      if((Al*startPoint.x+Bl)<startPoint.y && (Ar*startPoint.x+Br)>startPoint.y && startPoint.x<this.x){
         x=this.x;
-        y=(Dt*x)-Dt*line.x1+line.y1;      
+        y=(Dt*x)-Dt*startPoint.x+startPoint.y;      
       }
 
-      if(x && y){
-    
+      if(x && y){  
         let rez = new coordPoint(x,y);
-
-        $('#yy').remove();
-        let yy = this.parent.s.circle(x,y,2);
-        yy.attr({'id':'yy'});
-    
-        this.parent.linesContainer.removeline(line);
         return rez;
       }
     }
-    this.parent.linesContainer.removeline(line);
-    return null;
-  
+
+    return null; 
   }
 
   getXML(){}
@@ -2724,20 +2801,20 @@ export class GCircleClass extends GObjectBaseClass{
   }
 
   //punt styku
-  getLineTouchPoint(line: lineClass): coordPoint{
-    if(!(Snap.len(line.x1, line.y1, this.x, this.y)<=this.r*2) ){
+  // getLineTouchPoint(line: lineClass): coordPoint{
+  //   if(!(Snap.len(line.x1, line.y1, this.x, this.y)<=this.r*2) ){
 
-      let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
-      tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
+  //     let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
+  //     tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
 
-      let len = Snap.len(line.x1, line.y1, line.x2, line.y2)-this.r;
-      let joinPoint = tmp.getPointAtLength(len);
+  //     let len = Snap.len(line.x1, line.y1, line.x2, line.y2)-this.r;
+  //     let joinPoint = tmp.getPointAtLength(len);
 
-      return new coordPoint(joinPoint.x, joinPoint.y);
+  //     return new coordPoint(joinPoint.x, joinPoint.y);
 
-    }
-    return null;
-  }
+  //   }
+  //   return null;
+  // }
 
   getCenter(){
     return new coordPoint(this.x, this.y)
@@ -3129,72 +3206,72 @@ export class GTextClass extends GObjectBaseClass{
     
   }
 
-  getLineTouchPoint(line: lineClass): coordPoint{
+  // getLineTouchPoint(line: lineClass): coordPoint{
 
-    let bbox = this.svgobject.getBBox();
+  //   let bbox = this.svgobject.getBBox();
 
-    if(!((line.x1>bbox.x && line.x1<bbox.x+bbox.width) && (line.y1>bbox.y && line.y1<bbox.y+bbox.height)) )
-    {
+  //   if(!((line.x1>bbox.x && line.x1<bbox.x+bbox.width) && (line.y1>bbox.y && line.y1<bbox.y+bbox.height)) )
+  //   {
       
       
-      // //linia przecinająca
-      let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
-      tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
-      //$('#tmp'+this.uid).remove();
-      //określenie krawędź przecinanej
+  //     // //linia przecinająca
+  //     let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
+  //     tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
+  //     //$('#tmp'+this.uid).remove();
+  //     //określenie krawędź przecinanej
 
-      let Ap, Bp= new coordPoint(0,0);
+  //     let Ap, Bp= new coordPoint(0,0);
 
-      //współczynniki przekątnych
+  //     //współczynniki przekątnych
 
-      let x_l = bbox.x;
-      let x_r = bbox.x+bbox.width;
-      let y_u=bbox.y;
-      let y_d=bbox.y+bbox.height;
+  //     let x_l = bbox.x;
+  //     let x_r = bbox.x+bbox.width;
+  //     let y_u=bbox.y;
+  //     let y_d=bbox.y+bbox.height;
 
-      let Ar = (y_u-y_d)/(x_r-x_l);
-      let Br = -Ar*x_l+y_d;
-      let Al = (y_u-y_d)/(x_l-x_r);
-      let Bl = -Al*x_r+y_d;
+  //     let Ar = (y_u-y_d)/(x_r-x_l);
+  //     let Br = -Ar*x_l+y_d;
+  //     let Al = (y_u-y_d)/(x_l-x_r);
+  //     let Bl = -Al*x_r+y_d;
 
-      //wyznaczenie przecinanej krawedzi
-      let Ak, Bk: number;
-      let x,y:number;
-      //y=Al*line.x1+Bl;
+  //     //wyznaczenie przecinanej krawedzi
+  //     let Ak, Bk: number;
+  //     let x,y:number;
+  //     //y=Al*line.x1+Bl;
     
 
-      //wspolczynnik dla linii
-      let Dt = (line.y2-line.y1)/(line.x2-line.x1);
+  //     //wspolczynnik dla linii
+  //     let Dt = (line.y2-line.y1)/(line.x2-line.x1);
 
-      //gora
-      if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)>line.y1){
-        y=bbox.y;
-        x=(y+Dt*line.x1-line.y1)/Dt;      
-      }
-      //prawa
-      if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)<line.y1 && line.x1>bbox.x+bbox.width){
-        x=bbox.x+bbox.width;
-        y=(Dt*x)-Dt*line.x1+line.y1;      
-      }
-      //dol
-      if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)<line.y1){
-        y=bbox.y+bbox.height;
-        x=(y+Dt*line.x1-line.y1)/Dt;      
-      }
-      //lewa
-      if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)>line.y1 && line.x1<bbox.x){
-        x=bbox.x;
-        y=(Dt*x)-Dt*line.x1+line.y1;      
-      }
+  //     //gora
+  //     if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)>line.y1){
+  //       y=bbox.y;
+  //       x=(y+Dt*line.x1-line.y1)/Dt;      
+  //     }
+  //     //prawa
+  //     if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)<line.y1 && line.x1>bbox.x+bbox.width){
+  //       x=bbox.x+bbox.width;
+  //       y=(Dt*x)-Dt*line.x1+line.y1;      
+  //     }
+  //     //dol
+  //     if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)<line.y1){
+  //       y=bbox.y+bbox.height;
+  //       x=(y+Dt*line.x1-line.y1)/Dt;      
+  //     }
+  //     //lewa
+  //     if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)>line.y1 && line.x1<bbox.x){
+  //       x=bbox.x;
+  //       y=(Dt*x)-Dt*line.x1+line.y1;      
+  //     }
 
-      if(x && y)
-        return new coordPoint(x,y);      
+  //     if(x && y)
+  //       return new coordPoint(x,y);      
 
-    }
+  //   }
 
-    return null;
+  //   return null;
 
-  }
+  // }
 
   getCenter(){
     // let h=0;
