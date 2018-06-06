@@ -1459,9 +1459,13 @@ export class linesContainerClass{
   }
 
   updatePos(object: any){
-    for(let i in this.linesContainer)
-      this.linesContainer[i].move(object);
-      // this.s.append(this.selected);
+    // for(let i in this.linesContainer)
+    //   this.linesContainer[i].move(object);
+
+    let obid = object.attr('id');
+    this.linesContainer.filter(l=>l.startid == obid || l.stopid==obid).forEach((l)=>{l.move()});
+
+    
   }
 
   getXml(){
@@ -1545,6 +1549,8 @@ export class lineClass{
     tmp.attr({"id":this.id,'stroke-width':2, 'stroke':'black'});
 
     this.svgobject = tmp;
+
+    this.move();
   }
 
   createFromXml(object: any, parent: any){
@@ -1583,25 +1589,6 @@ export class lineClass{
     //this.drawArrow();
   }
 
-  drawArrow_old(){
-
-    let tmp = this.parent.gObjects.get(this.stopid);   
-    if(tmp)  
-      tmp.drawArrow(this);
-
-    // let rl = new lineClass(null,null,null);rl.x1 = this.x2; rl.y1 = this.y2; rl.x2 = this.x1; rl.y2  =this.y1;
-    // let startx= this.parent.gObjects.get(this.startid)?this.parent.gObjects.get(this.startid).getLineTouchPoint(rl):null;
-    // let endx = this.parent.gObjects.get(this.stopid)?this.parent.gObjects.get(this.stopid).getLineTouchPoint(this):null;
-
-    // if(startx && endx){
-    //   this.x1 = startx.x; this.y1 = startx.y;
-    //   this.x2 = endx.x; this.y2 = endx.y;
-
-    //   this.parent.gObjects.get(this.stopid).drawArrow2(endx, this);
-    // }
-    
-  }
-
   drawArrow(touchPoint:coordPoint){
 
  
@@ -1609,52 +1596,52 @@ export class lineClass{
     tmp.attr({'id':'tmp'+this.id});
     
 
-        let joint_x = touchPoint.x;
-        let joint_y = touchPoint.y;
+    let joint_x = touchPoint.x;
+    let joint_y = touchPoint.y;
 
-        //wyznaczenie odleglosci od poczatku linii  do punktu styku
-        let len = Snap.len(joint_x, joint_y, this.x1, this.y1);
-        if(len>20){
+    //wyznaczenie odleglosci od poczatku linii  do punktu styku
+    let len = Snap.len(joint_x, joint_y, this.x1, this.y1);
+    if(len>20){
 
-          //**************** punkt podstawy strzałki */
-          let top = tmp.getPointAtLength(len-15);
-          $('#tmp'+this.id).remove();
+      //**************** punkt podstawy strzałki */
+      let top = tmp.getPointAtLength(len-15);
+      $('#tmp'+this.id).remove();
 
-          //********** współczynnik a prostej prostopadłej do linii */
-          if(this.y2-this.y1!=0){
-            let A:number = (this.x2-this.x1)/(this.y2-this.y1);        
-            
-            //*********** wyznaczanie pierwszego narożnika strzałki */
-            let x1 :number= top.x+50;
-            let y1 :number= -A*x1+top.y+top.x*A;
+      //********** współczynnik a prostej prostopadłej do linii */
+      if(this.y2-this.y1!=0){
+        let A:number = (this.x2-this.x1)/(this.y2-this.y1);        
+        
+        //*********** wyznaczanie pierwszego narożnika strzałki */
+        let x1 :number= top.x+50;
+        let y1 :number= -A*x1+top.y+top.x*A;
 
-            tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x1+" "+y1);
-            tmp.attr({'id':'tmp'+this.id});
-            let p1 = tmp.getPointAtLength(5);
-            $('#tmp'+this.id).remove();
+        tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x1+" "+y1);
+        tmp.attr({'id':'tmp'+this.id});
+        let p1 = tmp.getPointAtLength(5);
+        $('#tmp'+this.id).remove();
 
-            //*********** wyznaczanie drugiego narożnika strzałki */
-            let x2 :number= top.x-50;
-            let y2 :number= -A*x2+top.y+top.x*A;
-            
-            tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
-            tmp.attr({'id':'tmp'+this.id});
-            let p2 = tmp.getPointAtLength(5);
-            $('#tmp'+this.id).remove();
+        //*********** wyznaczanie drugiego narożnika strzałki */
+        let x2 :number= top.x-50;
+        let y2 :number= -A*x2+top.y+top.x*A;
+        
+        tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
+        tmp.attr({'id':'tmp'+this.id});
+        let p2 = tmp.getPointAtLength(5);
+        $('#tmp'+this.id).remove();
 
-            $('#arrow_'+this.id).remove();
-            let arrow=this.parent.s.path('M'+p1.x+" "+p1.y+"L"+p2.x+" "+p2.y+" L"+joint_x+" "+joint_y+" Z");
-            
-            arrow.attr({'id':'arrow_'+this.id, 'fill':'black' });
-            arrow.click(()=>{this.makeSelected();});
-            $('#'+this.id).attr({'x2':joint_x, 'y2':joint_y});
-          }
-        }
-      
-   
-    else
-    $('#arrow_'+this.id).remove();
-    
+        $('#arrow_'+this.id).remove();
+        let arrow=this.parent.s.path('M'+p1.x+" "+p1.y+"L"+p2.x+" "+p2.y+" L"+joint_x+" "+joint_y+" Z");
+        
+        arrow.attr({'id':'arrow_'+this.id, 'fill':'black' });
+        arrow.click(()=>{this.makeSelected();});
+        $('#'+this.id).attr({'x2':joint_x, 'y2':joint_y});
+      }
+    }       
+    else{
+      $('#arrow_'+this.id).remove();
+    }
+
+    $('#tmp'+this.id).remove();    
   }
 
   extendLine(point: coordPoint){
@@ -1663,75 +1650,38 @@ export class lineClass{
     $('#'+this.id).attr({x2:this.x2, y2:this.y2});
   }
 
-
-  public move_old(object: any): boolean{
-    let rez = false;
-      if(object.attr('id') == this.startid || object.attr('id')==this.stopid)
-      {
-        rez = true;
-        if(object.attr('id') == this.startid){               
-           
-
-          let target =this.parent.gObjects.get(this.startid)
-          if(target){
-               //target.getLineTouchPoint(this);
-              let l = new lineClass(this.x2, this.y2, this.parent);
-              let p = target.getCenter();
-              l.x2 = p.x;
-              l.y2 = p.y;
-            let targetPoint  = null;//target.getLineTouchPoint(l);//.getLineTouchPoint(this);//this.getTarget(object);   
-            this.parent.linesContainer.removeline(l);
-            if(targetPoint){
-            let tmp = $('#'+this.id); 
-            this.x1 = targetPoint.x; //this.getTarget(object).x;
-            this.y1 = targetPoint.y; //this.getTarget(object).y;
-            tmp.attr({x1:this.x1,y1:this.y1});
-            }
-          }
-         
-        }
-        else{
-         
-          let target = this.getTarget(object);
-          if(target){
-            let tmp = $('#'+this.id);
-            this.x2 = target.x; //this.getTarget(object).x;
-            this.y2 = target.y; //this.getTarget(object).y;
-            tmp.attr({x2:this.x2,y2:this.y2});
-          }
-        }
-
-      }
-      //this.drawArrow();    
-    return true;
-  }
-
-  public move(object: any){
+  public move(object?: any){
    
-      if(object.attr('id') == this.startid || object.attr('id')==this.stopid)
+      //if(object.attr('id') == this.startid || object.attr('id')==this.stopid)
       {    
-        let gobject = this.parent.gObjects.get(object.attr('id'));
-        let center = gobject.getCenter();
-        let isstartpoint: boolean = (object.attr('id') == this.startid);
 
-        if(isstartpoint){
-          this.x1 = center.x;
-          this.y1 = center.y;  
+        let isstartpoint: boolean= false;
+
+        if(object){
+          let gobject = this.parent.gObjects.get(object.attr('id'));
+          let center = gobject.getCenter();
+          isstartpoint = (object.attr('id') == this.startid);
+       
+
+          if(isstartpoint){
+            this.x1 = center.x;
+            this.y1 = center.y;  
+          }
+          else{
+            this.x2 = center.x;
+            this.y2 = center.y;
+          }  
+
         }
-        else{
-          this.x2 = center.x;
-          this.y2 = center.y;
-        }  
 
-
-        let startpoint = this.parent.gObjects.get(this.startid).getLineTouchPoint(new coordPoint(this.x2,this.y2));
+        let startpoint = this.startid?this.parent.gObjects.get(this.startid).getLineTouchPoint(new coordPoint(this.x2,this.y2)): new coordPoint(this.x1,this.y1);
         let stoppoint = this.stopid?this.parent.gObjects.get(this.stopid).getLineTouchPoint(new coordPoint(this.x1,this.y1)): new coordPoint(this.x2,this.y2);
 
        
         if(startpoint && stoppoint){
           $('#'+this.id).attr({x1:startpoint.x,y1: startpoint.y, x2: stoppoint.x, y2: stoppoint.y});
 
-          this.drawArrow(stoppoint);  
+          this.drawArrow(stoppoint);             
         }
       }
   }
@@ -2003,172 +1953,7 @@ export class GObjectBaseClass extends CVObject{
 
   del(){}
 
-  drawArrow(line: lineClass){
-
-    if(!((line.x1>this.x && line.x1<this.x+this.w) && (line.y1>this.y && line.y1<this.y+this.h)) )
-    {
-      
-      
-      // //linia przecinająca
-      let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
-      tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
-      //$('#tmp'+this.uid).remove();
-      //określenie krawędź przecinanej
-
-      let Ap, Bp= new coordPoint(0,0);
-
-      //współczynniki przekątnych
-
-      let x_l = this.x;
-      let x_r = this.x+this.w;
-      let y_u=this.y;
-      let y_d=this.y+this.h;
-
-      let Ar = (y_u-y_d)/(x_r-x_l);
-      let Br = -Ar*x_l+y_d;
-      let Al = (y_u-y_d)/(x_l-x_r);
-      let Bl = -Al*x_r+y_d;
-
-      //wyznaczenie przecinanej krawedzi
-      let Ak, Bk: number;
-      let x,y:number;
-      //y=Al*line.x1+Bl;
-    
-
-      //wspolczynnik dla linii
-      let Dt = (line.y2-line.y1)/(line.x2-line.x1);
-
-      //gora
-      if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)>line.y1){
-        y=this.y;
-        x=(y+Dt*line.x1-line.y1)/Dt;      
-      }
-      //prawa
-      if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)<line.y1 && line.x1>this.x+this.w){
-        x=this.x+this.w;
-        y=(Dt*x)-Dt*line.x1+line.y1;      
-      }
-      //dol
-      if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)<line.y1){
-        y=this.y+this.h;
-        x=(y+Dt*line.x1-line.y1)/Dt;      
-      }
-      //lewa
-      if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)>line.y1 && line.x1<this.x){
-        x=this.x;
-        y=(Dt*x)-Dt*line.x1+line.y1;      
-      }
-
-      if(x && y){
-    
-
-        let joint_x = x;
-        let joint_y = y;
-
-        //wyznaczenie odleglosci od poczatku linii  do punktu styku
-        let len = Snap.len(joint_x, joint_y, line.x1, line.y1);
-        if(len>20){
-
-          //**************** punkt podstawy strzałki */
-          let top = tmp.getPointAtLength(len-15);
-          $('#tmp'+this.uid).remove();
-
-          //********** współczynnik a prostej prostopadłej do linii */
-          if(line.y2-line.y1!=0){
-            let A:number = (line.x2-line.x1)/(line.y2-line.y1);        
-            
-            //*********** wyznaczanie pierwszego narożnika strzałki */
-            let x1 :number= top.x+50;
-            let y1 :number= -A*x1+top.y+top.x*A;
-
-            tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x1+" "+y1);
-            tmp.attr({'id':'tmp'+this.uid});
-            let p1 = tmp.getPointAtLength(5);
-            $('#tmp'+this.uid).remove();
-
-            //*********** wyznaczanie drugiego narożnika strzałki */
-            let x2 :number= top.x-50;
-            let y2 :number= -A*x2+top.y+top.x*A;
-            
-            tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
-            tmp.attr({'id':'tmp'+this.uid});
-            let p2 = tmp.getPointAtLength(5);
-            $('#tmp'+this.uid).remove();
-
-            $('#arrow_'+line.id).remove();
-            let arrow=this.parent.s.path('M'+p1.x+" "+p1.y+"L"+p2.x+" "+p2.y+" L"+joint_x+" "+joint_y+" Z");
-            
-            arrow.attr({'id':'arrow_'+line.id, 'fill':'black' });
-            arrow.click(()=>{line.makeSelected();});
-            $('#'+line.id).attr({'x2':joint_x, 'y2':joint_y});
-          }
-        }
-      }
-    }
-    else
-    $('#arrow_'+line.id).remove();
-    
-  }
-
-  drawArrow2(crossPoint: coordPoint, line: lineClass){
-
-   if(crossPoint){
-    
-        let joint_x = crossPoint.x;
-        let joint_y = crossPoint.y;
-
-        let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
-        tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3
-
-        //wyznaczenie odleglosci od poczatku linii  do punktu styku
-        let len = Snap.len(joint_x, joint_y, line.x1, line.y1);
-        if(len>20){
-
-          //**************** punkt podstawy strzałki */
-          let top = tmp.getPointAtLength(len-15);
-          $('#tmp'+this.uid).remove();
-
-          //********** współczynnik a prostej prostopadłej do linii */
-          if(line.y2-line.y1!=0){
-            let A:number = (line.x2-line.x1)/(line.y2-line.y1);        
-            
-            //*********** wyznaczanie pierwszego narożnika strzałki */
-            let x1 :number= top.x+50;
-            let y1 :number= -A*x1+top.y+top.x*A;
-
-            tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x1+" "+y1);
-            tmp.attr({'id':'tmp'+this.uid});
-            let p1 = tmp.getPointAtLength(5);
-            $('#tmp'+this.uid).remove();
-
-            //*********** wyznaczanie drugiego narożnika strzałki */
-            let x2 :number= top.x-50;
-            let y2 :number= -A*x2+top.y+top.x*A;
-            
-            tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
-            tmp.attr({'id':'tmp'+this.uid});
-            let p2 = tmp.getPointAtLength(5);
-            $('#tmp'+this.uid).remove();
-
-            $('#arrow_'+line.id).remove();
-            let arrow=this.parent.s.path('M'+p1.x+" "+p1.y+"L"+p2.x+" "+p2.y+" L"+joint_x+" "+joint_y+" Z");
-            
-            arrow.attr({'id':'arrow_'+line.id, 'fill':'black' });
-            arrow.click(()=>{line.makeSelected();});
-            $('#'+line.id).attr({'x2':joint_x, 'y2':joint_y});
-           
-         
-          }
-        } 
-        
-        $('#tmp'+this.uid).remove();
-
-    }
-    else
-    $('#arrow_'+line.id).remove();
-    
-  }
-
+ 
   checkIsOnBorder(event: any){  }
 
   changeFontSize(size: string){
@@ -2699,122 +2484,23 @@ export class GCircleClass extends GObjectBaseClass{
     $('#id_info_'+this.uid).remove();
   }
 
-  
-  drawArrow(line: lineClass){
 
-    if(!(Snap.len(line.x1, line.y1, this.x, this.y)<=this.r*2) ){
+  getLineTouchPoint(startPoint: coordPoint): coordPoint{
+    let endPoint = new coordPoint(this.x, this.y);
 
- 
+    if(!(Snap.len(startPoint.x, startPoint.y, this.x, this.y)<=this.r*2) ){
 
-      //************** punkt styku */
-      let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
+      let tmp = this.parent.s.path('M'+startPoint.x+" "+startPoint.y+"L"+endPoint.x+" "+endPoint.y);
       tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
 
-      let len = Snap.len(line.x1, line.y1, line.x2, line.y2)-this.r;
+      let len = Snap.len(startPoint.x, startPoint.y, endPoint.x, endPoint.y)-this.r;
       let joinPoint = tmp.getPointAtLength(len);
-      $('#tmp'+this.uid).remove();
 
-
-      //**************** punkt podstawy strzałki */
-      let top = tmp.getPointAtLength(Math.abs(len-15));
-
-      if(line.y2-line.y1!=0){
-        //********** współczynnik a prostej prostopadłej do linii */
-        let A:number = (line.x2-line.x1)/(line.y2-line.y1);
-        
-        //*********** wyznaczanie pierwszego narożnika strzałki */
-        let x1 :number= top.x+50;
-        let y1 :number= -A*x1+top.y+top.x*A;
-
-        tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x1+" "+y1);
-        tmp.attr({'id':'tmp'+this.uid});
-        let p1 = tmp.getPointAtLength(5);
-        $('#tmp'+this.uid).remove();
-
-        //*********** wyznaczanie drugiego narożnika strzałki */
-        let x2 :number= top.x-50;
-        let y2 :number= -A*x2+top.y+top.x*A;
-        
-        tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
-        tmp.attr({'id':'tmp'+this.uid});
-        let p2 = tmp.getPointAtLength(5);
-        $('#tmp'+this.uid).remove();
-
-        $('#arrow_'+line.id).remove();
-        let arrow=this.parent.s.path('M'+p1.x+" "+p1.y+"L"+p2.x+" "+p2.y+" L"+joinPoint.x+" "+joinPoint.y+" Z");
-        arrow.attr({'id':'arrow_'+line.id, 'fill':'black' });
-        $('#'+line.id).attr({'x2':joinPoint.x, 'y2':joinPoint.y});
-      }
+      return new coordPoint(joinPoint.x, joinPoint.y);
 
     }
-    else
-      $('#arrow_'+line.id).remove();
-    
+    return null;
   }
-
-  drawArrow2(crossPoint:coordPoint, line: lineClass){
-
-    if(crossPoint){
-
-      //************** punkt styku */
-      let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
-      tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
-
-      let len = Snap.len(line.x1, line.y1, line.x2, line.y2)-this.r;
-      let joinPoint = crossPoint;
-   
-      //**************** punkt podstawy strzałki */
-      let top = tmp.getPointAtLength(Math.abs(len-15));
-
-      if(line.y2-line.y1!=0){
-        //********** współczynnik a prostej prostopadłej do linii */
-        let A:number = (line.x2-line.x1)/(line.y2-line.y1);
-        
-        //*********** wyznaczanie pierwszego narożnika strzałki */
-        let x1 :number= top.x+50;
-        let y1 :number= -A*x1+top.y+top.x*A;
-
-        tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x1+" "+y1);
-        tmp.attr({'id':'tmp'+this.uid});
-        let p1 = tmp.getPointAtLength(5);
-        $('#tmp'+this.uid).remove();
-
-        //*********** wyznaczanie drugiego narożnika strzałki */
-        let x2 :number= top.x-50;
-        let y2 :number= -A*x2+top.y+top.x*A;
-        
-        tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
-        tmp.attr({'id':'tmp'+this.uid});
-        let p2 = tmp.getPointAtLength(5);
-        $('#tmp'+this.uid).remove();
-
-        $('#arrow_'+line.id).remove();
-        let arrow=this.parent.s.path('M'+p1.x+" "+p1.y+"L"+p2.x+" "+p2.y+" L"+joinPoint.x+" "+joinPoint.y+" Z");
-        arrow.attr({'id':'arrow_'+line.id, 'fill':'black' });
-        $('#'+line.id).attr({'x2':joinPoint.x, 'y2':joinPoint.y});
-      }
-
-    }
-    else
-      $('#arrow_'+line.id).remove();
-    
-  }
-
-  //punt styku
-  // getLineTouchPoint(line: lineClass): coordPoint{
-  //   if(!(Snap.len(line.x1, line.y1, this.x, this.y)<=this.r*2) ){
-
-  //     let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
-  //     tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
-
-  //     let len = Snap.len(line.x1, line.y1, line.x2, line.y2)-this.r;
-  //     let joinPoint = tmp.getPointAtLength(len);
-
-  //     return new coordPoint(joinPoint.x, joinPoint.y);
-
-  //   }
-  //   return null;
-  // }
 
   getCenter(){
     return new coordPoint(this.x, this.y)
@@ -3041,237 +2727,73 @@ export class GTextClass extends GObjectBaseClass{
     $('#'+this.id).remove();
   }
 
-  //#region stary drawarrow  nie dziala
-  // drawArrow(line: lineClass){
+  getLineTouchPoint(startPoint: coordPoint): coordPoint{
 
-  //   let bbox = this.svgobject.getBBox();
+    let bbox = this.svgobject.getBBox();
+    let endPoint = new coordPoint(bbox.cx, bbox.cy)
 
-  //   if(!((line.x1>bbox.x && line.x1<bbox.x+bbox.width) && (line.y1>bbox.y && line.y1<bbox.y+bbox.height)) )
-  //   {
+    if(!((startPoint.x>bbox.x && startPoint.x<bbox.x+bbox.width) && (startPoint.y>bbox.y && startPoint.y<bbox.y+bbox.height)) )
+    {
       
       
-  //     // //linia przecinająca
-  //     let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
-  //     tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
-  //     //$('#tmp'+this.uid).remove();
-  //     //określenie krawędź przecinanej
+      // //linia przecinająca
+      // let tmp = this.parent.s.path('M'+startPoint.x+" "+startPoint.y+"L"+endPoint.x+" "+endPoint.y);
+      // tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
+      // $('#tmp'+this.uid).remove();
+      //określenie krawędź przecinanej
 
-  //     let Ap, Bp= new coordPoint(0,0);
+      let Ap, Bp= new coordPoint(0,0);
 
-  //     //współczynniki przekątnych
+      //współczynniki przekątnych
 
-  //     let x_l = bbox.x;
-  //     let x_r = bbox.x+bbox.width;
-  //     let y_u=bbox.y;
-  //     let y_d=bbox.y+bbox.height;
+      let x_l = bbox.x;
+      let x_r = bbox.x+bbox.width;
+      let y_u=bbox.y;
+      let y_d=bbox.y+bbox.height;
 
-  //     let Ar = (y_u-y_d)/(x_r-x_l);
-  //     let Br = -Ar*x_l+y_d;
-  //     let Al = (y_u-y_d)/(x_l-x_r);
-  //     let Bl = -Al*x_r+y_d;
+      let Ar = (y_u-y_d)/(x_r-x_l);
+      let Br = -Ar*x_l+y_d;
+      let Al = (y_u-y_d)/(x_l-x_r);
+      let Bl = -Al*x_r+y_d;
 
-  //     //wyznaczenie przecinanej krawedzi
-  //     let Ak, Bk: number;
-  //     let x,y:number;
-  //     //y=Al*line.x1+Bl;
+      //wyznaczenie przecinanej krawedzi
+      let Ak, Bk: number;
+      let x,y:number;
+      //y=Al*line.x1+Bl;
     
 
-  //     //wspolczynnik dla linii
-  //     let Dt = (line.y2-line.y1)/(line.x2-line.x1);
+      //wspolczynnik dla linii
+      let Dt = (endPoint.y-startPoint.y)/(endPoint.x-startPoint.x);
 
-  //     //gora
-  //     if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)>line.y1){
-  //       y=bbox.y;
-  //       x=(y+Dt*line.x1-line.y1)/Dt;      
-  //     }
-  //     //prawa
-  //     if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)<line.y1 && line.x1>bbox.x+bbox.width){
-  //       x=bbox.x+bbox.width;
-  //       y=(Dt*x)-Dt*line.x1+line.y1;      
-  //     }
-  //     //dol
-  //     if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)<line.y1){
-  //       y=bbox.y+bbox.height;
-  //       x=(y+Dt*line.x1-line.y1)/Dt;      
-  //     }
-  //     //lewa
-  //     if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)>line.y1 && line.x1<bbox.x){
-  //       x=bbox.x;
-  //       y=(Dt*x)-Dt*line.x1+line.y1;      
-  //     }
+      //gora
+      if((Al*startPoint.x+Bl)>startPoint.y && (Ar*startPoint.x+Br)>startPoint.y){
+        y=bbox.y;
+        x=(y+Dt*startPoint.x-startPoint.y)/Dt;      
+      }
+      //prawa
+      if((Al*startPoint.x+Bl)>startPoint.y && (Ar*startPoint.x+Br)<startPoint.y && startPoint.x>bbox.x+bbox.width){
+        x=bbox.x+bbox.width;
+        y=(Dt*x)-Dt*startPoint.x+startPoint.y;      
+      }
+      //dol
+      if((Al*startPoint.x+Bl)<startPoint.y && (Ar*startPoint.x+Br)<startPoint.y){
+        y=bbox.y+bbox.height;
+        x=(y+Dt*startPoint.x-startPoint.y)/Dt;      
+      }
+      //lewa
+      if((Al*startPoint.x+Bl)<startPoint.y && (Ar*startPoint.x+Br)>startPoint.y && startPoint.x<bbox.x){
+        x=bbox.x;
+        y=(Dt*x)-Dt*startPoint.x+startPoint.y;      
+      }
 
-  //     if(x && y){
-    
+      if(x && y)
+        return new coordPoint(x,y);      
 
-  //       let joint_x = x;
-  //       let joint_y = y;
-
-  //       //wyznaczenie odleglosci od poczatku linii  do punktu styku
-  //       let len = Snap.len(joint_x, joint_y, line.x1, line.y1);
-  //       if(len>20){
-
-  //         //**************** punkt podstawy strzałki */
-  //         let top = tmp.getPointAtLength(len-15);
-  //         $('#tmp'+this.uid).remove();
-
-  //         //********** współczynnik a prostej prostopadłej do linii */
-  //         if(line.y2-line.y1!=0){
-  //           let A:number = (line.x2-line.x1)/(line.y2-line.y1);        
-            
-  //           //*********** wyznaczanie pierwszego narożnika strzałki */
-  //           let x1 :number= top.x+50;
-  //           let y1 :number= -A*x1+top.y+top.x*A;
-
-  //           tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x1+" "+y1);
-  //           tmp.attr({'id':'tmp'+this.uid});
-  //           let p1 = tmp.getPointAtLength(5);
-  //           $('#tmp'+this.uid).remove();
-
-  //           //*********** wyznaczanie drugiego narożnika strzałki */
-  //           let x2 :number= top.x-50;
-  //           let y2 :number= -A*x2+top.y+top.x*A;
-            
-  //           tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
-  //           tmp.attr({'id':'tmp'+this.uid});
-  //           let p2 = tmp.getPointAtLength(5);
-  //           $('#tmp'+this.uid).remove();
-
-  //           $('#arrow_'+line.id).remove();
-  //           let arrow=this.parent.s.path('M'+p1.x+" "+p1.y+"L"+p2.x+" "+p2.y+" L"+joint_x+" "+joint_y+" Z");
-  //           arrow.attr({'id':'arrow_'+line.id, 'fill':'black' });
-  //           $('#'+line.id).attr({'x2':joint_x, 'y2':joint_y});
-  //         }
-  //       }
-  //     }
-  //     $('#tmp'+this.uid).remove();
-  //   }
-  //   else
-  //   $('#arrow_'+line.id).remove();
-    
-  // }
-
-  //#endregion
-
-  drawArrow2(crossPoint:coordPoint, line: lineClass){
- 
-      if(crossPoint){
-    
-        let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
-        tmp.attr({'id':'tmp'+this.uid});
-
-        let joint_x = crossPoint.x;
-        let joint_y = crossPoint.y;
-
-        //wyznaczenie odleglosci od poczatku linii  do punktu styku
-        let len = Snap.len(joint_x, joint_y, line.x1, line.y1);
-        if(len>20){
-
-          //**************** punkt podstawy strzałki */
-          let top = tmp.getPointAtLength(len-15);
-          $('#tmp'+this.uid).remove();
-
-          //********** współczynnik a prostej prostopadłej do linii */
-          if(line.y2-line.y1!=0){
-            let A:number = (line.x2-line.x1)/(line.y2-line.y1);        
-            
-            //*********** wyznaczanie pierwszego narożnika strzałki */
-            let x1 :number= top.x+50;
-            let y1 :number= -A*x1+top.y+top.x*A;
-
-            tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x1+" "+y1);
-            tmp.attr({'id':'tmp'+this.uid});
-            let p1 = tmp.getPointAtLength(5);
-            $('#tmp'+this.uid).remove();
-
-            //*********** wyznaczanie drugiego narożnika strzałki */
-            let x2 :number= top.x-50;
-            let y2 :number= -A*x2+top.y+top.x*A;
-            
-            tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
-            tmp.attr({'id':'tmp'+this.uid});
-            let p2 = tmp.getPointAtLength(5);
-            $('#tmp'+this.uid).remove();
-
-            $('#arrow_'+line.id).remove();
-            let arrow=this.parent.s.path('M'+p1.x+" "+p1.y+"L"+p2.x+" "+p2.y+" L"+joint_x+" "+joint_y+" Z");
-            arrow.attr({'id':'arrow_'+line.id, 'fill':'black' });
-            $('#'+line.id).attr({'x2':joint_x, 'y2':joint_y});
-          }
-        }  
-        
-        $('#tmp'+this.uid).remove();
     }
-    else
-    $('#arrow_'+line.id).remove();
-    
+
+    return null;
+
   }
-
-  // getLineTouchPoint(line: lineClass): coordPoint{
-
-  //   let bbox = this.svgobject.getBBox();
-
-  //   if(!((line.x1>bbox.x && line.x1<bbox.x+bbox.width) && (line.y1>bbox.y && line.y1<bbox.y+bbox.height)) )
-  //   {
-      
-      
-  //     // //linia przecinająca
-  //     let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);
-  //     tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
-  //     //$('#tmp'+this.uid).remove();
-  //     //określenie krawędź przecinanej
-
-  //     let Ap, Bp= new coordPoint(0,0);
-
-  //     //współczynniki przekątnych
-
-  //     let x_l = bbox.x;
-  //     let x_r = bbox.x+bbox.width;
-  //     let y_u=bbox.y;
-  //     let y_d=bbox.y+bbox.height;
-
-  //     let Ar = (y_u-y_d)/(x_r-x_l);
-  //     let Br = -Ar*x_l+y_d;
-  //     let Al = (y_u-y_d)/(x_l-x_r);
-  //     let Bl = -Al*x_r+y_d;
-
-  //     //wyznaczenie przecinanej krawedzi
-  //     let Ak, Bk: number;
-  //     let x,y:number;
-  //     //y=Al*line.x1+Bl;
-    
-
-  //     //wspolczynnik dla linii
-  //     let Dt = (line.y2-line.y1)/(line.x2-line.x1);
-
-  //     //gora
-  //     if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)>line.y1){
-  //       y=bbox.y;
-  //       x=(y+Dt*line.x1-line.y1)/Dt;      
-  //     }
-  //     //prawa
-  //     if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)<line.y1 && line.x1>bbox.x+bbox.width){
-  //       x=bbox.x+bbox.width;
-  //       y=(Dt*x)-Dt*line.x1+line.y1;      
-  //     }
-  //     //dol
-  //     if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)<line.y1){
-  //       y=bbox.y+bbox.height;
-  //       x=(y+Dt*line.x1-line.y1)/Dt;      
-  //     }
-  //     //lewa
-  //     if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)>line.y1 && line.x1<bbox.x){
-  //       x=bbox.x;
-  //       y=(Dt*x)-Dt*line.x1+line.y1;      
-  //     }
-
-  //     if(x && y)
-  //       return new coordPoint(x,y);      
-
-  //   }
-
-  //   return null;
-
-  // }
 
   getCenter(){
     // let h=0;
@@ -3304,7 +2826,8 @@ export class GTextClass extends GObjectBaseClass{
   }
 
   getFarrestPoint(){
-    return new coordPoint(this.x+this.svgobject.getBBox().width, this.y+this.svgobject.getBBox.height);
+    let tmp = this.svgobject.getBBox();
+    return new coordPoint(tmp.x+tmp.width, tmp.y+tmp.height);
   }
 
   isContainingPoint(x:number, y:number){      
