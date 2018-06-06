@@ -1447,13 +1447,12 @@ export class linesContainerClass{
 
   setEndLine(endid: any, line: any){
     line.stopid = endid;
-    // let tmp = this.linesContainer.filter(o=>o.id==line.attr('id'))[0]; 
-    // if(tmp)
-    //   tmp.stopid = endid;
 
-    let tmp = this.parent.gObjects.get(endid);
-    if(tmp)
-      line.extendLine(tmp.getCenter());
+    line.move($("#"+endid));
+
+    // let tmp = this.parent.gObjects.get(endid);
+    // if(tmp)
+    //   line.extendLine(tmp.getCenter());
 
     //line.drawArrow();
   }
@@ -1463,7 +1462,7 @@ export class linesContainerClass{
     //   this.linesContainer[i].move(object);
 
     let obid = object.attr('id');
-    this.linesContainer.filter(l=>l.startid == obid || l.stopid==obid).forEach((l)=>{l.move()});
+    this.linesContainer.filter(l=>l.startid == obid || l.stopid==obid).forEach((l)=>{l.move(object)});
 
     
   }
@@ -1591,8 +1590,11 @@ export class lineClass{
 
   drawArrow(touchPoint:coordPoint){
 
+    // let startpoint = {x: parseInt(this.svgobject.attr('x1')), y: parseInt(this.svgobject.attr('y1'))};
+    let startpoint = {x: this.svgobject.attr('x1'), y: this.svgobject.attr('y1')};
+
  
-    let tmp = this.parent.s.path('M'+this.x1+" "+this.y1+"L"+touchPoint.x+" "+touchPoint.y);
+    let tmp = this.parent.s.path('M'+startpoint.x+" "+startpoint.y+"L"+touchPoint.x+" "+touchPoint.y);
     tmp.attr({'id':'tmp'+this.id});
     
 
@@ -1600,7 +1602,7 @@ export class lineClass{
     let joint_y = touchPoint.y;
 
     //wyznaczenie odleglosci od poczatku linii  do punktu styku
-    let len = Snap.len(joint_x, joint_y, this.x1, this.y1);
+    let len = Snap.len(joint_x, joint_y, startpoint.x, startpoint.y);
     if(len>20){
 
       //**************** punkt podstawy strzałki */
@@ -1608,8 +1610,8 @@ export class lineClass{
       $('#tmp'+this.id).remove();
 
       //********** współczynnik a prostej prostopadłej do linii */
-      if(this.y2-this.y1!=0){
-        let A:number = (this.x2-this.x1)/(this.y2-this.y1);        
+      if(this.y2-startpoint.y!=0){
+        let A:number = (this.x2-startpoint.x)/(this.y2-startpoint.y);        
         
         //*********** wyznaczanie pierwszego narożnika strzałki */
         let x1 :number= top.x+50;
@@ -2045,71 +2047,6 @@ export class GObjectBaseClass extends CVObject{
   }
 
   //punkt styku z linia
-  getLineTouchPoint_old(line: lineClass): coordPoint{
-
-    //if(!((line.x1>this.x && line.x1<this.x+this.w) && (line.y1>this.y && line.y1<this.y+this.h)) )
-    {
-        // //linia przecinająca
-       
-        // let tmp = this.parent.s.path('M'+line.x1+" "+line.y1+"L"+line.x2+" "+line.y2);   
-        
-        // tmp.attr({'id':'tmp'+this.uid});//, 'stroke':"yellow", 'stroke-width':"3"
-        //$('#tmp'+this.uid).remove();
-        //określenie krawędź przecinanej
-  
-        let Ap, Bp= new coordPoint(0,0);
-  
-        //współczynniki przekątnych
-  
-        let x_l = this.x;
-        let x_r = this.x+this.w;
-        let y_u=this.y;
-        let y_d=this.y+this.h;
-  
-        let Ar = (y_u-y_d)/(x_r-x_l);
-        let Br = -Ar*x_l+y_d;
-        let Al = (y_u-y_d)/(x_l-x_r);
-        let Bl = -Al*x_r+y_d;
-  
-        //wyznaczenie przecinanej krawedzi
-        let Ak, Bk: number;
-        let x,y:number;
-        //y=Al*line.x1+Bl;
-      
-  
-        //wspolczynnik dla linii
-        let Dt = (line.y2-line.y1)/(line.x2-line.x1);
-  
-        //gora
-        if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)>line.y1){
-          y=this.y;
-          x=(y+Dt*line.x1-line.y1)/Dt;      
-        }
-        //prawa
-        if((Al*line.x1+Bl)>line.y1 && (Ar*line.x1+Br)<line.y1 && line.x1>this.x+this.w){
-          x=this.x+this.w;
-          y=(Dt*x)-Dt*line.x1+line.y1;      
-        }
-        //dol
-        if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)<line.y1){
-          y=this.y+this.h;
-          x=(y+Dt*line.x1-line.y1)/Dt;      
-        }
-        //lewa
-        if((Al*line.x1+Bl)<line.y1 && (Ar*line.x1+Br)>line.y1 && line.x1<this.x){
-          x=this.x;
-          y=(Dt*x)-Dt*line.x1+line.y1;      
-        }
-
-      let rez = new coordPoint(x,y);
-  
-      return rez;
-    }
-
-    //return null;
-  
-  }
-
   getLineTouchPoint(startPoint: coordPoint): coordPoint{
 
     let endPoint = this.getCenter();
@@ -2495,6 +2432,7 @@ export class GCircleClass extends GObjectBaseClass{
 
       let len = Snap.len(startPoint.x, startPoint.y, endPoint.x, endPoint.y)-this.r;
       let joinPoint = tmp.getPointAtLength(len);
+      $('#tmp'+this.uid).remove();
 
       return new coordPoint(joinPoint.x, joinPoint.y);
 
@@ -2846,7 +2784,7 @@ export class GTextClass extends GObjectBaseClass{
     //this.calculateRadius();
 
     // $("#"+this.id).attr({x:this.x, y: this.y});
-  this.create_multiline();
+    this.create_multiline();
 
     // let infoob = this.parent.s.select('#'+this.id);
     // infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
