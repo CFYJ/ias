@@ -162,7 +162,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     
     if(event['target'].id!="" ||  event['target'].tagName=='tspan'){
 
-  
+    
 
       this.startX = event.offsetX;
       this.startY = event.offsetY;
@@ -190,8 +190,10 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
           this.lastSelected = this.selected = this.gObjects.getByInfoId(event['target'].id);
         }
         else if(event['target'].tagName=='tspan'){
-          if(event['target'].parentNode.id.indexOf('info')!=-1)
-            this.lastSelected = this.selected = this.gObjects.getByInfoId(event['target'].id);
+         
+          if(event['target'].parentNode.id.indexOf('info')!=-1){
+            this.lastSelected = this.selected = this.gObjects.getByInfoId(event['target'].parentNode.id);     
+          }
           else
             this.lastSelected = this.selected = event['target'].parentNode;          
         }
@@ -227,6 +229,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   }
 
   g_mousemove(event: any){
+
     let eventX=event.offsetX;
     let eventY=event.offsetY;
       
@@ -245,7 +248,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         let tx = x;
         let ty = y;
 
-        if(this.selected.tagName!=null && this.selectedShape==null){      
+        if(this.selected.tagName!=null && this.selectedShape==null){          
           this.gObjects.move(tx,ty,this.selected.id);
           this.linesContainer.updatePos($("#"+this.selected.id));
         }
@@ -843,8 +846,10 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         if(!this.newline){
           this.newline = new lineClass(this.startX, this.startY, this)
           this.linesContainer.addline(this.newline);
-          if(this.selected && this.selected.id.indexOf('line')==-1)
-            this.gObjects.get(this.selected.id).updateLayout();
+          if(this.selected && this.selected.id.indexOf('line')==-1){
+            this.gObjects.get(this.selected.id).updateLayout();        
+            this.newline.startid = this.selected.id;
+          }
 
           this.isDrawing = true;        
         }
@@ -1525,14 +1530,6 @@ export class lineClass{
    if(x){
     this.parent=parent;  
 
-    if(this.parent.selected)
-      this.startid = this.parent.selected.id;
-
-      // let startpoint = this.getTarget(this.parent.selected);
-      // this.x1=this.x2=startpoint.x;
-      // this.y1=this.y2=startpoint.y;
-  
-
     this.x1=this.x2=x;
     this.y1=this.y2=y
     
@@ -1837,7 +1834,6 @@ export class GObjectContainerClass{
   }
 
   getByInfoId(id:string){
-
     id =id.replace('id_info_','');
     return this.objectsContainer.filter(o=>o.uid== parseInt( id))[0];
   }
@@ -2514,7 +2510,7 @@ export class GCircleClass extends GObjectBaseClass{
     //   el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
     //  });
 
-     super.move(x,y);
+    super.move(x,y);
 
     //#region old
       // let tmpcx =  parseInt($("#"+this.selected.id).attr("cx"));
