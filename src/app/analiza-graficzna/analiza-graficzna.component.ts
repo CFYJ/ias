@@ -137,6 +137,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   startY: any=0;
   resize: boolean = false;
 
+  isSelecting: boolean = false;
+  selectionList: GObjectBaseClass[]=[];
+
   isDrawing= false;
   isDragged = false;
 
@@ -922,6 +925,10 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     }
   }
 
+  drawSelectionFrame(x:number, y:number){
+    let tmpobject = this.s.rect(x, y, 0, 0);
+    tmpobject.attr({'id':'id_selection','rx':"5", 'ry':"5",  'stroke': 'yellow', 'stroke-width':1});
+  }
 
   //#endregion
 
