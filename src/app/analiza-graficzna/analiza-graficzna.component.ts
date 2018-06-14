@@ -187,12 +187,12 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
           this.selectShape(this.selectedShape, event);
 
         if(event['target'].id.indexOf('info')!=-1){
-          this.lastSelected = this.selected = this.gObjects.getByInfoId(event['target'].id);
+          this.lastSelected = this.selected =document.getElementById( this.gObjects.getByInfoId(event['target'].id).id);
         }
         else if(event['target'].tagName=='tspan'){
-         
+  
           if(event['target'].parentNode.id.indexOf('info')!=-1){
-            this.lastSelected = this.selected = this.gObjects.getByInfoId(event['target'].parentNode.id);     
+            this.lastSelected = this.selected = document.getElementById(this.gObjects.getByInfoId(event['target'].parentNode.id).id);     
           }
           else
             this.lastSelected = this.selected = event['target'].parentNode;          
