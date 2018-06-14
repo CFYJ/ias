@@ -176,8 +176,18 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
             this.drawElement(event);
         }
         else{
-        this.isDragged = true;
+
+
+          this.isSelecting = true;
+  
+          let vb =  this.s.attr('viewBox');        
+          let tmpobject = this.s.rect(event.offsetX*(1/this.scale)+vb.x,event.offsetY*(1/this.scale)+vb.y, 0, 0);
+          tmpobject.attr({'id':'id_selectionFrame','rx':"5", 'ry':"5",  'stroke': 'yellow', 'stroke-width':1, 'fill':'none'});
+
+        //this.isDragged = true;
    
+
+
         }
       }
       else {
@@ -239,44 +249,60 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     let x = (Math.max(this.startX,eventX)-Math.min(this.startX,eventX))*Math.sign(eventX-this.startX)*(1/this.scale);
     let y = (Math.max(this.startY,eventY)-Math.min(this.startY,eventY))*Math.sign(eventY-this.startY)*(1/this.scale);
 
+    if(this.isSelecting){
+      let sf = this.s.select('#id_selectionFrame').getBBox();
+      $('#id_selectionFrame').attr({width:sf.width+x, height:sf.height+y});
 
-    if(this.selected!= null){
-      
-      if(this.resize){
-        if(this.selected.tagName!=null)
-          this.gObjects.resize(this.selected.id, x, y);
-      }
-      else if(this.isDragged){      
-
-        let tx = x;
-        let ty = y;
-
-        if(this.selected.tagName!=null && this.selectedShape==null){          
-          this.gObjects.move(tx,ty,this.selected.id);
-          this.linesContainer.updatePos($("#"+this.selected.id));
-        }
-        // var m =(this.s.select("#"+this.selected.id)).transform().localMatrix.split();
-        // for(var i in m)
-        //   console.log("m:"+m[i]);
-        //console.log(this.s.select("#"+this.selected.id).transform().local);
-      }
     }
-    
     else{
-      if(this.isDragged){      
-        let vb =  this.s.attr('viewBox');
-        this.s.attr({viewBox:(parseInt(vb.x)-x)+","+(parseInt(vb.y)-y)+","+vb.w+","+vb.h})
+
+  
+
+      if(this.selected!= null){
+        
+        if(this.resize){
+          if(this.selected.tagName!=null)
+            this.gObjects.resize(this.selected.id, x, y);
+        }
+        else if(this.isDragged){      
+
+          let tx = x;
+          let ty = y;
+
+          if(this.selected.tagName!=null && this.selectedShape==null){          
+            this.gObjects.move(tx,ty,this.selected.id);
+            this.linesContainer.updatePos($("#"+this.selected.id));
+          }
+          // var m =(this.s.select("#"+this.selected.id)).transform().localMatrix.split();
+          // for(var i in m)
+          //   console.log("m:"+m[i]);
+          //console.log(this.s.select("#"+this.selected.id).transform().local);
+        }
       }
-    }
-    
-    if(this.selectedShape!=null && this.isDrawing){
-      this.drawElement(event);
+      
+      else{
+        if(this.isDragged){      
+          let vb =  this.s.attr('viewBox');
+          this.s.attr({viewBox:(parseInt(vb.x)-x)+","+(parseInt(vb.y)-y)+","+vb.w+","+vb.h})
+        }
+      }
+      
+      if(this.selectedShape!=null && this.isDrawing){
+        this.drawElement(event);
+      }
+
     }
     this.startX =event.offsetX;
     this.startY =event.offsetY;
   }
 
   g_mouseup(event: any){
+
+    if(this.isSelecting){
+      this.isSelecting = false;
+      $('#id_selectionFrame').remove();
+    }
+
     if(this.newline && event['target'].id!=""){
 
       if(event['target'].id!="svgCanvas"){
@@ -925,10 +951,6 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     }
   }
 
-  drawSelectionFrame(x:number, y:number){
-    let tmpobject = this.s.rect(x, y, 0, 0);
-    tmpobject.attr({'id':'id_selection','rx':"5", 'ry':"5",  'stroke': 'yellow', 'stroke-width':1});
-  }
 
   //#endregion
 
