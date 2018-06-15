@@ -160,12 +160,21 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     //   let sl = this.gObjects.get(this.lastSelected.id);
     //   sl?sl.makeUnselected():(this.linesContainer.get(this.lastSelected.id)?this.linesContainer.get(this.lastSelected.id).makeUnselected:null);
     // }
-    CVObject.makeUnselected();
-    this.selectedGObject=null;
+
+
+
+    //CVObject.makeUnselected();
+    //this.selectedGObject=null;
     
     if(event['target'].id!="" ||  event['target'].tagName=='tspan'){
 
     
+      // if(this.selectionList.indexOf(this.gObjects.get(event['target'].id))!==-1)
+      //   return;
+      // else{
+      //   CVObject.makeUnselected();
+      //   this.selectionList=[];
+      // }
 
       this.startX = event.offsetX;
       this.startY = event.offsetY;
@@ -176,7 +185,8 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
             this.drawElement(event);
         }
         else{
-
+          CVObject.makeUnselected();
+          this.selectionList = [];
 
           this.isSelecting = true;
   
@@ -192,7 +202,10 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       }
       else {
 
-        let sl = this.gObjects.get(event['target'].id);           
+        let sl = this.gObjects.get(event['target'].id);      
+        
+
+        
         this.selectedGObject=sl?sl:null;  
         sl?sl.makeSelected():(this.linesContainer.get(event['target'].id)?this.linesContainer.get(event['target'].id).makeSelected():null);
 
@@ -252,6 +265,8 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     if(this.isSelecting){
       let sf = this.s.select('#id_selectionFrame').getBBox();
       $('#id_selectionFrame').attr({width:sf.width+x, height:sf.height+y});
+
+      this.gObjects.makeSelection( this.s.select('#id_selectionFrame').getBBox());
 
     }
     else{
@@ -421,6 +436,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.svgObjects =[];
     this.gObjects.clean();
     this.linesContainer.clean();
+
+    this.isSelecting = false;
+    this.selectionList = [];
 
     this.canvasBackgroundColor=null;
 
@@ -1425,7 +1443,7 @@ export class CVObject{
   makeSelected(){};
 
   public static makeUnselected(){
-    $('#id_selected').remove();
+    $('.selected').remove();
   };
 }
 
@@ -1891,6 +1909,27 @@ export class GObjectContainerClass{
       tmp.move(x,y);
   }
 
+
+  makeSelection(sf: any){
+    this.objectsContainer.forEach((el)=>{
+      let cp = el.getCenter();
+      if((sf.x<cp.x && sf.x+sf.width>cp.x) && (sf.y<cp.y && sf.y+sf.height>cp.y)){
+        if(this.parent.selectionList.indexOf(el)===-1){ 
+          el.makeSelected();         
+          this.parent.selectionList.push(el)
+         
+        }
+      }
+      else{
+        if(this.parent.selectionList.indexOf(el)!==-1){
+          el.makeUnselected();
+          this.parent.selectionList.splice(this.parent.selectionList.indexOf(el),1);
+        
+        }
+      }
+    })
+  }
+
   resize(id:string, x:number, y:number){
     let tmp = this.get(id); //this.objectsContainer.filter(o=>o.id==id)[0];
     if(tmp){
@@ -2156,12 +2195,32 @@ export class GObjectBaseClass extends CVObject{
   }   
   
   makeSelected(){
-    $('#id_selected').remove();
-    let bb =this.svgobject.getBBox();
+    //$('#id_selected').remove();
 
-    let frame =this.parent.s.rect(bb.x-5, bb.y-5, bb.width+10, bb.height+10);
-    frame.attr({id:'id_selected','stroke':'gold','stroke-width':1, 'fill':'none'});
+    if(!(this instanceof GCircleClass)){
+      let bb =this.svgobject.getBBox();
 
+      if(this.parent.selectionList.indexOf(this)===-1){
+
+        let frame =this.parent.s.rect(bb.x-5, bb.y-5, bb.width+10, bb.height+10);
+        frame.attr({id:'id_selected'+this.uid,'stroke':'gold','stroke-width':1, 'fill':'none', class:'selected'});
+      }
+      else
+        this.parent.s.select('#id_selected'+this.uid).attr({x:bb.x, y:bb.y});      
+    }
+    else{
+      if(this.parent.selectionList.indexOf(this)===-1){
+        let frame =this.parent.s.circle(this.x, this.y,this.r+5);
+        frame.attr({id:'id_selected'+this.uid,'stroke':'gold','stroke-width':1, 'fill':'none', class:'selected'});
+      }
+      else{
+        this.parent.s.select('#id_selected'+this.uid).attr({cx:this.x, cy:this.y}); 
+      }
+    }
+
+  }
+  makeUnselected(){
+     $('#id_selected'+this.uid).remove();
   }
 
   resize(x:number, y:number){   this.makeSelected();} 
@@ -2550,14 +2609,14 @@ export class GCircleClass extends GObjectBaseClass{
     //endregion
   }
 
-  makeSelected(){
-    $('#id_selected').remove();
+  // makeSelected(){
+  //   //$('#id_selected').remove();
     
 
-    let frame =this.parent.s.circle(this.x, this.y,this.r+5);
-    frame.attr({id:'id_selected','stroke':'gold','stroke-width':1, 'fill':'none'});
+  //   let frame =this.parent.s.circle(this.x, this.y,this.r+5);
+  //   frame.attr({id:'id_selected','stroke':'gold','stroke-width':1, 'fill':'none'});
 
-  }
+  // }
 
   resize(x:number, y:number){
     let tmpr =  this.r;
