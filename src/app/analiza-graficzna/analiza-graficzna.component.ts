@@ -214,6 +214,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
         if(event['target'].id.indexOf('info')!=-1){
           this.lastSelected = this.selected =document.getElementById( this.gObjects.getByInfoId(event['target'].id).id);
+         
         }
         else if(event['target'].tagName=='tspan'){
   
@@ -221,11 +222,23 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
             this.lastSelected = this.selected = document.getElementById(this.gObjects.getByInfoId(event['target'].parentNode.id).id);     
           }
           else
-            this.lastSelected = this.selected = event['target'].parentNode;          
+            this.lastSelected = this.selected = event['target'].parentNode;  
+          
         }
         else{
           this.selected = document.getElementById(event['target'].id);
           this.lastSelected = this.selected;
+
+        }
+
+        if(this.selected){          
+          let gob = this.gObjects.get(this.selected.id);
+         
+          if(this.selectionList.indexOf(gob)===-1){
+               CVObject.makeUnselected();
+              this.selectionList=[];                 
+          }
+          gob.makeSelected();
         }
   
 
@@ -264,7 +277,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
     if(this.isSelecting){
       let sf = this.s.select('#id_selectionFrame').getBBox();
-      $('#id_selectionFrame').attr({width:sf.width+x, height:sf.height+y});
+      $('#id_selectionFrame').attr({x:sf.x>eventX?sf.x+x:sf.x, y:sf.y>eventY?sf.y+y:sf.y,  width:sf.width+(sf.x>eventX?Math.abs(x):x), height:sf.height+(sf.y>eventY?Math.abs(y):y)});
 
       this.gObjects.makeSelection( this.s.select('#id_selectionFrame').getBBox());
 
@@ -1904,9 +1917,12 @@ export class GObjectContainerClass{
   }
 
   move(x:number, y:number, id:string){
-    let tmp = this.get(id);
-    if(tmp)
-      tmp.move(x,y);
+    // let tmp = this.get(id);
+    // if(tmp)
+    //   tmp.move(x,y);
+    this.parent.selectionList.forEach((element)=>{
+      element.move(x,y);
+    })
   }
 
 
@@ -2204,14 +2220,17 @@ export class GObjectBaseClass extends CVObject{
 
         let frame =this.parent.s.rect(bb.x-5, bb.y-5, bb.width+10, bb.height+10);
         frame.attr({id:'id_selected'+this.uid,'stroke':'gold','stroke-width':1, 'fill':'none', class:'selected'});
+        this.parent.selectionList.push(this);
+
       }
       else
-        this.parent.s.select('#id_selected'+this.uid).attr({x:bb.x, y:bb.y});      
+        this.parent.s.select('#id_selected'+this.uid).attr({x:bb.x-5, y:bb.y-5});      
     }
     else{
       if(this.parent.selectionList.indexOf(this)===-1){
         let frame =this.parent.s.circle(this.x, this.y,this.r+5);
         frame.attr({id:'id_selected'+this.uid,'stroke':'gold','stroke-width':1, 'fill':'none', class:'selected'});
+        this.parent.selectionList.push(this);
       }
       else{
         this.parent.s.select('#id_selected'+this.uid).attr({cx:this.x, cy:this.y}); 
