@@ -155,7 +155,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
   //#region userAction methods(mouse, kyboard)
   g_mousedown(event: any){
-    
+
     // if(this.lastSelected){
     //   let sl = this.gObjects.get(this.lastSelected.id);
     //   sl?sl.makeUnselected():(this.linesContainer.get(this.lastSelected.id)?this.linesContainer.get(this.lastSelected.id).makeUnselected:null);
@@ -224,6 +224,8 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
           else
             this.lastSelected = this.selected = event['target'].parentNode;  
           
+            console.log(this.selected)
+            this.gObjects.get(this.selected.id).makeSelected();
         }
         else{
           this.selected = document.getElementById(event['target'].id);
@@ -231,15 +233,12 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
         }
 
-        if(this.selected){          
-          let gob = this.gObjects.get(this.selected.id);
+        // if(this.selected){          
+        //   let gob = this.gObjects.get(this.selected.id);
          
-          if(this.selectionList.indexOf(gob)===-1){
-               CVObject.makeUnselected();
-              this.selectionList=[];                 
-          }
-          gob.makeSelected();
-        }
+   
+        //   gob.makeSelected();
+        // }
   
 
         if(this.selected)
@@ -1457,6 +1456,7 @@ export class CVObject{
 
   public static makeUnselected(){
     $('.selected').remove();
+    $('#id_selected').remove();
   };
 }
 
@@ -1526,8 +1526,13 @@ export class linesContainerClass{
     // for(let i in this.linesContainer)
     //   this.linesContainer[i].move(object);
 
-    let obid = object.attr('id');
-    this.linesContainer.filter(l=>l.startid == obid || l.stopid==obid).forEach((l)=>{l.move(object)});
+    this.parent.selectionList.forEach((element)=>{
+      let obid = element.id;
+      this.linesContainer.filter(l=>l.startid == obid || l.stopid==obid).forEach((l)=>{l.move(object)});
+    })
+
+    // let obid = object.attr('id');
+    // this.linesContainer.filter(l=>l.startid == obid || l.stopid==obid).forEach((l)=>{l.move(object)});
 
     
   }
@@ -1673,7 +1678,7 @@ export class lineClass{
         //*********** wyznaczanie pierwszego narożnika strzałki */
         let x1 :number= top.x+50;
         let y1 :number= -A*x1+top.y+top.x*A;
-
+        
         tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x1+" "+y1);
         tmp.attr({'id':'tmp'+this.id});
         let p1 = tmp.getPointAtLength(5);
@@ -1684,6 +1689,11 @@ export class lineClass{
         let y2 :number= -A*x2+top.y+top.x*A;
         
         tmp = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
+        
+                                              // let k = this.parent.s.path('M'+top.x+" "+top.y+"L"+x2+" "+y2);
+                                              // $('#k').remove();
+                                              // k.attr({'id':'k','fill':'black','stroke-width':2, 'stroke':'black'})
+        
         tmp.attr({'id':'tmp'+this.id});
         let p2 = tmp.getPointAtLength(5);
         $('#tmp'+this.id).remove();
@@ -1712,41 +1722,43 @@ export class lineClass{
   public move(object?: any){
    
       //if(object.attr('id') == this.startid || object.attr('id')==this.stopid)
-      {    
+          
 
-        let isstartpoint: boolean= false;
+    let isstartpoint: boolean= false;
 
-        if(object){
-          let gobject = this.parent.gObjects.get(object.attr('id'));
-          let center = gobject.getCenter();
-          isstartpoint = (object.attr('id') == this.startid);
-       
+    if(object){
+      let gobject = this.parent.gObjects.get(object.attr('id'));
+      let center = gobject.getCenter();
+      isstartpoint = (object.attr('id') == this.startid);
+    
 
-          if(isstartpoint){
-            this.x1 = center.x;
-            this.y1 = center.y;  
-          }
-          else{
-            this.x2 = center.x;
-            this.y2 = center.y;
-          }  
-
-        }
-
-        let startpoint = this.startid?this.parent.gObjects.get(this.startid).getLineTouchPoint(new coordPoint(this.x2,this.y2)): new coordPoint(this.x1,this.y1);
-        let stoppoint = this.stopid?this.parent.gObjects.get(this.stopid).getLineTouchPoint(new coordPoint(this.x1,this.y1)): new coordPoint(this.x2,this.y2);
-
-       
-        if(startpoint && stoppoint){
-          $('#'+this.id).attr({x1:startpoint.x,y1: startpoint.y, x2: stoppoint.x, y2: stoppoint.y});
-
-          this.drawArrow(stoppoint);             
-        }
+      if(isstartpoint){
+        this.x1 = center.x;
+        this.y1 = center.y;  
       }
+      else{
+        this.x2 = center.x;
+        this.y2 = center.y;
+      }  
+
+    }
+
+    let startpoint = this.startid?this.parent.gObjects.get(this.startid).getLineTouchPoint(new coordPoint(this.x2,this.y2)): new coordPoint(this.x1,this.y1);
+    let stoppoint = this.stopid?this.parent.gObjects.get(this.stopid).getLineTouchPoint(new coordPoint(this.x1,this.y1)): new coordPoint(this.x2,this.y2);
+
+    
+    if(startpoint && stoppoint){
+      $('#'+this.id).attr({x1:startpoint.x,y1: startpoint.y, x2: stoppoint.x, y2: stoppoint.y});
+
+      this.drawArrow(stoppoint);             
+    }
+      
   }
 
   makeSelected(){
     $('#id_selected').remove();
+    CVObject.makeUnselected();
+    this.parent.selectionList=[];
 
     let tmp = $('#'+this.id);
    
@@ -2213,6 +2225,11 @@ export class GObjectBaseClass extends CVObject{
   makeSelected(){
     //$('#id_selected').remove();
 
+    if(this.parent.selectionList.indexOf(this)===-1 && this.parent.isSelecting===false){
+      CVObject.makeUnselected();
+      this.parent.selectionList=[];                 
+    }
+
     if(!(this instanceof GCircleClass)){
       let bb =this.svgobject.getBBox();
 
@@ -2224,7 +2241,7 @@ export class GObjectBaseClass extends CVObject{
 
       }
       else
-        this.parent.s.select('#id_selected'+this.uid).attr({x:bb.x-5, y:bb.y-5});      
+        this.parent.s.select('#id_selected'+this.uid).attr({x:bb.x-5, y:bb.y-5, width: bb.width+10, height:bb.height+10});      
     }
     else{
       if(this.parent.selectionList.indexOf(this)===-1){
@@ -2233,7 +2250,7 @@ export class GObjectBaseClass extends CVObject{
         this.parent.selectionList.push(this);
       }
       else{
-        this.parent.s.select('#id_selected'+this.uid).attr({cx:this.x, cy:this.y}); 
+        this.parent.s.select('#id_selected'+this.uid).attr({cx:this.x, cy:this.y, r:this.r+5}); 
       }
     }
 
@@ -2436,7 +2453,7 @@ export class GRectClass extends GObjectBaseClass{
     this.create_multiline();
 
     // let infoob = this.parent.s.select('#id_info_'+this.uid);
-    // infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
+    // //infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
     // infoob.selectAll("tspan").forEach((el)=>{
     //   el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
     //  });
@@ -2887,13 +2904,15 @@ export class GTextClass extends GObjectBaseClass{
     //this.calculateRadius();
 
     // $("#"+this.id).attr({x:this.x, y: this.y});
-    this.create_multiline();
 
-    // let infoob = this.parent.s.select('#'+this.id);
-    // infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
-    // infoob.selectAll("tspan").forEach((el)=>{
-    //   el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
-    //  });
+
+   // this.create_multiline();
+
+    let infoob = this.parent.s.select('#'+this.id);
+    //infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
+    infoob.selectAll("tspan").forEach((el)=>{
+      el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
+     });
 
 
     super.move(x,y);
