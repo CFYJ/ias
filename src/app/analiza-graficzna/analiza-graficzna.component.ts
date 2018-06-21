@@ -223,8 +223,6 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
           }
           else
             this.lastSelected = this.selected = event['target'].parentNode;  
-          
-            console.log(this.selected)
             this.gObjects.get(this.selected.id).makeSelected();
         }
         else{
@@ -1652,9 +1650,8 @@ export class lineClass{
 
   drawArrow(touchPoint:coordPoint){
 
-    // let startpoint = {x: parseInt(this.svgobject.attr('x1')), y: parseInt(this.svgobject.attr('y1'))};
-    let startpoint = {x: this.svgobject.attr('x1'), y: this.svgobject.attr('y1')};
-
+     let startpoint = {x: parseInt(this.svgobject.attr('x1')), y: parseInt(this.svgobject.attr('y1'))};
+    //let startpoint = {x: parseInt(this.svgobject.attr('x1')), y: parseInt(this.svgobject.attr('y1'))};
  
     let tmp = this.parent.s.path('M'+startpoint.x+" "+startpoint.y+"L"+touchPoint.x+" "+touchPoint.y);
     tmp.attr({'id':'tmp'+this.id});
@@ -1719,10 +1716,11 @@ export class lineClass{
     $('#'+this.id).attr({x2:this.x2, y2:this.y2});
   }
 
-  public move(object?: any){
+  public move2(object?: any){
    
       //if(object.attr('id') == this.startid || object.attr('id')==this.stopid)
           
+      object = null;
 
     let isstartpoint: boolean= false;
 
@@ -1753,6 +1751,35 @@ export class lineClass{
       this.drawArrow(stoppoint);             
     }
       
+  }
+
+  public move(object?: any){
+     
+    if(this.startid){
+      let ob = this.parent.gObjects.get(this.startid).getCenter();
+      this.x1 = ob.x;
+      this.y1 = ob.y;
+    }
+    if(this.stopid){
+      let ob = this.parent.gObjects.get(this.stopid).getCenter();
+      this.x2 = ob.x;
+      this.y2 = ob.y;
+    }
+
+    let startpoint = this.startid?this.parent.gObjects.get(this.startid).getLineTouchPoint(new coordPoint(this.x2,this.y2)): new coordPoint(this.x1,this.y1);
+    let stoppoint = this.stopid?this.parent.gObjects.get(this.stopid).getLineTouchPoint(new coordPoint(this.x1,this.y1)): new coordPoint(this.x2,this.y2);
+
+
+    if(startpoint && stoppoint){
+      $('#'+this.id).attr({x1:startpoint.x,y1: startpoint.y, x2: stoppoint.x, y2: stoppoint.y});
+
+      if(!this.parent.gObjects.get(this.startid).isContainingPoint(stoppoint.x, stoppoint.y))
+        if(Snap.len(startpoint.x, startpoint.y, stoppoint.x, stoppoint.y)>=20)
+          this.drawArrow(stoppoint);  
+        else
+          $('#arrow_'+this.id).remove();           
+    }
+    
   }
 
   makeSelected(){
