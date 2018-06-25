@@ -214,9 +214,10 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
         if(event['target'].id.indexOf('info')!=-1){
           this.lastSelected = this.selected =document.getElementById( this.gObjects.getByInfoId(event['target'].id).id);
-         
+          this.gObjects.get(this.selected.id).makeSelected();
         }
         else if(event['target'].tagName=='tspan'){
+        
   
           if(event['target'].parentNode.id.indexOf('info')!=-1){
             this.lastSelected = this.selected = document.getElementById(this.gObjects.getByInfoId(event['target'].parentNode.id).id);     
@@ -230,7 +231,6 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
           this.lastSelected = this.selected;
 
         }
-
         // if(this.selected){          
         //   let gob = this.gObjects.get(this.selected.id);
          
