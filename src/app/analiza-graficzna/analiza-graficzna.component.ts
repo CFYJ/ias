@@ -192,6 +192,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   
           let vb =  this.s.attr('viewBox');        
           let tmpobject = this.s.rect(event.offsetX*(1/this.scale)+vb.x,event.offsetY*(1/this.scale)+vb.y, 0, 0);
+          $('#id_selectionFrame').remove();
           tmpobject.attr({'id':'id_selectionFrame','rx':"5", 'ry':"5",  'stroke': 'yellow', 'stroke-width':1, 'fill':'none'});
 
         //this.isDragged = true;
@@ -266,6 +267,8 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
   g_mousemove(event: any){
 
+
+    //console.log(event)
     let eventX=event.offsetX;
     let eventY=event.offsetY;
       
@@ -274,7 +277,11 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
     if(this.isSelecting){
       let sf = this.s.select('#id_selectionFrame').getBBox();
-      $('#id_selectionFrame').attr({x:sf.x>eventX?sf.x+x:sf.x, y:sf.y>eventY?sf.y+y:sf.y,  width:sf.width+(sf.x>eventX?Math.abs(x):x), height:sf.height+(sf.y>eventY?Math.abs(y):y)});
+
+      let px = sf.x>eventX?sf.x+x:sf.x;
+      let py = sf.y>eventY?sf.y+y:sf.y;
+
+      $('#id_selectionFrame').attr({x:px, y:py,  width:Math.abs(sf.width+(sf.x>eventX?Math.abs(x):x)), height:Math.abs(sf.height+(sf.y>eventY?Math.abs(y):y))});
 
       this.gObjects.makeSelection( this.s.select('#id_selectionFrame').getBBox());
 
@@ -323,10 +330,12 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
   g_mouseup(event: any){
 
-    if(this.isSelecting){
-      this.isSelecting = false;
-      $('#id_selectionFrame').remove();
-    }
+    // if(this.isSelecting){
+    //   this.isSelecting = false;
+    //   $('#id_selectionFrame').remove();
+    // }
+    this.isSelecting = false;
+    $('#id_selectionFrame').remove();
 
     if(this.newline && event['target'].id!=""){
 
@@ -2476,7 +2485,7 @@ export class GRectClass extends GObjectBaseClass{
 
     $("#"+this.id).attr({x:this.x, y: this.y});
 
-    super.move(x,y);
+    //super.move(x,y);
     this.create_multiline();
 
     // let infoob = this.parent.s.select('#id_info_'+this.uid);
