@@ -155,7 +155,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
   //#region userAction methods(mouse, kyboard)
   g_mousedown(event: any){
-
+   event.preventDefault();
     // if(this.lastSelected){
     //   let sl = this.gObjects.get(this.lastSelected.id);
     //   sl?sl.makeUnselected():(this.linesContainer.get(this.lastSelected.id)?this.linesContainer.get(this.lastSelected.id).makeUnselected:null);
@@ -194,7 +194,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
           let tmpobject = this.s.rect(event.offsetX*(1/this.scale)+vb.x,event.offsetY*(1/this.scale)+vb.y, 0, 0);
           $('#id_selectionFrame').remove();
           tmpobject.attr({'id':'id_selectionFrame','rx':"5", 'ry':"5",  'stroke': 'yellow', 'stroke-width':1, 'fill':'none'});
-
+          this.selectionPoint=new coordPoint(event.offsetX*(1/this.scale)+vb.x, event.offsetY*(1/this.scale)+vb.y);
         //this.isDragged = true;
    
 
@@ -265,9 +265,10 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     }
   }
 
+  selectionPoint: coordPoint=null;
   g_mousemove(event: any){
 
-
+ 
     //console.log(event)
     let eventX=event.offsetX;
     let eventY=event.offsetY;
@@ -278,12 +279,29 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     if(this.isSelecting){
       let sf = this.s.select('#id_selectionFrame').getBBox();
 
-      let px = sf.x>eventX?sf.x+x:sf.x;
-      let py = sf.y>eventY?sf.y+y:sf.y;
 
-      $('#id_selectionFrame').attr({x:px, y:py,  width:Math.abs(sf.width+(sf.x>eventX?Math.abs(x):x)), height:Math.abs(sf.height+(sf.y>eventY?Math.abs(y):y))});
+
+      // let px =eventX>this.selectionPoint.x? (sf.x>eventX?sf.x+x:sf.x):  (sf.x-30<eventX?sf.x+x:sf.x);
+      // let py =eventY>this.selectionPoint.y? (sf.y>eventY?sf.y+y:sf.y):  (sf.y-30<eventY?sf.y+y:sf.y);
+
+        let px =eventX<this.selectionPoint.x? sf.x+x:sf.x;
+      let py =eventY<this.selectionPoint.y? sf.y+y:sf.y;
+      
+      let w = sf.width+(x*Math.sign(eventX-this.selectionPoint.x));
+      let h = sf.height+(y*Math.sign(eventY-this.selectionPoint.y));
+
+      $('#id_selectionFrame').attr({x:px, y:py,  width:Math.abs(w), height:Math.abs(h)});
 
       this.gObjects.makeSelection( this.s.select('#id_selectionFrame').getBBox());
+
+
+
+      // let px = sf.x>eventX?sf.x+x:sf.x;
+      // let py = sf.y>eventY?sf.y+y:sf.y;
+
+      // $('#id_selectionFrame').attr({x:px, y:py,  width:Math.abs(sf.width+(sf.x>eventX?Math.abs(x):x)), height:Math.abs(sf.height+(sf.y>eventY?Math.abs(y):y))});
+
+      // this.gObjects.makeSelection( this.s.select('#id_selectionFrame').getBBox());
 
     }
     else{
@@ -2148,9 +2166,9 @@ export class GObjectBaseClass extends CVObject{
      text_element = wyn;
     }
 
-    text_element.attr({"id":"id_info_"+this.uid, "font-size":this.fontsize, 'fill':this.fontcolor});
+    text_element.attr({"id":"id_info_"+this.uid, "font-size":this.fontsize, 'fill':this.fontcolor, 'class':'disable-select'});//, 'class':'disable-select'
     $('#'+"id_info_"+this.uid).toggleClass('text');
-
+   
     return text_element;
   }
 
