@@ -352,6 +352,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     //   this.isSelecting = false;
     //   $('#id_selectionFrame').remove();
     // }
+
+  console.log(this.selectionList)
+
     this.isSelecting = false;
     $('#id_selectionFrame').remove();
 
@@ -1986,6 +1989,7 @@ export class GObjectContainerClass{
     // let tmp = this.get(id);
     // if(tmp)
     //   tmp.move(x,y);
+  
     this.parent.selectionList.forEach((element)=>{
       element.move(x,y);
     })
@@ -1995,11 +1999,12 @@ export class GObjectContainerClass{
   makeSelection(sf: any){
     this.objectsContainer.forEach((el)=>{
       let cp = el.getCenter();
+
+
       if((sf.x<cp.x && sf.x+sf.width>cp.x) && (sf.y<cp.y && sf.y+sf.height>cp.y)){
         if(this.parent.selectionList.indexOf(el)===-1){ 
           el.makeSelected();         
-          this.parent.selectionList.push(el)
-         
+          //this.parent.selectionList.push(el)         
         }
       }
       else{
@@ -2009,6 +2014,24 @@ export class GObjectContainerClass{
         
         }
       }
+
+
+      // if((sf.x<cp.x && sf.x+sf.width>cp.x) && (sf.y<cp.y && sf.y+sf.height>cp.y)){
+      //   if(this.parent.selectionList.indexOf(el)===-1){ 
+      //     el.makeSelected();         
+      //     this.parent.selectionList.push(el)
+         
+      //   }
+      // }
+      // else{
+      //   if(this.parent.selectionList.indexOf(el)!==-1){
+      //     el.makeUnselected();
+      //     this.parent.selectionList.splice(this.parent.selectionList.indexOf(el),1);
+        
+      //   }
+      // }
+
+
     })
   }
 
