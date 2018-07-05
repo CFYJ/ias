@@ -125,6 +125,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     });
 
     document.addEventListener('keyup', (event:any)=>{this.g_keypress(event)});
+    document.addEventListener('keydown', (event:any)=>{this.g_keydown(event)});
     this.generateTreeSource();
   }
 
@@ -183,6 +184,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         
         if(this.selectedShape!=null){
             this.drawElement(event);
+        }
+        if(this.shiftPressed){
+          this.isDragged = true;
         }
         else{
           CVObject.makeUnselected();
@@ -269,7 +273,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   g_mousemove(event: any){
 
  
-    //console.log(event)
+    //console.log(event.keyCode)
     let eventX=event.offsetX;
     let eventY=event.offsetY;
       
@@ -279,16 +283,13 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     if(this.isSelecting){
       let sf = this.s.select('#id_selectionFrame').getBBox();
 
+      let vb =  this.s.attr('viewBox');        
 
-
-      // let px =eventX>this.selectionPoint.x? (sf.x>eventX?sf.x+x:sf.x):  (sf.x-30<eventX?sf.x+x:sf.x);
-      // let py =eventY>this.selectionPoint.y? (sf.y>eventY?sf.y+y:sf.y):  (sf.y-30<eventY?sf.y+y:sf.y);
-
-        let px =eventX<this.selectionPoint.x? sf.x+x:sf.x;
-      let py =eventY<this.selectionPoint.y? sf.y+y:sf.y;
+      let px =eventX*(1/this.scale)+vb.x<this.selectionPoint.x? sf.x+x:sf.x;
+      let py =eventY*(1/this.scale)+vb.y<this.selectionPoint.y? sf.y+y:sf.y;
       
-      let w = sf.width+(x*Math.sign(eventX-this.selectionPoint.x));
-      let h = sf.height+(y*Math.sign(eventY-this.selectionPoint.y));
+      let w = sf.width+(x*Math.sign(eventX*(1/this.scale)+vb.x-this.selectionPoint.x));
+      let h = sf.height+(y*Math.sign(eventY*(1/this.scale)+vb.y-this.selectionPoint.y));
 
       $('#id_selectionFrame').attr({x:px, y:py,  width:Math.abs(w), height:Math.abs(h)});
 
@@ -353,8 +354,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     //   $('#id_selectionFrame').remove();
     // }
 
-  console.log(this.selectionList)
+  //console.log(this.selectionList)
 
+    
     this.isSelecting = false;
     $('#id_selectionFrame').remove();
 
@@ -429,8 +431,11 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     //this.s.transform('s'+this.scale);
   }
 
+  shiftPressed: boolean = false;
   g_keypress(event: any){   
     //console.log('dfdf'+this.selected.id);
+    //console.log(event.keyCode)
+
     if(event['target'].id!='g_displaytext')
     if(this.lastSelected)
     if(event.keyCode == 46){   
@@ -446,7 +451,18 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         this.gObjects.del(this.lastSelected.id);
       }
 
-    }  
+    }
+    if(event.keyCode == 16){   
+      this.isDragged = false;
+      this.shiftPressed = false;
+    }
+   
+  }
+
+  g_keydown(event: any){
+    if(event.keyCode == 16){   
+      this.shiftPressed= true;
+    }
   }
 
   //#endregion
@@ -1291,6 +1307,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   primaryKey: any="";
   primaryContent: any="";
   secondaryKey: any="";
+  resultSource=[]=[];
   prepareGrid(data: any){
     if(data){
 
@@ -1302,7 +1319,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       if(rows.length>startrow){
         let columnsCounter = rows[0].split(this.separator).length;
 
-        let resultSource=[]=[];
+        
 
         
         rows.forEach((row:any, index)=>{  
@@ -1314,7 +1331,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
             }
 
             rowcounter++;
-            resultSource.push(tmpsource);      
+            this.resultSource.push(tmpsource);      
           }
         });
        
@@ -1322,7 +1339,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         
           let col = 'kolumna-'+i;
           if(this.firstRowHeaders){           
-            col=resultSource[0][i]?resultSource[0][i]:col;
+            col=this.resultSource[0][i]?this.resultSource[0][i]:col;
           }
     
           this.filecolumns[i] = i<columnsCounter-1?{ text: col, datafield: 'column'+i,  width: 120}: { text: col, datafield: 'column'+i};
@@ -1346,7 +1363,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         // this.filecolumns[ this.filecolumns.length-1]['width']='auto';
 
         let grid
-        this.filesource['localdata']= resultSource.slice(0,5);
+        this.filesource['localdata']= this.resultSource.slice(0,5);
               
         this.fileGrid['source']=new $.jqx.dataAdapter(this.filesource);
          //this.fileGrid.refresh();
@@ -1394,6 +1411,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
   }
 
+
   graphLevels: any[][]=[];
   pK: number=0;pC: number=0; sK: number=0;
   startDrawingFromFile(){
@@ -1405,13 +1423,16 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.sK =parseInt(this.secondaryKey.replace('column',''));
 
     this.graphLevels[0]=[];
-    this.filesource['localdata'].forEach((row: any)=>{
+    // this.filesource['localdata'].forEach((row: any)=>{
+    this.resultSource.forEach((row: any)=>{
      
       if(row[this.sK]===""){
         this.graphLevels[0].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
         this.prepareGraphFromFile(row[this.pK],1);
       }
-    })
+    });
+
+    this.resultSource=[];
 
     this.drawElementsFromFile();
 
@@ -1420,12 +1441,18 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     
   }
 
+  findChildren(element: string, level: number){
+
+
+  }
+
   prepareGraphFromFile(element: string, level: number){
   
     if(!this.graphLevels[level])
       this.graphLevels[level]=[];
 
-    this.filesource['localdata'].forEach((row: any)=>{
+   // this.filesource['localdata'].forEach((row: any)=>{
+    this.resultSource.forEach((row: any)=>{
       if(row[this.sK]===element){
         this.graphLevels[level].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
         this.prepareGraphFromFile(row[this.pK],level+1);
@@ -1471,6 +1498,90 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.selectedGraf=null;
     
   }
+
+
+
+
+  // graphLevels: any[][]=[];
+  // pK: number=0;pC: number=0; sK: number=0;
+  // startDrawingFromFile(){
+
+  //   this.wyczysc();
+
+  //   this.pK =parseInt(this.primaryKey.replace('column',''));
+  //   this.pC =parseInt(this.primaryContent.replace('column',''));
+  //   this.sK =parseInt(this.secondaryKey.replace('column',''));
+
+  //   this.graphLevels[0]=[];
+  //   // this.filesource['localdata'].forEach((row: any)=>{
+  //   this.resultSource.forEach((row: any)=>{
+     
+  //     if(row[this.sK]===""){
+  //       this.graphLevels[0].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
+  //       this.prepareGraphFromFile(row[this.pK],1);
+  //     }
+  //   });
+
+  //   this.resultSource=[];
+
+  //   this.drawElementsFromFile();
+
+
+
+    
+  // }
+
+  // prepareGraphFromFile(element: string, level: number){
+  
+  //   if(!this.graphLevels[level])
+  //     this.graphLevels[level]=[];
+
+  //   this.filesource['localdata'].forEach((row: any)=>{
+  //     if(row[this.sK]===element){
+  //       this.graphLevels[level].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
+  //       this.prepareGraphFromFile(row[this.pK],level+1);
+  //     }
+  //   });
+  // }
+
+  // drawElementsFromFile(){
+  //   let maxCount=0;
+  //   this.graphLevels.forEach((el:any)=>{ 
+  //     maxCount<el.length?maxCount=el.length:false;
+  //   })
+
+  //   let w = 150;
+  //   let h = 50;
+
+  //   if(maxCount>0)
+  //   this.graphLevels.forEach((item, index)=>{
+  //     item.forEach((el,elindex)=>{
+      
+  //       this.gObjects.drawFromFile({x: (maxCount/item.length)*w +2*w*elindex,
+  //                                   y: 2*h*index+h,
+  //                                   w: w,
+  //                                   h: h,
+  //                                   uid: el['id'],
+  //                                   info: el['content'] })
+  //     });
+
+  //   });
+
+
+  //   this.graphLevels.forEach((item, index)=>{
+  //     item.forEach((el,elindex)=>{
+  //       if(el['parent']!=='')
+  //         this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+elindex+index, start: 'id_rect_'+el['parent'], stop: 'id_rect_'+el['id']});
+  //     });
+  //   });
+
+  //   this.gObjects.updateLayout();
+
+  //   this.myTree.selectItem(null);   
+  //   this.treeSelected=null;
+  //   this.selectedGraf=null;
+    
+  // }
 
 
   //#endregion
