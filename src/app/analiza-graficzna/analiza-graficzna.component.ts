@@ -411,11 +411,11 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
     let sign = 1
     if(event['wheelDelta']>0){
-      this.scale +=0.2; 
+      this.scale += this.scale>0.4?0.2:0.02; 
     }
     else{
-      if(this.scale>0.4){
-        this.scale -=0.2;  
+      if(this.scale>0.04){
+        this.scale -=this.scale>0.4?0.2:0.02;
         sign = -1    
       }
     }
@@ -1385,7 +1385,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.primaryKey= "";
     this.primaryContent="";
     this.secondaryKey="";
-    this.graphLevels =[];
+    //this.graphLevels =[];
     this.firstRowHeaders= false;
 
     this.filecolumns =[
@@ -1412,7 +1412,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   }
 
 
-  graphLevels: any[][]=[];
+  
   pK: number=0;pC: number=0; sK: number=0;
   startDrawingFromFile(){
 
@@ -1422,73 +1422,41 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.pC =parseInt(this.primaryContent.replace('column',''));
     this.sK =parseInt(this.secondaryKey.replace('column',''));
 
-    this.graphLevels[0]=[];
+    let graphLevels: any[][]=[];
+    graphLevels[0]=[];
+
+    let startpoint :number = 0;
+    let rootCounter: number=0;
     // this.filesource['localdata'].forEach((row: any)=>{
     this.resultSource.forEach((row: any)=>{
      
       if(row[this.sK]===""){
-        this.graphLevels[0].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
-        this.prepareGraphFromFile(row[this.pK],1);
-      }
+        
+        graphLevels[0].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
+        this.prepareGraphFromFile(row[this.pK],1,graphLevels);
+
+        let tmpcenter = 0;
+        for(let i=0; i<graphLevels.length; i++)
+          tmpcenter = graphLevels[i].length>tmpcenter?graphLevels[i].length: tmpcenter;
+        
+        startpoint += tmpcenter*200;
+
+        this.drawElementsFromFile(startpoint,graphLevels);
+
+      } 
+      graphLevels=[];
+      graphLevels[0]=[];
+
     });
 
-    this.resultSource=[];
+    
 
-    this.drawElementsFromFile();
-
+    
 
 
     
-  }
-
-  findChildren(element: string, level: number){
-
-
-  }
-
-  prepareGraphFromFile(element: string, level: number){
-  
-    if(!this.graphLevels[level])
-      this.graphLevels[level]=[];
-
-   // this.filesource['localdata'].forEach((row: any)=>{
-    this.resultSource.forEach((row: any)=>{
-      if(row[this.sK]===element){
-        this.graphLevels[level].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
-        this.prepareGraphFromFile(row[this.pK],level+1);
-      }
-    });
-  }
-
-  drawElementsFromFile(){
-    let maxCount=0;
-    this.graphLevels.forEach((el:any)=>{ 
-      maxCount<el.length?maxCount=el.length:false;
-    })
-
-    let w = 150;
-    let h = 50;
-
-    if(maxCount>0)
-    this.graphLevels.forEach((item, index)=>{
-      item.forEach((el,elindex)=>{
-      
-        this.gObjects.drawFromFile({x: (maxCount/item.length)*w +2*w*elindex,
-                                    y: 2*h*index+h,
-                                    w: w,
-                                    h: h,
-                                    uid: el['id'],
-                                    info: el['content'] })
-      });
-
-    });
-
-
-    this.graphLevels.forEach((item, index)=>{
-      item.forEach((el,elindex)=>{
-        if(el['parent']!=='')
-          this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+elindex+index, start: 'id_rect_'+el['parent'], stop: 'id_rect_'+el['id']});
-      });
+    this.resultSource.forEach((row, index)=>{     
+          this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+index, start: 'id_rect_'+row[this.sK], stop: 'id_rect_'+row[this.pK]}); 
     });
 
     this.gObjects.updateLayout();
@@ -1496,6 +1464,62 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.myTree.selectItem(null);   
     this.treeSelected=null;
     this.selectedGraf=null;
+
+    this.resultSource=[];
+
+  }
+
+
+  prepareGraphFromFile(element: string, level: number, graphLevels:any[]=[]){
+  
+    if(!graphLevels[level])
+      graphLevels[level]=[];
+
+   // this.filesource['localdata'].forEach((row: any)=>{
+    this.resultSource.forEach((row: any)=>{
+      if(row[this.sK]===element){
+        graphLevels[level].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
+        this.prepareGraphFromFile(row[this.pK],level+1, graphLevels);
+      }
+    });
+  }
+
+  drawElementsFromFile(startpoint?: number, graphLevels:any[]=[]){
+    let maxCount=0;
+    graphLevels.forEach((el:any)=>{ 
+      maxCount<el.length?maxCount=el.length:false;
+    })
+
+    let w = 150;
+    let h = 50;
+
+    
+
+    if(maxCount>0)
+    graphLevels.forEach((item, index)=>{ 
+      let L= graphLevels[index].length;      
+      let start = startpoint-((L-1)*150);     
+      item.forEach((el,elindex)=>{
+
+
+      
+        // this.gObjects.drawFromFile({x: (maxCount/item.length)*w +2*w*elindex,
+        //                             y: 2*h*index+h,
+        //                             w: w,
+        //                             h: h,
+        //                             uid: el['id'],
+        //                             info: el['content'] })
+        this.gObjects.drawFromFile({x: start+((elindex-1)*150*2),
+          y: 2*h*index+h,
+          w: w,
+          h: h,
+          uid: el['id'],
+          info: el['content'] })
+      });
+
+    });
+
+
     
   }
 
