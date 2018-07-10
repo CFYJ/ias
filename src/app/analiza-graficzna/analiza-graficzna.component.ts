@@ -1426,12 +1426,12 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     graphLevels[0]=[];
 
     let startpoint :number = 0;
-    let rootCounter: number=0;
+    
     // this.filesource['localdata'].forEach((row: any)=>{
     this.resultSource.forEach((row: any)=>{
-     
+      let rootCounter=0;
       if(row[this.sK]===""){
-        
+
         graphLevels[0].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
         this.prepareGraphFromFile(row[this.pK],1,graphLevels);
 
@@ -1439,9 +1439,12 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         for(let i=0; i<graphLevels.length; i++)
           tmpcenter = graphLevels[i].length>tmpcenter?graphLevels[i].length: tmpcenter;
         
-        startpoint += tmpcenter*200;
+      
 
         this.drawElementsFromFile(startpoint,graphLevels);
+
+        rootCounter++;
+        startpoint += tmpcenter*200+rootCounter*200+200;
 
       } 
       graphLevels=[];
@@ -1455,8 +1458,11 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
 
     
-    this.resultSource.forEach((row, index)=>{     
+    this.resultSource.forEach((row, index)=>{   
+      try{        
+        if(row[this.pK])
           this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+index, start: 'id_rect_'+row[this.sK], stop: 'id_rect_'+row[this.pK]}); 
+      }catch(e){}
     });
 
     this.gObjects.updateLayout();
@@ -1498,9 +1504,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     if(maxCount>0)
     graphLevels.forEach((item, index)=>{ 
       let L= graphLevels[index].length;      
-      let start = startpoint-((L-1)*150);     
+      //let start = startpoint+((L*index/L)*150)+((L*index/L-1)*150);     
       item.forEach((el,elindex)=>{
-
+console.log(((maxCount+maxCount-1)/L)*((elindex+1)/2)*w)
 
       
         // this.gObjects.drawFromFile({x: (maxCount/item.length)*w +2*w*elindex,
@@ -1509,7 +1515,8 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         //                             h: h,
         //                             uid: el['id'],
         //                             info: el['content'] })
-        this.gObjects.drawFromFile({x: start+((elindex-1)*150*2),
+        //this.gObjects.drawFromFile({x: start+((elindex-1)*150*2),
+        this.gObjects.drawFromFile({x: ((maxCount+maxCount-1)/L)*((elindex+1)/2)*w*L,
           y: 2*h*index+h,
           w: w,
           h: h,
