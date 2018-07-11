@@ -127,6 +127,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     document.addEventListener('keyup', (event:any)=>{this.g_keypress(event)});
     document.addEventListener('keydown', (event:any)=>{this.g_keydown(event)});
     this.generateTreeSource();
+
+    // var img = this.s.image("/images/grafy/pc.png", 10, 100, 100,100);
+    // img.mousedown((e)=>{alert('ddd');})
   }
 
 
@@ -219,6 +222,12 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
         if(event['target'].id.indexOf('info')!=-1){
           this.lastSelected = this.selected =document.getElementById( this.gObjects.getByInfoId(event['target'].id).id);
+          this.gObjects.get(this.selected.id).makeSelected();
+        }
+        if(event['target'].id.indexOf('iconimg')!=-1){
+          console.log(event['target'].id)
+          console.log( this.gObjects.getByImgId(event['target'].id))
+          this.lastSelected = this.selected =document.getElementById( this.gObjects.getByImgId(event['target'].id).id);
           this.gObjects.get(this.selected.id).makeSelected();
         }
         else if(event['target'].tagName=='tspan'){
@@ -945,6 +954,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       case 'text': 
         this.gObjects.add(new GTextClass(this.startX,this.startY,this));
         break; 
+      case 'icon':
+        this.gObjects.add(new GIconClass(this.startX,this.startY,this));
+        break;
       case 'line':            
         if(!this.newline){
           this.newline = new lineClass(this.startX, this.startY, this)
@@ -1425,7 +1437,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     let graphLevels: any[][]=[];
     graphLevels[0]=[];
 
-    let startpoint :number = 0;
+    let startpoint :number = -100;
     
     // this.filesource['localdata'].forEach((row: any)=>{
     this.resultSource.forEach((row: any)=>{
@@ -1444,7 +1456,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         this.drawElementsFromFile(startpoint,graphLevels);
 
         rootCounter++;
-        startpoint += tmpcenter*200+rootCounter*200+200;
+        //startpoint += tmpcenter*200 +rootCounter*200+200;
+        startpoint += tmpcenter*150 + (tmpcenter-1)*150;
+
 
       } 
       graphLevels=[];
@@ -1453,15 +1467,11 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     });
 
     
-
-    
-
-
     
     this.resultSource.forEach((row, index)=>{   
       try{        
         if(row[this.pK])
-          this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+index, start: 'id_rect_'+row[this.sK], stop: 'id_rect_'+row[this.pK]}); 
+          this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+index, start: 'id_icon_'+row[this.sK], stop: 'id_icon_'+row[this.pK]}); 
       }catch(e){}
     });
 
@@ -1474,7 +1484,6 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.resultSource=[];
 
   }
-
 
   prepareGraphFromFile(element: string, level: number, graphLevels:any[]=[]){
   
@@ -1490,6 +1499,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     });
   }
 
+  circle: number=0;
   drawElementsFromFile(startpoint?: number, graphLevels:any[]=[]){
     let maxCount=0;
     graphLevels.forEach((el:any)=>{ 
@@ -1506,119 +1516,41 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     
 
     if(maxCount>0)
-    graphLevels.forEach((item, index)=>{ 
-      let L= graphLevels[index].length;      
-      //let start = startpoint+((L*index/L)*150)+((L*index/L-1)*150);     
-      item.forEach((el,elindex)=>{
-//console.log(((maxCount+maxCount-1)/L)*((elindex+1)/2)*w)
+    // //wykres drzewkowy
+    // graphLevels.forEach((item, index)=>{ 
+    //   let L= graphLevels[index].length;       
+    //   item.forEach((el,elindex)=>{
 
-      
-        // this.gObjects.drawFromFile({x: (maxCount/item.length)*w +2*w*elindex,
-        //                             y: 2*h*index+h,
-        //                             w: w,
-        //                             h: h,
-        //                             uid: el['id'],
-        //                             info: el['content'] })
-        //this.gObjects.drawFromFile({x: start+((elindex-1)*150*2),
-        //this.gObjects.drawFromFile({x: ((maxCount+maxCount-1)/L)*((elindex+1)/2)*w*L,
-        if(!this.gObjects.get('id_rect_'+el['id']))
-        this.gObjects.drawFromFile({x: (maxwidth/item.length)*elindex +  (maxwidth/item.length)*0.5 + startpoint,
-          y: 2*h*index+h,
+    //     if(!this.gObjects.get('id_icon_'+el['id']))
+    //     this.gObjects.drawFromFile({x: (maxwidth/item.length)*elindex +  (maxwidth/item.length)*0.5 + startpoint,
+    //       y: 2*h*index+h,    
+    //       w: w,
+    //       h: h,
+    //       uid: el['id'],
+    //       info: el['content'] })
+    //   });
+
+    //wykres kolowy
+    graphLevels.forEach((item, index)=>{ 
+      let L= graphLevels[index].length;       
+      item.forEach((el,elindex)=>{
+
+        if(!this.gObjects.get('id_icon_'+el['id']))
+        this.gObjects.drawFromFile({x: elindex==0?startpoint: startpoint+300*Math.cos(2*Math.PI*(elindex+1)/L),
+          y: elindex==0?5*h: 5*h+300*Math.sin(2*Math.PI*(elindex+1)/L),    
           w: w,
           h: h,
           uid: el['id'],
           info: el['content'] })
       });
 
+
     });
 
-
+    this.circle++;
     
   }
 
-
-
-
-  // graphLevels: any[][]=[];
-  // pK: number=0;pC: number=0; sK: number=0;
-  // startDrawingFromFile(){
-
-  //   this.wyczysc();
-
-  //   this.pK =parseInt(this.primaryKey.replace('column',''));
-  //   this.pC =parseInt(this.primaryContent.replace('column',''));
-  //   this.sK =parseInt(this.secondaryKey.replace('column',''));
-
-  //   this.graphLevels[0]=[];
-  //   // this.filesource['localdata'].forEach((row: any)=>{
-  //   this.resultSource.forEach((row: any)=>{
-     
-  //     if(row[this.sK]===""){
-  //       this.graphLevels[0].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
-  //       this.prepareGraphFromFile(row[this.pK],1);
-  //     }
-  //   });
-
-  //   this.resultSource=[];
-
-  //   this.drawElementsFromFile();
-
-
-
-    
-  // }
-
-  // prepareGraphFromFile(element: string, level: number){
-  
-  //   if(!this.graphLevels[level])
-  //     this.graphLevels[level]=[];
-
-  //   this.filesource['localdata'].forEach((row: any)=>{
-  //     if(row[this.sK]===element){
-  //       this.graphLevels[level].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
-  //       this.prepareGraphFromFile(row[this.pK],level+1);
-  //     }
-  //   });
-  // }
-
-  // drawElementsFromFile(){
-  //   let maxCount=0;
-  //   this.graphLevels.forEach((el:any)=>{ 
-  //     maxCount<el.length?maxCount=el.length:false;
-  //   })
-
-  //   let w = 150;
-  //   let h = 50;
-
-  //   if(maxCount>0)
-  //   this.graphLevels.forEach((item, index)=>{
-  //     item.forEach((el,elindex)=>{
-      
-  //       this.gObjects.drawFromFile({x: (maxCount/item.length)*w +2*w*elindex,
-  //                                   y: 2*h*index+h,
-  //                                   w: w,
-  //                                   h: h,
-  //                                   uid: el['id'],
-  //                                   info: el['content'] })
-  //     });
-
-  //   });
-
-
-  //   this.graphLevels.forEach((item, index)=>{
-  //     item.forEach((el,elindex)=>{
-  //       if(el['parent']!=='')
-  //         this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+elindex+index, start: 'id_rect_'+el['parent'], stop: 'id_rect_'+el['id']});
-  //     });
-  //   });
-
-  //   this.gObjects.updateLayout();
-
-  //   this.myTree.selectItem(null);   
-  //   this.treeSelected=null;
-  //   this.selectedGraf=null;
-    
-  // }
 
 
   //#endregion
@@ -2086,7 +2018,7 @@ export class GObjectContainerClass{
   }
 
   drawFromFile(object: any){    
-    let tmpr = new GRectClass(null,null,null);
+    let tmpr = new GIconClass(null,null,null);
     this.add(tmpr);
     (tmpr).createFromFile(object, this.parent);
   }
@@ -2112,6 +2044,11 @@ export class GObjectContainerClass{
 
   getByInfoId(id:string){
     id =id.replace('id_info_','');
+    return this.objectsContainer.filter(o=>o.uid== parseInt( id))[0];
+  }
+
+  getByImgId(id:string){
+    id =id.replace('id_iconimg_','');
     return this.objectsContainer.filter(o=>o.uid== parseInt( id))[0];
   }
 
@@ -3142,6 +3079,175 @@ export class GTextClass extends GObjectBaseClass{
 
     super.move(x,y);
   }
+
+}
+
+export class GIconClass extends GObjectBaseClass{
+
+  constructor(x:number, y:number, parent: AnalizaGraficznaComponent )
+  {
+    super();
+
+    if(x){
+      this.x = x;
+      this.y = y;
+      this.parent = parent;
+
+
+      this.shape = "icon";
+      
+      this.uid = Date.now();
+      this.id = "id_icon_"+this.uid;       
+
+      this.createObject();
+      this.parent.svgObjects.push(this.id);  
+    } 
+  }
+
+  calculateRadius(){
+    let center = this.getCenter();
+    this.r = Snap.len(this.x, this.y, center.x, center.y);
+  }
+
+  createObject(){    
+    this.calculateRadius();
+   
+    let tmpobject = this.parent.s.rect(this.x, this.y, this.w, this.h);
+     //tmpobject.attr({'id':this.id,'rx':"5", 'ry':"5" 'stroke': 'skyblue', 'stroke-width':1});
+    tmpobject.attr({'id':this.id, "fill":'none'});
+    this.svgobject = tmpobject;
+
+    //tmpobject = this.parent.s.text(this.x+5,this.y+15,this.info);
+    tmpobject = this.create_multiline();
+
+    let iconobject = this.parent.s.image("/images/grafy/pc.png", this.x, this.y-100, 100,100);
+    iconobject.attr({'id':'id_iconimg_'+this.uid})
+
+    this.baseFunction();
+  }
+
+  createFromXml(object: any, parent: any){
+
+    this.x = parseInt(object.x[0]);
+    this.y = parseInt(object.y[0]);
+    this.w = parseInt(object.w[0]);
+    this.h = parseInt(object.h[0]);
+    this.parent = parent;
+    this.shape = "icon";    
+    this.uid = object.uid[0];
+    this.id = object.id[0];
+    this.info = object.info[0];
+    this.fontsize = object.fontsize[0];
+    this.bgcolor = object.bgcolor[0];
+    if(object.fontcolor)
+    this.fontcolor = object.fontcolor[0];
+    this.opis2 =object.opis2?object.opis2[0]:null;
+    this.createObject();
+    this.parent.svgObjects.push(this.id);   
+
+  }
+
+  createFromFile(object: any, parent: any){
+    this.x = parseInt(object.x);
+    this.y = parseInt(object.y);
+    this.w = parseInt(object.w);
+    this.h = parseInt(object.h);
+    this.parent = parent;
+    this.shape = "icon";    
+    this.uid = object.uid;
+    this.id = 'id_icon_'+object.uid;
+    this.info = object.info;
+
+    this.createObject();
+    this.parent.svgObjects.push(this.id);   
+  }
+
+  checkIsOnBorder(event: any){        
+    let vbb =  this.parent.s.attr('viewBox');
+
+    let cx = event.offsetX*(1/this.parent.scale)+vbb.x;
+    let cy = event.offsetY*(1/this.parent.scale)+vbb.y;
+
+    let rez = false;
+ 
+    if(
+      (((cy>(this.y-3))&&(cy<(this.y+this.h+3)))&&((cx>(this.x+this.w-3))&&(cx<(this.x+this.w+3)))) 
+      ||
+      (((cy>(this.y+this.h-3))&&(cy<(this.y+this.h+3)))&&((cx>(this.x-3))&&(cx<(this.x+this.w+3))))
+    )
+    rez = true;
+
+    return rez;
+  }
+
+  del(){
+    $('#'+this.id).remove();
+    $('#id_info_'+this.uid).remove();
+  }
+
+  
+  getCenter(){
+    return new coordPoint(this.x+this.w/2, this.y+this.h/2)
+  }
+  
+  getXML(){
+    return {id: this.id,
+            uid:this.uid,
+            shape:this.shape,
+            info:this.info,
+            x:this.x,
+            y:this.y,
+            w:this.w,
+            h:this.h,
+            fontsize:this.fontsize,
+            bgcolor:this.bgcolor,
+            fontcolor:this.fontcolor,
+            opis2:this.opis2,
+            };
+  }
+
+  getFarrestPoint(){
+    return new coordPoint(this.x+this.w, this.y+this.h);
+  }
+
+  isContainingPoint(x:number, y:number){
+    if((this.x<x && this.x+this.w>x) && (this.y<y && this.y+this.h>y))
+      return true;
+
+    return false;
+  }
+
+  isOnBorder(event: any): boolean{
+
+    let rez = false;
+
+    return rez;
+  }
+
+  move(x:number, y:number){
+
+    this.x +=x;
+    this.y +=y;
+
+    //this.calculateRadius();
+
+    $("#"+this.id).attr({x:this.x, y: this.y});
+
+    $("#id_iconimg_"+this.uid).attr({x:this.x, y:this.y-100});
+
+    //super.move(x,y);
+    this.create_multiline();
+
+    // let infoob = this.parent.s.select('#id_info_'+this.uid);
+    // //infoob.attr({x: parseInt(infoob.attr('x'))+x, y: parseInt(infoob.attr('y'))+y});
+    // infoob.selectAll("tspan").forEach((el)=>{
+    //   el.attr({x:parseInt(el.attr('x'))+x, y:parseInt(el.attr('y'))+y}); 
+    //  });
+
+
+    super.move(x,y);
+  }
+
 
 }
 
