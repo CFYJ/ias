@@ -1496,9 +1496,13 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       maxCount<el.length?maxCount=el.length:false;
     })
 
+   
+
     let w = 150;
     let h = 50;
 
+
+    let maxwidth = (2*maxCount-1)*w;
     
 
     if(maxCount>0)
@@ -1506,7 +1510,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       let L= graphLevels[index].length;      
       //let start = startpoint+((L*index/L)*150)+((L*index/L-1)*150);     
       item.forEach((el,elindex)=>{
-console.log(((maxCount+maxCount-1)/L)*((elindex+1)/2)*w)
+//console.log(((maxCount+maxCount-1)/L)*((elindex+1)/2)*w)
 
       
         // this.gObjects.drawFromFile({x: (maxCount/item.length)*w +2*w*elindex,
@@ -1516,7 +1520,9 @@ console.log(((maxCount+maxCount-1)/L)*((elindex+1)/2)*w)
         //                             uid: el['id'],
         //                             info: el['content'] })
         //this.gObjects.drawFromFile({x: start+((elindex-1)*150*2),
-        this.gObjects.drawFromFile({x: ((maxCount+maxCount-1)/L)*((elindex+1)/2)*w*L,
+        //this.gObjects.drawFromFile({x: ((maxCount+maxCount-1)/L)*((elindex+1)/2)*w*L,
+        if(!this.gObjects.get('id_rect_'+el['id']))
+        this.gObjects.drawFromFile({x: (maxwidth/item.length)*elindex +  (maxwidth/item.length)*0.5 + startpoint,
           y: 2*h*index+h,
           w: w,
           h: h,
@@ -2079,7 +2085,7 @@ export class GObjectContainerClass{
     });
   }
 
-  drawFromFile(object: any){
+  drawFromFile(object: any){    
     let tmpr = new GRectClass(null,null,null);
     this.add(tmpr);
     (tmpr).createFromFile(object, this.parent);
