@@ -567,7 +567,10 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   showInfo(){
     let msg="<p>Aplikacja przeznaczona do rysowania grafów.</p>"+  
             "Rysowanie grafu odbywa się na zasadzie rysowania w programie Paint.<br>"+
-            "<p><strong><font color='red'>Sugerowaną przeglądarką jest Google Chrome.</font></strong></p>"+           
+            "<p><strong><font color='red'>Sugerowaną przeglądarką jest Google Chrome.</font></strong></p>"+    
+            "<p><b>SHIFT+SCROLL lub przyciski +/-</b> - powiększenie/pomniejszenie widoku (przycisk shift+kółko myszy - nie działa na Firefox)<br>"+
+            "<b>SHIFT+ruch myszy</b> - przesówanie całego płótna"+
+            "</p>"+
             "<p>Stworzony graf można zapisać jako plik png, który może być wklejony do Worda. Takie rozwiązanie eliminuje problem <i>rozsypujących</i> się grafów przy otwieraniu w różnych edytorach tekstu.</p>"+          
             "<p>Po zalogowaniu do systemu dostępne są dodatkowe opcje, takie jak zapisywanie grafów na własnym koncie w celu późniejszej obróbki, a także udostępnianie innym uzytkownikom.<br>"+
             "Udostępnienie grafu innym użytkownikom możliwe jest na dwa sposoby jako obserwator(użytkownik nie może nanosić zmian) lub edytor(możliwość nanoszenia zmian na równi z autorem grafu).</p>"+
@@ -938,12 +941,20 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     // var b64Start = 'data:image/svg+xml;base64,';
     // var image64 = b64Start + svg64;
     // img.src = image64;
+    let context =  canvas.getContext('2d');
+
 
     var data = serializer.serializeToString(this.svg);
     img.src = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(data);
-    
+
     img.onload = ()=>{
-      canvas.getContext('2d').drawImage(img, 0, 0,2400, 1600);
+      context.drawImage(img, 0, 0,2400, 1600);  
+      //context.drawImage(im,0,0, 100, 100);
+
+      this.gObjects.getByShape('icon').forEach((el)=>{
+        context.drawImage(<HTMLImageElement> document.getElementById('id_iconimg_'+el.uid), (el.x+ parseInt(vbb.x)*(-1)+50)*this.scale,(el.y+ parseInt(vbb.y)*(-1))*this.scale, 50*this.scale, 50*this.scale);
+      })
+      
 
       var imgr    = canvas.toDataURL("image/png");
       var a      = document.createElement('a');
@@ -953,8 +964,6 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       document.body.appendChild(a); a.click(); 
       myWindow.close();
     }
-    
-
 
 
   }
@@ -1540,37 +1549,42 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     let maxwidth = (2*maxCount-1)*w;
     
 
-    if(maxCount>0)
-    // //wykres drzewkowy
-    // graphLevels.forEach((item, index)=>{ 
-    //   let L= graphLevels[index].length;       
-    //   item.forEach((el,elindex)=>{
+    if(maxCount>0){
+      // //wykres drzewkowy
+      // graphLevels.forEach((item, index)=>{ 
+      //   let L= graphLevels[index].length;       
+      //   item.forEach((el,elindex)=>{
 
-    //     if(!this.gObjects.get('id_icon_'+el['id']))
-    //     this.gObjects.drawFromFile({x: (maxwidth/item.length)*elindex +  (maxwidth/item.length)*0.5 + startpoint,
-    //       y: 2*h*index+h,    
-    //       w: w,
-    //       h: h,
-    //       uid: el['id'],
-    //       info: el['content'] })
-    //   });
+      //     if(!this.gObjects.get('id_icon_'+el['id']))
+      //     this.gObjects.drawFromFile({x: (maxwidth/item.length)*elindex +  (maxwidth/item.length)*0.5 + startpoint,
+      //       y: 2*h*index+h,    
+      //       w: w,
+      //       h: h,
+      //       uid: el['id'],
+      //       info: el['content'] })
+      //   });
 
-    //wykres kolowy
-    graphLevels.forEach((item, index)=>{ 
-      let L= graphLevels[index].length;       
-      item.forEach((el,elindex)=>{
+      //wykres kolowy    
+      graphLevels.forEach((item, index)=>{ 
+        
+        let L= graphLevels[index].length;       
+        item.forEach((el,elindex)=>{
 
-        if(!this.gObjects.get('id_icon_'+el['id']))
-        this.gObjects.drawFromFile({x: elindex==0?startpoint: startpoint+300*Math.cos(2*Math.PI*(elindex+1)/L),
-          y: elindex==0?5*h: 5*h+300*Math.sin(2*Math.PI*(elindex+1)/L),    
-          w: w,
-          h: h,
-          uid: el['id'],
-          info: el['content'] })
+          if(!this.gObjects.get('id_icon_'+el['id']))
+          this.gObjects.drawFromFile({x: index==0?startpoint: startpoint+300*Math.cos(2*Math.PI*(elindex+1)/L),
+            y: index==0?5*h: 5*h+300*Math.sin(2*Math.PI*(elindex+1)/L),    
+            w: w,
+            h: h,
+            uid: el['id'],
+            info: el['content'] })
+        });
+
+
       });
 
+      console.log(graphLevels)
 
-    });
+    }
 
     this.circle++;
     
@@ -2084,6 +2098,10 @@ export class GObjectContainerClass{
   getByImgId(id:string){
     id =id.replace('id_iconimg_','');
     return this.objectsContainer.filter(o=>o.uid.toString()== id)[0];
+  }
+
+  getByShape(shape: string){
+    return this.objectsContainer.filter(o=>o.shape==shape);
   }
 
   getelementInPoint(x:number, y:number){
@@ -3127,7 +3145,7 @@ export class GIconClass extends GObjectBaseClass{
       this.y = y;
       this.parent = parent;
 
-      this.h = 150;
+      this.h = 100;
 
       this.shape = "icon";
       
@@ -3155,7 +3173,7 @@ export class GIconClass extends GObjectBaseClass{
     //tmpobject = this.parent.s.text(this.x+5,this.y+15,this.info);
     tmpobject = this.create_multiline();
 
-    let iconobject = this.parent.s.image("/images/grafy/pc.png", this.x+25, this.y, 100,100);
+    let iconobject = this.parent.s.image("/images/grafy/pc.png", this.x+50, this.y, 50,50);
     iconobject.attr({'id':'id_iconimg_'+this.uid})
 
     this.baseFunction();
@@ -3268,7 +3286,7 @@ export class GIconClass extends GObjectBaseClass{
 
     $("#"+this.id).attr({x:this.x, y: this.y});
 
-    $("#id_iconimg_"+this.uid).attr({x:this.x+25, y:this.y});
+    $("#id_iconimg_"+this.uid).attr({x:this.x+50, y:this.y});
 
     //super.move(x,y);
     this.create_multiline();
@@ -3288,9 +3306,9 @@ export class GIconClass extends GObjectBaseClass{
 
     
     let infoob = this.parent.s.select('#id_info_'+this.uid);
-    infoob.attr({y: parseInt(infoob.attr('y'))+100});
+    infoob.attr({y: parseInt(infoob.attr('y'))+50});
     infoob.selectAll("tspan").forEach((el)=>{
-      el.attr({y:parseInt(el.attr('y'))+100}); 
+      el.attr({y:parseInt(el.attr('y'))+50}); 
      });
   }
 
