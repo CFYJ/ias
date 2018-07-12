@@ -144,12 +144,18 @@
         
         <div>
 
+            <button style="position:absolute; margin-left:20px; margin-top:10px;width:40px;font-size: 23px" class="infobutton" (click)="zoom(false)">-</button>
+            <button style="position:absolute; margin-left:70px; margin-top:10px;width:40px;font-size: 23px" class="infobutton" (click)="zoom(true)">+</button>
+            
+
             <svg #svgCanvas id="svgCanvas" width="2400" height="1600px" [ngStyle]="{'background-color': canvasBackgroundColor? canvasBackgroundColor: 'transparent'}"
             (mouseup)="g_mouseup($event)" (mousemove)="g_mousemove($event)"
             (mousedown)="g_mousedown($event)" (mousewheel)="g_mousewheel($event)" 
             >
 
             </svg>
+
+          
         </div> 
       </jqxSplitter>  
   </div>

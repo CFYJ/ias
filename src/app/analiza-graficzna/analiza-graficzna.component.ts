@@ -225,8 +225,6 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
           this.gObjects.get(this.selected.id).makeSelected();
         }
         if(event['target'].id.indexOf('iconimg')!=-1){
-          console.log(event['target'].id)
-          console.log( this.gObjects.getByImgId(event['target'].id))
           this.lastSelected = this.selected =document.getElementById( this.gObjects.getByImgId(event['target'].id).id);
           this.gObjects.get(this.selected.id).makeSelected();
         }
@@ -438,6 +436,33 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.s.attr({viewBox:(vb.x+(tmp2_p.x-tmp1_p.x)*(Math.sign(tmp2_p.x-tmp1_p.x))*sign)+","+(vb.y+(tmp2_p.y-tmp1_p.y)*(Math.sign(tmp2_p.y-tmp1_p.y))*sign)+","+this.orgVBwidth*(1/this.scale)+","+this.orgVBheight*(1/this.scale)});
 
     //this.s.transform('s'+this.scale);
+  }
+
+  zoom(down:boolean){
+    let vb =  this.s.attr('viewBox');
+
+    let tmp1_p = this.svg.createSVGPoint();
+    tmp1_p.x = (vb.x+vb.w/2*(1/this.scale));
+    tmp1_p.y = (vb.y+vb.h/2*(1/this.scale));
+
+    let sign = 1
+    if(down){
+      this.scale += this.scale>0.4?0.2:0.02; 
+    }
+    else{
+      if(this.scale>0.04){
+        this.scale -=this.scale>0.4?0.2:0.02;
+        sign = -1    
+      }
+    }
+
+    this.scale = Math.round(this.scale*100)/100;
+    
+    let tmp2_p = this.svg.createSVGPoint();
+    tmp2_p.x = (vb.x+vb.w/2*(1/this.scale));
+    tmp2_p.y = (vb.y+vb.h/2*(1/this.scale));
+
+    this.s.attr({viewBox:(vb.x+(tmp2_p.x-tmp1_p.x)*(Math.sign(tmp2_p.x-tmp1_p.x))*sign)+","+(vb.y+(tmp2_p.y-tmp1_p.y)*(Math.sign(tmp2_p.y-tmp1_p.y))*sign)+","+this.orgVBwidth*(1/this.scale)+","+this.orgVBheight*(1/this.scale)});
   }
 
   shiftPressed: boolean = false;
@@ -1864,7 +1889,7 @@ export class lineClass{
   }
 
   public move(object?: any){
-     
+   
     if(this.startid){
       let ob = this.parent.gObjects.get(this.startid).getCenter();
       this.x1 = ob.x;
@@ -1879,11 +1904,14 @@ export class lineClass{
     let startpoint = this.startid?this.parent.gObjects.get(this.startid).getLineTouchPoint(new coordPoint(this.x2,this.y2)): new coordPoint(this.x1,this.y1);
     let stoppoint = this.stopid?this.parent.gObjects.get(this.stopid).getLineTouchPoint(new coordPoint(this.x1,this.y1)): new coordPoint(this.x2,this.y2);
 
+    $('#arrow_'+this.id).remove();   
+  
 
     if(startpoint && stoppoint){
       $('#'+this.id).attr({x1:startpoint.x,y1: startpoint.y, x2: stoppoint.x, y2: stoppoint.y});
 
-      if(!this.parent.gObjects.get(this.startid).isContainingPoint(stoppoint.x, stoppoint.y))
+     
+      //if(!this.parent.gObjects.get(this.startid).isContainingPoint(stoppoint.x, stoppoint.y))
         if(Snap.len(startpoint.x, startpoint.y, stoppoint.x, stoppoint.y)>=20)
           this.drawArrow(stoppoint);  
         else
@@ -2012,7 +2040,12 @@ export class GObjectContainerClass{
           let tmpt = new GTextClass(null,null,null);
           this.add(tmpt);
           (tmpt).createFromXml(element.gobject[0], this.parent);
-          break;        
+          break; 
+        case 'icon':
+          let tmpi = new GIconClass(null,null,null);
+          this.add(tmpi);
+          (tmpi).createFromXml(element.gobject[0], this.parent);
+          break;       
       }
     });
   }
@@ -2044,12 +2077,13 @@ export class GObjectContainerClass{
 
   getByInfoId(id:string){
     id =id.replace('id_info_','');
-    return this.objectsContainer.filter(o=>o.uid== parseInt( id))[0];
+    // return this.objectsContainer.filter(o=>o.uid== parseInt( id))[0];
+    return this.objectsContainer.filter(o=>o.uid.toString()== id)[0];
   }
 
   getByImgId(id:string){
     id =id.replace('id_iconimg_','');
-    return this.objectsContainer.filter(o=>o.uid== parseInt( id))[0];
+    return this.objectsContainer.filter(o=>o.uid.toString()== id)[0];
   }
 
   getelementInPoint(x:number, y:number){
@@ -3093,6 +3127,7 @@ export class GIconClass extends GObjectBaseClass{
       this.y = y;
       this.parent = parent;
 
+      this.h = 150;
 
       this.shape = "icon";
       
@@ -3120,7 +3155,7 @@ export class GIconClass extends GObjectBaseClass{
     //tmpobject = this.parent.s.text(this.x+5,this.y+15,this.info);
     tmpobject = this.create_multiline();
 
-    let iconobject = this.parent.s.image("/images/grafy/pc.png", this.x, this.y-100, 100,100);
+    let iconobject = this.parent.s.image("/images/grafy/pc.png", this.x+25, this.y, 100,100);
     iconobject.attr({'id':'id_iconimg_'+this.uid})
 
     this.baseFunction();
@@ -3233,7 +3268,7 @@ export class GIconClass extends GObjectBaseClass{
 
     $("#"+this.id).attr({x:this.x, y: this.y});
 
-    $("#id_iconimg_"+this.uid).attr({x:this.x, y:this.y-100});
+    $("#id_iconimg_"+this.uid).attr({x:this.x+25, y:this.y});
 
     //super.move(x,y);
     this.create_multiline();
@@ -3246,6 +3281,17 @@ export class GIconClass extends GObjectBaseClass{
 
 
     super.move(x,y);
+  }
+
+  create_multiline(){
+    super.create_multiline();
+
+    
+    let infoob = this.parent.s.select('#id_info_'+this.uid);
+    infoob.attr({y: parseInt(infoob.attr('y'))+100});
+    infoob.selectAll("tspan").forEach((el)=>{
+      el.attr({y:parseInt(el.attr('y'))+100}); 
+     });
   }
 
 
