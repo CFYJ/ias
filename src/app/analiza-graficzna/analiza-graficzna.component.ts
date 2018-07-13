@@ -1338,7 +1338,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   primaryContent: any="";
   secondaryKey: any="";
   resultSource=[]=[];
-  rodzajWykresu='drzewo';
+  rodzajWykresu='kolowy';//'drzewo';
   prepareGrid(data: any){
     if(data){
 
@@ -1458,28 +1458,34 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
     let startpoint :number = -100;
     
-    // this.filesource['localdata'].forEach((row: any)=>{
     this.resultSource.forEach((row: any)=>{
       let rootCounter=0;
       if(row[this.sK]===""){
 
-        graphLevels[0].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
-        this.prepareGraphFromFile(row[this.pK],1,graphLevels);
+        if(this.rodzajWykresu=='drzewo'){
+          graphLevels[0].push({id: row[this.pK], content: row[this.pC], parent: row[this.sK] });
+          this.prepareGraphFromFile(row[this.pK],1,graphLevels);
 
-        let tmpcenter = 0;
-        for(let i=0; i<graphLevels.length; i++)
-          tmpcenter = graphLevels[i].length>tmpcenter?graphLevels[i].length: tmpcenter;
+          let tmpcenter = 0;
+          for(let i=0; i<graphLevels.length; i++)
+            tmpcenter = graphLevels[i].length>tmpcenter?graphLevels[i].length: tmpcenter;
         
+          this.drawElementsFromFile(startpoint,graphLevels);
+
+        
+          startpoint += tmpcenter*150 + (tmpcenter-1)*150;
+        }
+        else{
+
+          let gp = this.prepareCircleGraphFromFile({id: row[this.pK], content: row[this.pC], children:[] })
+          this.drawCircleElementsFromFile(new coordPoint(500*rootCounter,500),gp);
       
-
-        this.drawElementsFromFile(startpoint,graphLevels);
-
+        }
+                   
         rootCounter++;
-        //startpoint += tmpcenter*200 +rootCounter*200+200;
-        startpoint += tmpcenter*150 + (tmpcenter-1)*150;
-
 
       } 
+
       graphLevels=[];
       graphLevels[0]=[];
 
@@ -1487,12 +1493,12 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
     
     
-    this.resultSource.forEach((row, index)=>{   
-      try{        
-        if(row[this.pK])
-          this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+index, start: 'id_icon_'+row[this.sK], stop: 'id_icon_'+row[this.pK]}); 
-      }catch(e){console.log(e);}
-    });
+    // this.resultSource.forEach((row, index)=>{   
+    //   try{        
+    //     if(row[this.sK])
+    //       this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+index, start: 'id_icon_'+row[this.sK], stop: 'id_icon_'+row[this.pK]}); 
+    //   }catch(e){console.log(e);}
+    // });
 
     this.gObjects.updateLayout();
 
@@ -1518,57 +1524,152 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     });
   }
 
-  circle: number=0;
-  drawElementsFromFile(startpoint?: number, graphLevels:any[]=[]){
-    let maxCount=0;
-    graphLevels.forEach((el:any)=>{ 
-      maxCount<el.length?maxCount=el.length:false;
+  prepareCircleGraphFromFile( graphLevels:any){
+
+    this.resultSource.forEach((row: any)=>{
+
+      if(row[this.sK]===graphLevels.id){
+        graphLevels.children.push({id: row[this.pK], content: row[this.pC], children: [] });
+        //console.log(graphLevels[0].children[graphLevels[0].children.length-1])
+        this.prepareCircleGraphFromFile(graphLevels.children[graphLevels.children.length-1]);
+      }
     })
+    
+    return graphLevels;
+  }
 
 
+  drawElementsFromFile(startpoint?: number, graphLevels:any[]=[], y?:number){   
     let w = 150;
     let h = 50;
+   
+    if(this.rodzajWykresu=="drzewo"){
 
+      let maxCount=0;
+      graphLevels.forEach((el:any)=>{ 
+        maxCount<el.length?maxCount=el.length:false;
+      })
 
-    let maxwidth = (2*maxCount-1)*w;
+      let maxwidth = (2*maxCount-1)*w;
     
 
-    if(maxCount>0){
-      // //wykres drzewkowy
-      // graphLevels.forEach((item, index)=>{ 
-      //   let L= graphLevels[index].length;       
-      //   item.forEach((el,elindex)=>{
+      if(maxCount>0){
+        //wykres drzewkowy
+        graphLevels.forEach((item, index)=>{ 
+          let L= graphLevels[index].length;       
+          item.forEach((el,elindex)=>{
 
-      //     if(!this.gObjects.get('id_icon_'+el['id']))
-      //     this.gObjects.drawFromFile({x: (maxwidth/item.length)*elindex +  (maxwidth/item.length)*0.5 + startpoint,
-      //       y: 2*h*index+h,    
-      //       w: w,
-      //       h: h,
-      //       uid: el['id'],
-      //       info: el['content'] })
-      //   });
+            if(!this.gObjects.get('id_icon_'+el['id']))
+            this.gObjects.drawFromFile({x: (maxwidth/item.length)*elindex +  (maxwidth/item.length)*0.5 + startpoint,
+              y: 2*h*index+h,    
+              w: w,
+              h: h,
+              uid: el['id'],
+              info: el['content'] })
+          });
 
-      //wykres kolowy    
-      graphLevels.forEach((item, index)=>{ 
-        
-        let L= graphLevels[index].length;       
-        item.forEach((el,elindex)=>{
+        // //wykres kolowy stary    
+        // graphLevels.forEach((item, index)=>{ 
+          
+        //   let L= graphLevels[index].length;       
+        //   item.forEach((el,elindex)=>{
 
-          if(!this.gObjects.get('id_icon_'+el['id']))
-          this.gObjects.drawFromFile({x: index==0?startpoint: startpoint+300*Math.cos(2*Math.PI*(elindex+1)/L),
-            y: index==0?5*h: 5*h+300*Math.sin(2*Math.PI*(elindex+1)/L),    
+        //     if(!this.gObjects.get('id_icon_'+el['id']))
+        //     this.gObjects.drawFromFile({x: index==0?startpoint: startpoint+300*Math.cos(2*Math.PI*(elindex+1)/L),
+        //       y: index==0?5*h: 5*h+300*Math.sin(2*Math.PI*(elindex+1)/L),    
+        //       w: w,
+        //       h: h,
+        //       uid: el['id'],
+        //       info: el['content'] })
+        //   });
+        // });
+
+        });
+
+      }
+    }
+    else{
+
+  
+        //wykres kolowy stary    
+        graphLevels.forEach((item, index)=>{ 
+          
+          this.gObjects.drawFromFile({x: startpoint,  y: y?y:5*h,    
             w: w,
             h: h,
-            uid: el['id'],
-            info: el['content'] })
+            uid: item['id'],
+            info: item['content'] });
+
+          if(item.chidren.length>0)
+          item.chidren.forEach((el,elindex)=>{
+            if(!this.gObjects.get('id_icon_'+el['id']))
+            this.drawElementsFromFile(startpoint+300*Math.cos(2*Math.PI*(elindex+1)/item.chidren.length), el, 5*h+300*Math.sin(2*Math.PI*(elindex+1)/item.chidren.length))
+          });
         });
 
 
-      });
+        // //wykres kolowy stary    
+        // graphLevels.forEach((item, index)=>{ 
+          
+        //   let L= graphLevels[index].length;       
+        //   item.forEach((el,elindex)=>{
+
+        //     if(!this.gObjects.get('id_icon_'+el['id']))
+        //     this.gObjects.drawFromFile({x: index==0?startpoint: startpoint+300*Math.cos(2*Math.PI*(elindex+1)/L),
+        //       y: index==0?5*h: 5*h+300*Math.sin(2*Math.PI*(elindex+1)/L),    
+        //       w: w,
+        //       h: h,
+        //       uid: el['id'],
+        //       info: el['content'] })
+        //   });
+        // });
 
     }
 
-    this.circle++;
+    
+    
+  }
+
+  drawCircleElementsFromFile(startpoint :coordPoint, graphLevels: any){   
+    let w = 150;
+    let h = 50;
+   
+
+        //wykres kolowy stary    
+        graphLevels.forEach((item, index)=>{ 
+          
+          this.gObjects.drawFromFile({x: startpoint.x,  y: startpoint.y,    
+            w: w,
+            h: h,
+            uid: item['id'],
+            info: item['content'] });
+
+          if(item.chidren.length>0)
+          item.chidren.forEach((el,elindex)=>{
+            if(!this.gObjects.get('id_icon_'+el['id']))
+            this.drawCircleElementsFromFile(new coordPoint(startpoint.x+300*Math.cos(2*Math.PI*(elindex+1)/item.chidren.length),startpoint.y+300*Math.sin(2*Math.PI*(elindex+1)/item.chidren.length)), el )
+          });
+        });
+
+
+        // //wykres kolowy stary    
+        // graphLevels.forEach((item, index)=>{ 
+          
+        //   let L= graphLevels[index].length;       
+        //   item.forEach((el,elindex)=>{
+
+        //     if(!this.gObjects.get('id_icon_'+el['id']))
+        //     this.gObjects.drawFromFile({x: index==0?startpoint: startpoint+300*Math.cos(2*Math.PI*(elindex+1)/L),
+        //       y: index==0?5*h: 5*h+300*Math.sin(2*Math.PI*(elindex+1)/L),    
+        //       w: w,
+        //       h: h,
+        //       uid: el['id'],
+        //       info: el['content'] })
+        //   });
+        // });
+
+
+    
     
   }
 
@@ -1760,21 +1861,26 @@ export class lineClass{
   }
 
   createFromFile(object: any, parent: any){
-    this.parent=parent;
-    
-    let start= this.parent.gObjects.get(object.start).getCenter();
-    let stop = this.parent.gObjects.get(object.stop).getCenter();
+    try{
+        this.parent=parent;
+      
+        let start= this.parent.gObjects.get(object.start).getCenter();
+        let stop = this.parent.gObjects.get(object.stop).getCenter();
 
-    this.x1=start.x;
-    this.x2=stop.x;
-    this.y1=start.y;
-    this.y2=stop.y;
-    
-    this.id =object.id;
-    this.startid=object.start;
-    this.stopid=object.stop;
-    
-    this.createLine(); 
+        this.x1=start.x;
+        this.x2=stop.x;
+        this.y1=start.y;
+        this.y2=stop.y;
+        
+        this.id =object.id;
+        this.startid=object.start;
+        this.stopid=object.stop;
+        
+        this.createLine(); 
+    }catch(e){
+      console.log(object)
+      console.log(e)
+    }
 
     //this.drawArrow();
   }
