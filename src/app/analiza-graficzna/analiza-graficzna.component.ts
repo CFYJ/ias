@@ -160,25 +160,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   //#region userAction methods(mouse, kyboard)
   g_mousedown(event: any){
    event.preventDefault();
-    // if(this.lastSelected){
-    //   let sl = this.gObjects.get(this.lastSelected.id);
-    //   sl?sl.makeUnselected():(this.linesContainer.get(this.lastSelected.id)?this.linesContainer.get(this.lastSelected.id).makeUnselected:null);
-    // }
-
-
-
-    //CVObject.makeUnselected();
-    //this.selectedGObject=null;
+ 
     
     if(event['target'].id!="" ||  event['target'].tagName=='tspan'){
-
-    
-      // if(this.selectionList.indexOf(this.gObjects.get(event['target'].id))!==-1)
-      //   return;
-      // else{
-      //   CVObject.makeUnselected();
-      //   this.selectionList=[];
-      // }
 
       this.startX = event.offsetX;
       this.startY = event.offsetY;
@@ -188,7 +172,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         if(this.selectedShape!=null){
             this.drawElement(event);
         }
-        if(this.shiftPressed){
+        else if(this.shiftPressed){
           this.isDragged = true;
         }
         else{
@@ -1354,6 +1338,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   primaryContent: any="";
   secondaryKey: any="";
   resultSource=[]=[];
+  rodzajWykresu='drzewo';
   prepareGrid(data: any){
     if(data){
 
@@ -1506,7 +1491,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       try{        
         if(row[this.pK])
           this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+index, start: 'id_icon_'+row[this.sK], stop: 'id_icon_'+row[this.pK]}); 
-      }catch(e){}
+      }catch(e){console.log(e);}
     });
 
     this.gObjects.updateLayout();
@@ -1540,7 +1525,6 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       maxCount<el.length?maxCount=el.length:false;
     })
 
-   
 
     let w = 150;
     let h = 50;
@@ -1581,8 +1565,6 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
 
       });
-
-      console.log(graphLevels)
 
     }
 
