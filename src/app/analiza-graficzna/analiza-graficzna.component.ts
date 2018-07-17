@@ -1380,7 +1380,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
               this.primaryKey = 'column0';
               break;
             case 1:
-              this.primaryContent='column1';
+              this.primaryContent='column0';
               break;
             case 2:
               this.secondaryKey='column2';
@@ -1457,9 +1457,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     graphLevels[0]=[];
 
     let startpoint :number = -100;
-    
+    let rootCounter=0;
     this.resultSource.forEach((row: any)=>{
-      let rootCounter=0;
+     
       if(row[this.sK]===""){
 
         if(this.rodzajWykresu=='drzewo'){
@@ -1478,7 +1478,8 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         else{
 
           let gp = this.prepareCircleGraphFromFile({id: row[this.pK], content: row[this.pC], children:[] })
-          this.drawCircleElementsFromFile(new coordPoint(500*rootCounter,500),gp);
+
+          this.drawCircleElementsFromFile(new coordPoint(500*rootCounter,100),gp);
       
         }
                    
@@ -1493,12 +1494,12 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
     
     
-    // this.resultSource.forEach((row, index)=>{   
-    //   try{        
-    //     if(row[this.sK])
-    //       this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+index, start: 'id_icon_'+row[this.sK], stop: 'id_icon_'+row[this.pK]}); 
-    //   }catch(e){console.log(e);}
-    // });
+    this.resultSource.forEach((row, index)=>{   
+      try{        
+        if(row[this.sK])
+          this.linesContainer.drawFromFile({id: "id_line_"+Date.now()+index, start: 'id_icon_'+row[this.sK], stop: 'id_icon_'+row[this.pK]}); 
+      }catch(e){console.log(e);}
+    });
 
     this.gObjects.updateLayout();
 
@@ -1634,43 +1635,42 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     let w = 150;
     let h = 50;
    
+    //wykres kolowy stary 
 
-        //wykres kolowy stary    
-        graphLevels.forEach((item, index)=>{ 
-          
-          this.gObjects.drawFromFile({x: startpoint.x,  y: startpoint.y,    
-            w: w,
-            h: h,
-            uid: item['id'],
-            info: item['content'] });
+    this.gObjects.drawFromFile({x: startpoint.x,  y: startpoint.y,    
+      w: w,
+      h: h,
+      uid: graphLevels.id,
+      info: graphLevels.content });
 
-          if(item.chidren.length>0)
-          item.chidren.forEach((el,elindex)=>{
-            if(!this.gObjects.get('id_icon_'+el['id']))
-            this.drawCircleElementsFromFile(new coordPoint(startpoint.x+300*Math.cos(2*Math.PI*(elindex+1)/item.chidren.length),startpoint.y+300*Math.sin(2*Math.PI*(elindex+1)/item.chidren.length)), el )
-          });
-        });
+    graphLevels.children.forEach((el,elindex)=>{
+        
+      if(!this.gObjects.get('id_icon_'+el['id'])){
+        let wch = el.children.length>0?3:1;
 
+        this.drawCircleElementsFromFile(new coordPoint(startpoint.x+200*wch*Math.cos(2*Math.PI*(elindex+1)/graphLevels.children.length),startpoint.y+200*wch*Math.sin(2*Math.PI*(elindex+1)/ graphLevels.children.length)), el )
 
-        // //wykres kolowy stary    
-        // graphLevels.forEach((item, index)=>{ 
-          
-        //   let L= graphLevels[index].length;       
-        //   item.forEach((el,elindex)=>{
-
-        //     if(!this.gObjects.get('id_icon_'+el['id']))
-        //     this.gObjects.drawFromFile({x: index==0?startpoint: startpoint+300*Math.cos(2*Math.PI*(elindex+1)/L),
-        //       y: index==0?5*h: 5*h+300*Math.sin(2*Math.PI*(elindex+1)/L),    
-        //       w: w,
-        //       h: h,
-        //       uid: el['id'],
-        //       info: el['content'] })
-        //   });
-        // });
+      }
+    });
 
 
-    
-    
+
+    // //wykres kolowy stary    
+    // graphLevels.forEach((item, index)=>{ 
+      
+    //   let L= graphLevels[index].length;       
+    //   item.forEach((el,elindex)=>{
+
+    //     if(!this.gObjects.get('id_icon_'+el['id']))
+    //     this.gObjects.drawFromFile({x: index==0?startpoint: startpoint+300*Math.cos(2*Math.PI*(elindex+1)/L),
+    //       y: index==0?5*h: 5*h+300*Math.sin(2*Math.PI*(elindex+1)/L),    
+    //       w: w,
+    //       h: h,
+    //       uid: el['id'],
+    //       info: el['content'] })
+    //   });
+    // });
+
   }
 
 
