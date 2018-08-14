@@ -459,7 +459,7 @@ isEditing: boolean = false;
 
       $.each(files, function(key, value)
       {
-        formData.append(key, value);
+        formData.append(key as string, value);
       });
 
       $.ajax({

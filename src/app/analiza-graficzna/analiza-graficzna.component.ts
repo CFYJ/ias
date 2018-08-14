@@ -1,5 +1,6 @@
 import {ViewChild, Component, OnInit, AfterViewInit } from '@angular/core';
 
+
 import { AuthenticationService } from './../authentication.service';
 import { SimpleGlobal } from 'ng2-simple-global';
 import { CommonModule, NgStyle } from '@angular/common'
@@ -11,6 +12,7 @@ import { jqxTreeComponent} from 'jqwidgets-ts/angular_jqxtree';
 import { jqxWindowComponent } from 'jqwidgets-ts/angular_jqxwindow';
 import { jqxGridComponent } from 'jqwidgets-ts/angular_jqxgrid';
 
+
 import { TEMPLATE_DRIVEN_DIRECTIVES } from '@angular/forms/src/directives';
 import { shallowEqual } from '@angular/router/src/utils/collection';
 
@@ -19,6 +21,9 @@ import { HtmlTagDefinition } from '@angular/compiler';
 import { element } from 'protractor';
 import { reverse } from 'dns';
 import { select } from 'snapsvg';
+
+import * as $ from "jquery";
+
 
 // { parseString, Builder }
 declare var Snap: any;
@@ -64,7 +69,6 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
   constructor(public auth: AuthenticationService,
     private sg: SimpleGlobal) { }
-
 
 
   ngOnInit() {
@@ -654,7 +658,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
   loadShares(){
     this.sharesGridsource.data={id:this.grafyRole.filter(g=>g.id==this.treeSelected.id)[0].idGrafu, user:this.auth.getUser()};
-    let sharesGriddataAdapter = new $.jqx.dataAdapter(this.sharesGridsource);
+    let sharesGriddataAdapter = new jqx.dataAdapter(this.sharesGridsource);
     this.sharesGrid.source(sharesGriddataAdapter);
   }
 
@@ -681,7 +685,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
   };
 
-  sharesGriddataAdapter = new $.jqx.dataAdapter(this.sharesGridsource);
+  sharesGriddataAdapter = new jqx.dataAdapter(this.sharesGridsource);
 
 
   //#endregion
@@ -1064,7 +1068,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   searchShareUser: string='';
   shareGraf(){
     this.sharedGridsource.data={id:this.grafyRole.filter(g=>g.id==this.treeSelected.id)[0].idGrafu, user:this.auth.getUser()};
-    let sharedGriddataAdapter = new $.jqx.dataAdapter(this.sharedGridsource);
+    let sharedGriddataAdapter = new jqx.dataAdapter(this.sharedGridsource);
     this.sharedusersGrid.source(sharedGriddataAdapter);
 
     this.shareWindow.open();
@@ -1084,7 +1088,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       if(event['target'].value.length>=3){
         this.allGridsource.url = this.sg['SERVICE_URL']+'Grafy/GetUsersToShare/'+event['target'].value;
 
-        let allGriddataAdapter = new $.jqx.dataAdapter(this.allGridsource);
+        let allGriddataAdapter = new jqx.dataAdapter(this.allGridsource);
         this.allusersGrid.source(allGriddataAdapter);
         this.allusersGrid.updatebounddata();
       }
@@ -1173,7 +1177,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       },
   };
 
-  allGriddataAdapter = new $.jqx.dataAdapter(this.allGridsource);
+  allGriddataAdapter = new jqx.dataAdapter(this.allGridsource);
 
 
 
@@ -1238,7 +1242,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         commit(true);
       },
   };
-  sharedGriddataAdapter = new $.jqx.dataAdapter(this.sharedGridsource);
+  sharedGriddataAdapter = new jqx.dataAdapter(this.sharedGridsource);
 
 
 
@@ -1330,7 +1334,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
      
   };
 
-  filedataAdapter = new $.jqx.dataAdapter(this.filesource);
+  filedataAdapter = new jqx.dataAdapter(this.filesource);
 
   separator=";";
   firstRowHeaders: boolean = false;
@@ -1396,7 +1400,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         let grid
         this.filesource['localdata']= this.resultSource.slice(0,5);
               
-        this.fileGrid['source']=new $.jqx.dataAdapter(this.filesource);
+        this.fileGrid['source']=new jqx.dataAdapter(this.filesource);
          //this.fileGrid.refresh();
   
         this.fileGrid.updatebounddata(); 
@@ -1436,7 +1440,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
        
     };
 
-    this.filedataAdapter = new $.jqx.dataAdapter(this.filesource);
+    this.filedataAdapter = new jqx.dataAdapter(this.filesource);
 
     $('#file-field').val('');
 

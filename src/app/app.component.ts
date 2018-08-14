@@ -8,6 +8,7 @@ import { DOCUMENT } from '@angular/platform-browser';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  // title: string="app works!"
   constructor(@Inject(DOCUMENT) private document: any, private sg: SimpleGlobal) {
         const url: string = this.document.location.href;
 
@@ -37,4 +38,5 @@ export class AppComponent {
         //   sg['SERVICE_URL'] = 'http://10.10.0.250/api/'
         // }
     }
+
 }

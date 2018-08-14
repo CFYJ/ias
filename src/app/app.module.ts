@@ -39,7 +39,7 @@ import { jqxTabsComponent} from 'jqwidgets-ts/angular_jqxtabs';
 import { jqxColorPickerComponent} from 'jqwidgets-ts/angular_jqxcolorpicker';
 import { jqxDropDownButtonComponent } from 'jqwidgets-ts/angular_jqxdropdownbutton';
 
-import * as $ from 'jquery'
+import * as $ from 'jquery';
 
 import {SimpleGlobal} from 'ng2-simple-global';
 import { UpowaznieniaComponent } from './upowaznienia/upowaznienia.component'
