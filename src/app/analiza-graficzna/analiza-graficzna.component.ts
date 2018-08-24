@@ -22,7 +22,7 @@ import { element } from 'protractor';
 import { reverse } from 'dns';
 import { select } from 'snapsvg';
 
-import * as $ from "jquery";
+//import * as $ from "jquery";
 
 
 // { parseString, Builder }
@@ -768,7 +768,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   newGrafCancel(){
     this.windowNewGraf.close();
     this.newRoleModel= {'typ':'graf', 'nazwa':'', 'error':false};
-
+    this.newgrafAction=null
   }
 
   deleteGraf(){

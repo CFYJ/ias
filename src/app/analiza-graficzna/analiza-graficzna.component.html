@@ -165,7 +165,7 @@
 <jqxWindow #windowNewGraf [auto-create]='false' >
     <div style="padding:20px">
       <div>
-        <div style="margin-top:10px">
+        <div style="margin-top:10px" *ngIf="newgrafAction!='clone'">
           <input type="radio" [(ngModel)]="newRoleModel.typ" name="typroli" id="typroli" value="graf">Graf        
           <input type="radio" [(ngModel)]="newRoleModel.typ" name="typroli" value="katalog" style="margin-left:30px">Katalog
         </div>
