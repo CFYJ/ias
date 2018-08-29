@@ -22,6 +22,7 @@ import { element } from 'protractor';
 import { reverse } from 'dns';
 import { select } from 'snapsvg';
 
+
 //import * as $ from "jquery";
 
 
@@ -78,6 +79,8 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.orgVBwidth = $("#svgCanvas").width();
     this.orgVBheight=$("#svgCanvas").height();     
     this.s.attr({viewBox:0+","+0+","+this.orgVBwidth+","+this.orgVBheight});   
+
+    this.loadIcons();
   }
 
   ngAfterViewInit(): void{
@@ -161,12 +164,14 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   selectedShape: any=null;  
   linesContainer: any = new linesContainerClass(this);
 
+  showIconList: boolean=false;
+
   //#region userAction methods(mouse, kyboard)
   g_mousedown(event: any){
    event.preventDefault();
- 
+   this.selectedGObject = null;
     
-    if(event['target'].id!="" ||  event['target'].tagName=='tspan'){
+    if(event['target'].id!="" ||  event['target'].tagName=='tspan'){      
 
       this.startX = event.offsetX;
       this.startY = event.offsetY;
@@ -200,8 +205,6 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
         let sl = this.gObjects.get(event['target'].id);      
         
-
-        
         this.selectedGObject=sl?sl:null;  
         sl?sl.makeSelected():(this.linesContainer.get(event['target'].id)?this.linesContainer.get(event['target'].id).makeSelected():null);
 
@@ -214,7 +217,9 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
         }
         if(event['target'].id.indexOf('iconimg')!=-1){
           this.lastSelected = this.selected =document.getElementById( this.gObjects.getByImgId(event['target'].id).id);
-          this.gObjects.get(this.selected.id).makeSelected();
+          //this.gObjects.get(this.selected.id).makeSelected();
+          this.selectedGObject=this.gObjects.get(this.selected.id);
+          this.selectedGObject.makeSelected();
         }
         else if(event['target'].tagName=='tspan'){
         
@@ -514,6 +519,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.svgObjects =[];
     this.gObjects.clean();
     this.linesContainer.clean();
+    
 
     this.isSelecting = false;
     this.selectionList = [];
@@ -533,6 +539,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.selectedFontSize = 15;
     this.selected = this.lastSelected = null;
     this.selectedGObject=null;
+    this.showIconList = false;
   }
 
 
@@ -1059,6 +1066,10 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     }
   }
 
+  changeIcon(icon: string){
+    (this.selectedGObject as GIconClass).changeIcon(icon);
+    this.showIconList = false;
+  }
 
   //#endregion
 
@@ -1289,12 +1300,35 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
       }
 
       isInType(object: any): boolean{
+        console.log(object)
+        console.log(this.selected)
         if(this.selected)
           if(this.selected instanceof object)
           return true;
 
         return false;
       }
+
+      isIcon(){
+        if(this.selectedGObject)
+          return this.selectedGObject instanceof GIconClass?true: false;
+        return false;
+      }
+
+
+      loadedIcons: string[]=[];
+      loadIcons(){
+          $.get("/images/grafy/icons/lista.txt",(data)=>{       
+          this.loadedIcons = data.split("\r\n");            
+        })
+      }
+
+      imgclick(ob: string){
+        console.log(ob);
+      }
+
+
+      
   
     //#endregion
   
@@ -3228,6 +3262,8 @@ export class GTextClass extends GObjectBaseClass{
 
 export class GIconClass extends GObjectBaseClass{
 
+  icon: string="person.svg";
+
   constructor(x:number, y:number, parent: AnalizaGraficznaComponent )
   {
     super();
@@ -3254,6 +3290,12 @@ export class GIconClass extends GObjectBaseClass{
     this.r = Snap.len(this.x, this.y, center.x, center.y);
   }
 
+  changeIcon(icon: string){
+    this.icon = icon;
+    $('#id_iconimg_'+this.uid).attr({'href':"/images/grafy/icons/"+this.icon});
+    console.log('dfd');
+  }
+
   createObject(){    
     this.calculateRadius();
    
@@ -3264,8 +3306,9 @@ export class GIconClass extends GObjectBaseClass{
 
     //tmpobject = this.parent.s.text(this.x+5,this.y+15,this.info);
     tmpobject = this.create_multiline();
-
-    let iconobject = this.parent.s.image("/images/grafy/pc.png", this.x+50, this.y, 50,50);
+    
+    //let iconobject = this.parent.s.image("/images/grafy/icons/pc.png", this.x+50, this.y, 50,50);
+    let iconobject = this.parent.s.image("/images/grafy/icons/"+this.icon, this.x+50, this.y, 50,50);
     iconobject.attr({'id':'id_iconimg_'+this.uid})
 
     this.baseFunction();
@@ -3285,26 +3328,29 @@ export class GIconClass extends GObjectBaseClass{
     this.fontsize = object.fontsize[0];
     this.bgcolor = object.bgcolor[0];
     if(object.fontcolor)
-    this.fontcolor = object.fontcolor[0];
-    this.opis2 =object.opis2?object.opis2[0]:null;
+      this.fontcolor = object.fontcolor[0];
+    this.opis2 =object.opis2?object.opis2[0]:null;   
+    if(object.icon) 
+      this.icon = object.icon?object.icon[0]:'person.svg';
     this.createObject();
     this.parent.svgObjects.push(this.id);   
 
   }
 
   createFromFile(object: any, parent: any){
-    this.x = parseInt(object.x);
-    this.y = parseInt(object.y);
-    this.w = parseInt(object.w);
-    this.h = parseInt(object.h);
-    this.parent = parent;
-    this.shape = "icon";    
-    this.uid = object.uid;
-    this.id = 'id_icon_'+object.uid;
-    this.info = object.info;
+    // this.x = parseInt(object.x);
+    // this.y = parseInt(object.y);
+    // this.w = parseInt(object.w);
+    // this.h = parseInt(object.h);
+    // this.parent = parent;
+    // this.shape = "icon";    
+    // this.uid = object.uid;
+    // this.id = 'id_icon_'+object.uid;
+    // this.info = object.info;
+    
 
-    this.createObject();
-    this.parent.svgObjects.push(this.id);   
+    // this.createObject();
+    // this.parent.svgObjects.push(this.id);   
   }
 
   checkIsOnBorder(event: any){        
@@ -3328,6 +3374,7 @@ export class GIconClass extends GObjectBaseClass{
   del(){
     $('#'+this.id).remove();
     $('#id_info_'+this.uid).remove();
+    $('#id_iconimg_'+this.uid).remove();
   }
 
   
@@ -3348,6 +3395,7 @@ export class GIconClass extends GObjectBaseClass{
             bgcolor:this.bgcolor,
             fontcolor:this.fontcolor,
             opis2:this.opis2,
+            icon:this.icon,
             };
   }
 

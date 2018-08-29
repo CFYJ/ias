@@ -1,0 +1,10 @@
+building.svg
+city.svg
+city2.svg
+men.svg
+woman.svg
+people.png
+person.svg
+server.svg
+pc.png
+pcstation.svg
