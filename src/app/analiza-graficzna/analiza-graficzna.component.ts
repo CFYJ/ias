@@ -170,6 +170,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
   g_mousedown(event: any){
    event.preventDefault();
    this.selectedGObject = null;
+   this.cleanSelection();
     
     if(event['target'].id!="" ||  event['target'].tagName=='tspan'){      
 
@@ -497,6 +498,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
  
   selectShape(shape: string, event:any){
 
+    this.cleanSelection();
     if( $('#'+event['target'].id).hasClass('button-highlighted'))
     $('#'+event['target'].id).toggleClass('button-highlighted');
     else{
@@ -526,6 +528,8 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
 
     this.canvasBackgroundColor=null;
 
+    this.showIconList = false;
+
     this.cleanSelection();
 
   }
@@ -538,7 +542,7 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     this.selectedText = "";
     this.selectedFontSize = 15;
     this.selected = this.lastSelected = null;
-    this.selectedGObject=null;
+    this.selectedGObject=null; 
     this.showIconList = false;
   }
 
@@ -1066,8 +1070,12 @@ export class AnalizaGraficznaComponent implements OnInit, AfterViewInit {
     }
   }
 
+  defaultIcon:string='person.svg';
   changeIcon(icon: string){
-    (this.selectedGObject as GIconClass).changeIcon(icon);
+    if(this.selectedGObject)
+      if(this.selectedGObject instanceof GIconClass)
+        (this.selectedGObject as GIconClass).changeIcon(icon);
+    this.defaultIcon = icon;
     this.showIconList = false;
   }
 
@@ -3293,7 +3301,6 @@ export class GIconClass extends GObjectBaseClass{
   changeIcon(icon: string){
     this.icon = icon;
     $('#id_iconimg_'+this.uid).attr({'href':"/images/grafy/icons/"+this.icon});
-    console.log('dfd');
   }
 
   createObject(){    
@@ -3308,6 +3315,7 @@ export class GIconClass extends GObjectBaseClass{
     tmpobject = this.create_multiline();
     
     //let iconobject = this.parent.s.image("/images/grafy/icons/pc.png", this.x+50, this.y, 50,50);
+    this.icon = this.parent.defaultIcon;
     let iconobject = this.parent.s.image("/images/grafy/icons/"+this.icon, this.x+50, this.y, 50,50);
     iconobject.attr({'id':'id_iconimg_'+this.uid})
 
