@@ -64,17 +64,22 @@
     color:white;
 }
 .buttonImg{
-    height:45px;
-    width:55px;
+    height:40px;
+    width:45px;
     float:left;
+    margin-left:10px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
 
-.button:hover{
-    background-color: rgb(122, 226, 216);
+.button:hover, .button-highlighted{
+    background-color: rgb(167, 243, 81);
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
   }
+  /*
 .button-highlighted{
-    background-color:rgb(62, 208, 245);
+    background-color:rgb(167, 243, 81);
 }
+*/
 
 .buttonshape{
     background-color:white;
