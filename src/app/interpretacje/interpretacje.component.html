@@ -1,14 +1,14 @@
 <p>
- Kryterium wyszukiwania: 
+ <!-- Kryterium wyszukiwania: 
  <select  [(ngModel)]="typ" style="height:21px; width:110px">
    <option *ngFor="let obj of typValues" [value]='obj.key' style="height: 35px">{{obj.val}}</option>
  </select>
  <input type="text" [value]="arg" [(ngModel)]="arg" id="argInput" />
  <button (click)="findInterpretacje()" >Szukaj</button>
- <button (click)="clearSearch()" >Wyczyść parametry</button>
+ <button (click)="clearSearch()" >Wyczyść parametry</button> -->
 
- <a href="http://sip.mf.gov.pl/" target="_blank" style="margin-left:50px;text-decoration:none;
-  padding:5px; background-color: lightgreen; border-radius: 15px;">Przeglądarka interpretacji MF</a>
+ <a href="http://sip.mf.gov.pl/" target="_blank" class="button_mf" style="margin-left:5px;text-decoration:none; color:#fff;
+  background-color: #31b0d5; padding:6px 12px;border-radius:4px;">Przeglądarka interpretacji MF</a>
 </p>
 
 <jqxGrid id="jqxInterpretacjegrid" #gridInterpretacjeReference
