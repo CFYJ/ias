@@ -8,18 +8,21 @@
   <a [routerLink]="['/upowaznienia']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Upoważnienia w aplikacjach</a>
   <a  *ngIf="auth.checkIfUserIsInRole('grafy_admin')" [routerLink]="['/analizagraficzna']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Analiza graficzna</a>
   <a  [routerLink]="['/interpretacje']"  *ngIf="auth.checkIfUserIsInRole('interpretacje')" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Interpretacje</a>
-  <a  [routerLink]="['/helpdesk']"  *ngIf="auth.checkIfUserIsInRole('helpdesk')"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">HelpDesk</a>
+  <a  [routerLink]="['/helpdesk']"  *ngIf="auth.checkIfUserIsInRole('helpdesk')"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">HelpDesk</a>  
   <!-- *ngIf="auth.checkIfUserIsInRole('Interpretacje')" -->
+  <a  [routerLink]="['/rejestr-bwip']"  *ngIf="auth.checkIfUserIsInRole('rejestr-bwip')"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Rejestr BWIP</a>
 
-  <div  class="logo">WISKAS</div>
-  <a [routerLink]="['/login']" *ngIf="!auth.loggedIn(); else loggedIn" style="float:right;" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Logowanie</a>
+ 
+  <a [routerLink]="['/login']" *ngIf="!auth.loggedIn(); else loggedIn" style="float:right" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Logowanie</a>
   
 
   <ng-template #loggedIn>
-      <div class="well">Jesteś zalogowany jako <b>{{ auth.getUser() }}</b>
+      <div class="well"  >Jesteś zalogowany jako <b>{{ auth.getUser() }}</b>
         <a [routerLink]="['/kontakty']" (click)="logout()">Wyloguj</a>
       </div>
   </ng-template>
+
+  <div  class="logo">WISKAS</div>
   
 </nav>
 

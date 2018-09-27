@@ -1,0 +1,289 @@
+<table style="width:100%">
+  <tr>
+    <td>
+      <div style="width:100%;">
+        <div class="header">
+          <Label style="margin-left: 30px">Sprawy</Label>
+          <div *ngIf="auth.checkIfUserIsInRole('rejestr-bwip-edycja')">
+            <div class="button_head" (click)="dodaj_sprawe()">Dodaj</div>
+            <!-- <div class="button_head" (click)="dodaj_spraweZPliku()">Utwórz z pliku</div> -->
+            <div class="button_head" (click)="edytuj_sprawe()">Edytuj</div>
+            <div class="button_head" (click)="usun_sprawe()">Usuń</div>
+            <div class="button_head" (click)="poTerminie_sprawe()">Starsze niż 6 miesięcy - {{licznikStarychSpraw}}</div>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+
+
+<tr>
+  <td>
+      <!-- [showfilterrow]="true" -->
+      <jqxGrid id="jqxSprawyGrid" #gridSprawyReference [width]="'100%'"
+      [columns]="columnsSprawy"  [auto-create]='false' [source]='dataAdapterSprawy'
+      [sortable]="true" [altrows]="true" [filterable]="true"
+      [editable]="false"  [selectionmode]="'multiplecellsadvanced'" 
+      (onCellselect)='gridZdarzenia.updatebounddata()'
+      (onCellclick)='gridSprawyCellClicked($event)' (onBindingcomplete)="gridZdarzenia.updatebounddata()"
+      (onGroupschanged)="GroupschangedSprawy($event)" (onFilter)="FilterSprawy($event)"
+      ></jqxGrid>
+      <!--  -->
+  </td>
+</tr>
+
+<tr>
+  <td>
+      <table style="width:100%; overflow: auto">
+          <tr>
+            <td style="width:50%">
+              <div class="header">
+                <Label style="margin-left: 30px">Zdarzenia</Label>
+                <div *ngIf="auth.checkIfUserIsInRole('rejestr-bwip-edycja')">
+                  <div class="button_head" (click)="dodaj_zdarzenie()">Dodaj</div>
+                  <div class="button_head" (click)="edytuj_zdarzenie()">Edytuj</div>
+                  <div class="button_head" (click)="usun_zdarzenie()">Usuń</div>
+                </div>  
+              </div>
+            </td>
+            <td>
+                <div class="header">
+                  <Label style="margin-left: 30px">Pliki</Label>
+                  <div *ngIf="auth.checkIfUserIsInRole('rejestr-bwip-edycja')">
+                    <div class="button_head" (click)="dodaj_plik()">Dodaj</div>
+                    <div class="button_head" (click)="usun_plik()">Usuń</div>
+                    <div class="button_head" (click)="pobierz_plik()">Pobierz</div>
+                  </div>  
+                </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+                <jqxGrid id="jqxZdarzeniaGrid" #gridZdarzeniaReference [width]="'100%'"
+                [columns]="columnsZdarzenia"  [auto-create]='false' [source]='dataAdapterZdarzenia'
+                [height]="'350px'" [sortable]="true" 
+                [editable]="false" (onBindingcomplete)='gridPliki.updatebounddata()'
+                [selectionmode]="'multiplecellsadvanced'" (onCellselect)='gridPliki.updatebounddata()'></jqxGrid>
+            </td>
+            <td>  
+              <jqxGrid id="jqxPlikiGrid" #gridPlikiReference [width]="'100%'"
+              [columns]="columnsPliki"  [auto-create]='false' [source]='dataAdapterPliki'
+              [height]="'350px'" [sortable]="true"
+              [editable]="false" 
+              [selectionmode]="'multiplecellsadvanced'"
+              ></jqxGrid>
+            </td>
+          </tr>
+        </table>
+  </td>
+</tr>
+
+</table>
+
+
+<jqxWindow #windowSprawy [auto-create]='false' [showCloseButton]="false" >
+
+    <div style="overflow: auto;">
+
+      <div *ngIf="sprawaZPliku" style="width: 100%;">
+        <table style="width: 100%">
+        <!-- <div class="button_head" style="margin-left:30px; float:left;">Wybierz plik xml</div>    -->
+        <!-- style="margin-left:30px; float:left;width:80%" -->
+        <!-- <div id="fileuploadprogress"  style="margin-left:30px; float:left;width:80%; height:40px;"></div> -->
+       <tr>
+         <td>
+           <div style="width:400px; margin:auto; " >
+            <input  class="button_head" style="width:384px;margin:0 !important;" id="file-field" name="file-field" (change)="uploadFile($event)" type="file" >
+          </div>
+         </td>
+       </tr>
+        <tr>
+          <td>
+              <div *ngIf="czyDuplikatSprawy" class="infoMessage">W systemie istnieje sprawa o podanym numerze. 
+                Wybrany plik zostanie zarejestrowany jako nowe zdarzenie w isniejącej sprawie. 
+                Można ustawić datę wpłynięcia wniosku.</div>
+          </td>
+        </tr>     
+        </table>
+      </div>
+
+      <!-- <div style="height: auto"> -->
+      <table style="margin: 0 auto; display: table; font-size:14px" *ngIf="showSprawyDitails" >
+        <tr>
+          <td>Numer BWIP</td>
+          <td><input [(ngModel)]="obiektSprawy.nrBwip" class="sprawaInput" [disabled]="czyDuplikatSprawy"></td>
+        </tr>
+        <tr>
+          <td>Nazwa</td>
+          <td><input [(ngModel)]="obiektSprawy.nazwa" class="sprawaInput" [disabled]="czyDuplikatSprawy"></td>
+        </tr>
+        <tr>
+          <td>Od kogo</td>
+          <td><input [(ngModel)]="obiektSprawy.odKogo" class="sprawaInput" [disabled]="czyDuplikatSprawy"></td>
+        </tr>
+        <tr>
+          <td>Do kogo</td>
+          <td><input [(ngModel)]="obiektSprawy.doKogo" class="sprawaInput" [disabled]="czyDuplikatSprawy"></td>
+        </tr>
+        <tr>
+          <td>Urząd</td>
+          <td><input [(ngModel)]="obiektSprawy.urzad" class="sprawaInput" [disabled]="czyDuplikatSprawy"></td>
+        </tr> 
+        <tr>
+          <td>Data wniosku</td>
+          <td>
+              <jqxDateTimeInput #jqxDateTimeWejscieSpr  [(ngModel)]="obiektSprawy.dataPierwszegoWniosku"  class="sprawaInput"
+              [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"
+              [culture]="'pl-PL'"></jqxDateTimeInput>
+            <!-- <input [(ngModel)]="obiektSprawy.dataPierwszegoWniosku" class="sprawaInput"> -->
+          </td>
+        </tr>
+        <tr>
+          <td>Data ostatniego wniosku</td>
+          <td> 
+            <jqxDateTimeInput #jqxDateTimeWyjscieSpr  [(ngModel)]="obiektSprawy.dataOstatniegoWniosku"  class="sprawaInput"
+            [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"
+            [culture]="'pl-PL'" [disabled]="czyDuplikatSprawy"></jqxDateTimeInput>
+          </td>
+        </tr>      
+        <tr>
+          <td>Rodzaj wniosku</td>
+          <td><input [(ngModel)]="obiektSprawy.rodzWniosku" class="sprawaInput" [disabled]="czyDuplikatSprawy"></td>
+        </tr>
+        <tr>
+          <td>Rodzaj należności</td>
+          <td><input [(ngModel)]="obiektSprawy.rodzNaleznosci" class="sprawaInput" [disabled]="czyDuplikatSprawy"></td>
+        </tr>      
+        <tr>
+          <td>Numer SZD</td>
+          <td><input [(ngModel)]="obiektSprawy.nrSzd" class="sprawaInput" [disabled]="czyDuplikatSprawy"></td>
+        </tr>        
+        <tr>
+          <td>Całkowita kwota</td>
+          <td><input [(ngModel)]="obiektSprawy.calkowitaKwota" class="sprawaInput" [disabled]="czyDuplikatSprawy" type="number"></td>
+        </tr>     
+        <tr>
+          <td>Zakończona</td>
+          <td ><input type="checkbox"  [ngModel]="obiektSprawy.status == 1 ? true : obiektSprawy.status == 0 ? false : null" (ngModelChange)="obiektSprawy.status = $event ? 1 : 0" [disabled]="czyDuplikatSprawy"></td>
+          <!-- [(ngModel)]="obiektSprawy.status"  -->
+        </tr>    
+      </table>
+      <!-- </div> -->
+      <div style="bottom: 10px;right:20px; display: table; width: 100%; position: absolute;">
+        <div class="button_head no" style="margin-left:30px;  float: right; position: relative;" (click)="windowSprawyCancel()">Anuluj</div>      
+        <div class="button_head yes" style="margin-left:30px; float: right; position: relative;"(click)="windowSprawyOK()">Zapisz</div>  
+      </div>
+    </div>
+</jqxWindow>
+
+<jqxWindow #windowZdarzenia [auto-create]='false' >
+
+    <div style="overflow: auto;">
+
+      <div *ngIf="zdarzenieZPliku" style="width: 100%; display:block">
+        <!-- <div class="button_head" style="margin-left:30px; float:left;">Wybierz plik xml</div>    -->
+      
+          <input  class="button_head" style="margin-left:30px; float:left;min-width: 390px !important;" id="file-field" name="file-field" (change)="uploadFile($event)" type="file" >  
+
+          <div style="margin-left:30px;width:390px">
+            <div id="fileuploadprogress"  style="position: relative "></div>
+          </div>
+     
+      </div>
+
+      <!-- <div style="height: auto"> -->
+      <table style="margin: 0 auto; display: table; font-size:14px" *ngIf="obiektZdarzenia" >
+        <tr>
+          <td>Data wpływu wniosku</td>
+          <td>
+            <!-- <input [(ngModel)]="obiektZdarzenia.dataWejscia" class="sprawaInput"> -->
+            <jqxDateTimeInput #jqxDateTimeWejscieZd  [(ngModel)]="obiektZdarzenia.dataWejscia"  class="sprawaInput" [culture]="'pl-PL'"
+              [formatString]= "'yyyy-MM-dd HH:mm'"   [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"></jqxDateTimeInput>
+          </td>
+        </tr>
+        <tr>
+          <td>Data wyjścia wniosku</td>
+          <td>
+            <!-- <input [(ngModel)]="obiektZdarzenia.dataWyjscia" class="sprawaInput"> -->
+            <jqxDateTimeInput #jqxDateTimeWyjscieZd  [(ngModel)]="obiektZdarzenia.dataWyjscia"  class="sprawaInput" [culture]="'pl-PL'"
+              [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"></jqxDateTimeInput>
+          </td>
+        </tr>
+        <tr>
+            <td>Kwota całkowita</td>
+            <td><input [(ngModel)]="obiektZdarzenia.calkowitaKwota" class="sprawaInput" type="number"></td>
+          </tr>
+        <tr>
+          <td>Informacje</td>
+          <td><textarea [(ngModel)]="obiektZdarzenia.informacja" class="sprawaInput" ></textarea></td>
+        </tr> 
+      </table>
+      <!-- </div> -->
+      <div style="bottom: 20px;right:20px; display: table; width: 100%; position: absolute;">
+        <div class="button_head no" style="margin-left:30px;  float: right; position: relative;" (click)="windowZdarzeniaCancel()">Anuluj</div>      
+        <div class="button_head yes" style="margin-left:30px; float: right; position: relative;"(click)="windowZdarzeniaOK()">Zapisz</div>  
+      </div>
+    </div>
+</jqxWindow>
+
+<jqxWindow #questionWindow [auto-create]='false'
+          [width]="370" [height]="285"          
+          [isModal]="true" [modalOpacity]="0.3"
+          [okButton]="'.qok'" [cancelButton]="'.qcancel'" [resizable]="false">
+
+  <div style="height:240px;display: table; width: 100%;">
+    <div style="bottom: 40px;overflow: hidden; min-height: 220px;overflow: hidden;  font-size: 14px;" #windowContent>
+        <div [innerHTML]="questionWindowParams.message" >     </div>
+    </div>
+
+    <div style="float: right; bottom: 10px;">        
+          <jqxButton #okButton class="qok yes"  *ngIf="questionWindowParams.byes" 
+                    style="display: inline-block; margin-right: 10px;"
+                    [width]="80">
+            {{questionWindowParams.byesval}}
+          </jqxButton>
+          <jqxButton #cancelButton  class="qcancel no"  *ngIf="questionWindowParams.bno"
+                    style="display: inline-block;"
+                    [width]="80">               
+            {{questionWindowParams.bnoval}} 
+          </jqxButton>
+   
+    </div>  
+  </div>
+</jqxWindow>  
+
+<jqxWindow #jqxwindowPDF [auto-create]='false' [height]="'90%'" [width]="'70%'" style="padding-top:5px">
+  <div >
+   <iframe *ngIf="fileUrl!=null" style="width:98%; height:98%; margin: auto" [src]="fileUrl" frameborder="0"></iframe>
+  </div>
+</jqxWindow>  
+
+<jqxWindow #jqxwindowFileUpload [auto-create]='false'  [width]="470" [height]="225"   style="padding-top:5px" [cancelButton]="'.qcancel2'" >
+  <div>
+    <div style="width: 100%">
+      <table style="width:100%; margin-top:15px;">
+        <tr>
+          <td>
+            <div  style="width:360px; margin:auto">
+              <input class="button_head_w" style="width:344px;" id="file-fieldUpload" name="file-field" (change)="zaladuj_plik($event)" type="file" >  
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div style="width:360px; margin:auto">
+              <div id="fileuploadprogresspliki"  style="width: 360px; margin:auto;height: 30px; border-radius:4px;"></div>
+            </div>
+          </td>
+        </tr>      
+    </table>
+    </div>
+    <div style="width: 100%; margin-top:50px;">         
+        <jqxButton #cancelButtonUpload  class="qcancel2 no"
+                  style="float:right; margin-right:50px" (click)="closezaladujPliki()"
+                  [width]="80">               
+          Zakończ
+        </jqxButton> 
+    </div>  
+  </div>
+</jqxWindow> 

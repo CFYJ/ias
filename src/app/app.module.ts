@@ -44,6 +44,9 @@ import * as $ from 'jquery'
 import {SimpleGlobal} from 'ng2-simple-global';
 import { UpowaznieniaComponent } from './upowaznienia/upowaznienia.component'
 
+//*********************** rozwiazanie problemu z odswiezaniem strony w przegladarce prze f5 */
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+
 
 //*******************google maps****************/
 import { CommonModule } from '@angular/common';
@@ -57,6 +60,7 @@ import { AnalizaGraficznaComponent } from './analiza-graficzna/analiza-graficzna
 import { InterpretacjeComponent } from './interpretacje/interpretacje.component';
 import { HelpdeskComponent } from './helpdesk/helpdesk.component';
 import { jqxDragDropComponent } from 'jqwidgets-ts/angular_jqxdragdrop';
+import { RejestrBwipComponent } from './rejestr-bwip/rejestr-bwip.component';
 
 //**********************************************/
 
@@ -72,6 +76,7 @@ export const appRoutes: Routes = [
   { path: 'analizagraficzna', component: AnalizaGraficznaComponent},
   { path: 'interpretacje', component: InterpretacjeComponent, canActivate: [AuthGuardService], data:{role: ['interpretacje']}},
   { path: 'helpdesk', component: HelpdeskComponent, canActivate: [AuthGuardService], data:{role: ['helpdesk']}},
+  { path: 'rejestr-bwip', component: RejestrBwipComponent, canActivate: [AuthGuardService], data:{role: ['rejestr-bwip']}},
 ];
 
 @NgModule({
@@ -104,6 +109,7 @@ export const appRoutes: Routes = [
     InterpretacjeComponent,
     HelpdeskComponent,
     jqxDragDropComponent,
+    RejestrBwipComponent,
   ],
   imports: [
     HttpClientModule,
@@ -121,10 +127,11 @@ export const appRoutes: Routes = [
   ],
   providers: [
     {
-    provide: HTTP_INTERCEPTORS,
+    provide: HTTP_INTERCEPTORS,  
     useClass: AuthorizationHeaderInjector,
     multi: true
     },
+    {provide: LocationStrategy, useClass: HashLocationStrategy},
     JwtHelper, AuthGuardService, AuthenticationService, KontaktyService, MessageService, SimpleGlobal,UpowaznieniaService,    ],
   bootstrap: [AppComponent]
 })

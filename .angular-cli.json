@@ -55,6 +55,8 @@
       "./jqwidgets/globalization/globalize.js",
       "./jqwidgets/jqxwindow.js",
       "./jqwidgets/jqxnotification.js",
+      "./jqwidgets/globalization/globalize.culture.pl-PL.js",
+      "./jqwidgets/globalization/globalize.culture.de-DE.js",
       "./scripts/login.js",
       "../node_modules/snapsvg/dist/snap.svg-min.js"
     ],

@@ -1,0 +1,80 @@
+.header{
+    width: 100%;
+    min-width: 580px;
+    height: 30px;
+    background-color: #53daf1;
+    /* #8ecdd8;   #1bd462*/
+    font-size: 20px;
+    
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    //padding: 10px;
+    //padding-left: 30px;   
+
+}
+
+.header>label{
+    float: left;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.button_head{
+    //background-color: rgb(180, 221, 255);
+    font-size: 14px;
+    margin-left: 10px;
+    //padding: 5px;
+    min-width:100px;
+    float: left;
+    text-align: center;
+
+    color:#fff;
+    background-color: #31b0d5; 
+    padding:6px 8px;
+    border-radius:4px;
+    text-decoration: none;
+}
+
+
+
+.button_head_w{
+    font-size: 14px;
+    text-align: center;
+    color:#fff;
+    background-color: #31b0d5; 
+    padding:6px 8px;
+    border-radius:4px;
+    text-decoration: none;
+}
+
+.button_head:hover, .button_head_w:hover{
+    box-shadow: 5px 5px 3px  #537b8d;
+}
+
+.yes{
+    background-color: #2db939 !important;
+}
+.no{
+    background-color: #bb3d27 !important;
+}
+
+
+.sprawaInput{
+    width:300px;
+}
+
+.jqx-grid-column-header{
+    white-space: "normal" !important;
+}
+
+.infoMessage{
+    background-color: #b9492d;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px;
+    width: 400px;
+    margin:auto;
+    //display: block;
+}
