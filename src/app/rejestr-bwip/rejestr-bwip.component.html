@@ -1,6 +1,101 @@
-<p>
-  rejestr-bwip works!
-</p>
-{{odpowiedz}}
+<div>
 
-<button (click)="loadData()">dawaj</button>
+</div>
+
+<!-- <button (click)="loadData()">dawaj</button> -->
+<div class="header">
+  <Label>Sprawy</Label>
+  <div class="button_head" (click)="dodaj_sprawe()">Dodaj nową</div>
+  <div class="button_head" (click)="dodaj_spraweZPliku()">Utwórz nową z pliku</div>
+  <div class="button_head" (click)="edytuj_sprawe()">Edytuj</div>
+  <div class="button_head">Usuń</div>
+</div>
+
+<jqxGrid id="jqxSprawyGrid" #gridSprawyReference [width]="'100%'"
+[columns]="columnsSprawy"  [auto-create]='false' [source]='dataAdapterSprawy'
+[autoheight]="true" [sortable]="true" [altrows]="true"
+[editable]="false"
+[selectionmode]="'multiplecellsadvanced'" (onCellclick)='gridSprawyCellClicked($event)'
+></jqxGrid>
+
+<div class="header">Zdarzenia</div>
+
+<jqxGrid id="jqxZdarzeniaGrid" #gridZdarzeniaReference [width]="'100%'"
+[columns]="columnsZdarzenia"  [auto-create]='false' [source]='dataAdapterZdarzenia'
+[autoheight]="true" [sortable]="true"
+[editable]="false" 
+[selectionmode]="'multiplecellsadvanced'"
+></jqxGrid>
+
+
+<!-- (onCellclick)='editCellclick($event)' -->
+
+
+<jqxWindow #windowSprawy [auto-create]='false' >
+
+    <div style="overflow: auto;">
+
+      <div *ngIf="sprawaZPliku" style="width: 100%; display:inline-block">
+        <div class="button_head" style="margin-left:30px;">Wybierz plik xml</div>     
+        
+      </div>
+
+      <table style="margin: 0 auto; display: table;" *ngIf="showSprawyDitails" >
+        <tr>
+          <td>Nazwa</td>
+          <td><input [(ngModel)]="obiektSprawy.nazwa" ></td>
+        </tr>
+        <tr>
+          <td>Identyfikator</td>
+          <td><input [(ngModel)]="obiektSprawy.identyfikator"></td>
+        </tr>
+        <tr>
+          <td>Adres</td>
+          <td><input [(ngModel)]="obiektSprawy.adres"></td>
+        </tr>
+        <tr>
+          <td>Od kogo</td>
+          <td><input [(ngModel)]="obiektSprawy.odKogo"></td>
+        </tr>
+        <tr>
+          <td>Do kogo</td>
+          <td><input [(ngModel)]="obiektSprawy.doKogo"></td>
+        </tr>
+        <tr>
+          <td>Typ</td>
+          <td><input [(ngModel)]="obiektSprawy.typ"></td>
+        </tr>
+        <tr>
+          <td>Rodzaj wniosku</td>
+          <td><input [(ngModel)]="obiektSprawy.rodzWniosku"></td>
+        </tr>
+        <tr>
+          <td>Numer BWIP</td>
+          <td><input [(ngModel)]="obiektSprawy.nrBwip"></td>
+        </tr>
+
+        <tr>
+          <td>Numer SZD</td>
+          <td><input [(ngModel)]="obiektSprawy.nrSzd"></td>
+        </tr>
+        <tr>
+          <td>Rodzaj należności</td>
+          <td><input [(ngModel)]="obiektSprawy.rodzNaleznosci"></td>
+        </tr>
+        <tr>
+          <td>Całkowita kwota</td>
+          <td><input [(ngModel)]="obiektSprawy.calkowitaKwota"></td>
+        </tr>
+        <tr>
+          <td>Termin odpowiedzi</td>
+          <td><input [(ngModel)]="obiektSprawy.terminOdpowiedz"></td>
+        </tr>    
+
+      </table>
+
+      <div style="margin-top:20px; display: table; width:100%">       
+        <div class="button_head yes" style="margin-left:30px; float: left; position: relative;"(click)="windowSprawyOK()">Zapisz</div>  
+        <div class="button_head no" style="margin-left:30px;  float: left; position: relative;" (click)="windowSprawyCancel()">Anuluj</div>      
+      </div>
+    </div>
+</jqxWindow>
