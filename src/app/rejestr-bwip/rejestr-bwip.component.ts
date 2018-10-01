@@ -43,7 +43,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   //#region grid_sprawy */
 
-  selectedRowIdSprawy = null;
   selectedRowDataSprawy = null;
 
   sourceSprawy={
@@ -75,28 +74,34 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       this.totalrecords= data.totalRows;
     },
 
-    // addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
-    //   const t = JSON.stringify(rowdata);
-    //   $.ajax({
-    //     cache: false,
-    //     dataType: 'json',
-    //     contentType: 'application/json',
-    //     url: this.sg['SERVICE_URL'] + 'Upowaznienia/AddUpowaznienia',
-    //     data: t,
-    //     type: 'POST',
-    //     beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-    //     success: function (data: any, status: any, xhr: any) {
-    //       //alert('Wstawiono nowy rekord - id: ' + data.id);
-    //       rowdata.id = data.id;
-    //       commit(true);                  
-    //     },
-    //     error: function (jqXHR: any, textStatus: any, errorThrown: any) {
-    //       alert(textStatus + ' - ' + errorThrown);
-    //       commit(false);
-    //     }
-    //   })
-    // },
+    filter: ()=>{
+      // update the grid and send a request to the server.
+      this.gridSprawy.updatebounddata();  
+    },
+
+    addrow: (rowid: any, rowdata: any, position: any, commit: any) => {
+      console.log(rowdata)
+      const t = JSON.stringify(rowdata);
+      $.ajax({
+        cache: false,
+        dataType: 'json',
+        contentType: 'application/json',
+        url: this.sg['SERVICE_URL'] + 'RejestrBWIP/AddSprawy',
+        data: t,
+        type: 'POST',
+        beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+        success: function (data: any, status: any, xhr: any) {
+          rowdata.id = data.id;
+          commit(true);                  
+        },
+        error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+          alert(textStatus + ' - ' + errorThrown);
+          commit(false);
+        }
+      })
+    },
     updaterow: (rowid: any, rowdata: any, commit: any) => {
+    
       const t = JSON.stringify(rowdata);
       $.ajax({
         cache: false,
@@ -106,7 +111,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         data: t,
         type: 'PUT',
         beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-        success:  (data: any, status: any, xhr: any)=> {              
+        success:  (data: any, status: any, xhr: any)=> {  
+          this.gridSprawyEdycja=false;         
           commit(true);           
         },
         error: function (jqXHR: any, textStatus: any, errorThrown: any) {
@@ -141,7 +147,11 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   };
 
   dataAdapterSprawy = new $.jqx.dataAdapter(this.sourceSprawy,
-    {beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}}, 
+    {beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+    formatData: function (data: any) {
+      return data;
+    }
+    }, 
   );
 
 
@@ -201,8 +211,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
 
   gridSprawyCellClicked(event:any):void{
-    console.log(event.args.rowindex);
-    this.selectedRowIdSprawy = event.args.rowindex;
     this.selectedRowDataSprawy = event.args.row.bounddata;  
     this.createObiektSprawy(this.selectedRowDataSprawy);
   }
@@ -230,21 +238,19 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   }
 
   edytuj_sprawe(){
-   if(this.obiektSprawy)
-    if(this.obiektSprawy.id>-1){
-      this.gridSprawyEdition = true;
+   if(this.gridSprawy.getselectedcell().rowindex){
+      this.createObiektSprawy(this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex))
+      this.gridSprawyEdycja = true;
       this.sprawaZPliku = false;
       this.showSprawyDitails = true;
       this.windowSprawy.title("Edytuj sprawę");
       this.windowSprawy.open();
-
-
     }
   }
 
   createObiektSprawy(row?:any){
     this.obiektSprawy={
-      id:row?row.id:-1,
+      id:row?row.id:0,
       nazwa:row?row.nazwa:"",
       identyfikator:row?row.identyfikator:"",
       adres:row?row.adres:"",
@@ -256,7 +262,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       nrSzd:row?row.nrSzd:"",
       rodzNaleznosci:row?row.rodzNaleznosci:"",
       calkowitaKwota:row?row.calkowitaKwota:"",
-      terminOdpowiedzi:row?row.terminOdpowiedzi:""
+      terminOdpowiedzi:row?row.terminOdpowiedzi:"",
+      sysdate:row?row.sysdate:"",
     }
   }
 
@@ -265,21 +272,21 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     this.createObiektSprawy();
     this.showSprawyDitails = false;
     this.sprawaZPliku = false;
-    this.gridSprawyEdition = false;
+    this.gridSprawyEdycja = false;
   }
 
-  gridSprawyEdition: boolean = false;
+  gridSprawyEdycja: boolean = false;
 
   windowSprawyOK(){    
-    if(this.gridSprawyEdition)
-      this.gridSprawy.updaterow(this.selectedRowIdSprawy, this.obiektSprawy);
+    if(this.gridSprawyEdycja)
+      this.gridSprawy.updaterow(this.gridSprawy.getrowid(this.gridSprawy.getselectedcell().rowindex), this.obiektSprawy);      
     else
-      this.gridSprawy.addrow(0,this.obiektSprawy);  
+      this.gridSprawy.addrow(0,this.obiektSprawy,'top');  
 
     this.windowSprawy.close();
     this.showSprawyDitails = false;
     this.sprawaZPliku = false;
-    this.gridSprawyEdition = false;
+    this.gridSprawyEdycja = false;
   }
   //#endregion
 
@@ -320,7 +327,10 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
         pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
         sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
-        sortremovestring: 'Wyczyść sortowanie'
+        sortremovestring: 'Wyczyść sortowanie', emptydatastring:'Brak danych',
+        filtershowrowdatestring: "Pokaż rekordy gdzie data jest:",
+        filtershowrowstring: "Pokaż rekordy spełniające warunek:",
+        filterdatecomparisonoperators: ['równa', 'różna', 'mniejsza', 'mniejsza lub równa', 'większa', 'większa lub równa', 'null', 'not null'],
       },
   
       columnsresize: true,
