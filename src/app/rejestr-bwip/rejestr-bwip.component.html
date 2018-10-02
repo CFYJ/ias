@@ -6,9 +6,9 @@
 <div class="header">
   <Label>Sprawy</Label>
   <div class="button_head" (click)="dodaj_sprawe()">Dodaj nową</div>
-  <div class="button_head" (click)="dodaj_spraweZPliku()">Utwórz nową z pliku</div>
+  <div class="button_head" (click)="dodaj_spraweZPliku()">Utwórz z pliku</div>
   <div class="button_head" (click)="edytuj_sprawe()">Edytuj</div>
-  <div class="button_head">Usuń</div>
+  <div class="button_head" (click)="usun_sprawe()">Usuń</div>
 </div>
 
 <jqxGrid id="jqxSprawyGrid" #gridSprawyReference [width]="'100%'"
@@ -36,66 +36,94 @@
     <div style="overflow: auto;">
 
       <div *ngIf="sprawaZPliku" style="width: 100%; display:inline-block">
-        <div class="button_head" style="margin-left:30px;">Wybierz plik xml</div>     
-        
+        <!-- <div class="button_head" style="margin-left:30px; float:left;">Wybierz plik xml</div>    -->
+        <input  class="button_head" style="margin-left:30px; float:left;min-width: 390px !important;" id="file-field" name="file-field" (change)="uploadFile($event)" type="file" >  
+        <div id="fileuploadprogress"  style="margin-left:30px; float:left;"></div>
       </div>
 
-      <table style="margin: 0 auto; display: table;" *ngIf="showSprawyDitails" >
+      <!-- <div style="height: auto"> -->
+      <table style="margin: 0 auto; display: table; font-size:14px" *ngIf="showSprawyDitails" >
         <tr>
           <td>Nazwa</td>
-          <td><input [(ngModel)]="obiektSprawy.nazwa" ></td>
+          <td><input [(ngModel)]="obiektSprawy.nazwa" class="sprawaInput"></td>
         </tr>
         <tr>
           <td>Identyfikator</td>
-          <td><input [(ngModel)]="obiektSprawy.identyfikator"></td>
+          <td><input [(ngModel)]="obiektSprawy.identyfikator" class="sprawaInput"></td>
         </tr>
         <tr>
           <td>Adres</td>
-          <td><input [(ngModel)]="obiektSprawy.adres"></td>
+          <td><input [(ngModel)]="obiektSprawy.adres" class="sprawaInput"></td>
         </tr>
         <tr>
           <td>Od kogo</td>
-          <td><input [(ngModel)]="obiektSprawy.odKogo"></td>
+          <td><input [(ngModel)]="obiektSprawy.odKogo" class="sprawaInput"></td>
         </tr>
         <tr>
           <td>Do kogo</td>
-          <td><input [(ngModel)]="obiektSprawy.doKogo"></td>
+          <td><input [(ngModel)]="obiektSprawy.doKogo" class="sprawaInput"></td>
         </tr>
         <tr>
           <td>Typ</td>
-          <td><input [(ngModel)]="obiektSprawy.typ"></td>
+          <td><input [(ngModel)]="obiektSprawy.typ" class="sprawaInput"></td>
         </tr>
         <tr>
           <td>Rodzaj wniosku</td>
-          <td><input [(ngModel)]="obiektSprawy.rodzWniosku"></td>
+          <td><input [(ngModel)]="obiektSprawy.rodzWniosku" class="sprawaInput"></td>
         </tr>
         <tr>
           <td>Numer BWIP</td>
-          <td><input [(ngModel)]="obiektSprawy.nrBwip"></td>
+          <td><input [(ngModel)]="obiektSprawy.nrBwip" class="sprawaInput"></td>
         </tr>
 
         <tr>
           <td>Numer SZD</td>
-          <td><input [(ngModel)]="obiektSprawy.nrSzd"></td>
+          <td><input [(ngModel)]="obiektSprawy.nrSzd" class="sprawaInput"></td>
         </tr>
         <tr>
           <td>Rodzaj należności</td>
-          <td><input [(ngModel)]="obiektSprawy.rodzNaleznosci"></td>
+          <td><input [(ngModel)]="obiektSprawy.rodzNaleznosci" class="sprawaInput"></td>
         </tr>
         <tr>
           <td>Całkowita kwota</td>
-          <td><input [(ngModel)]="obiektSprawy.calkowitaKwota"></td>
+          <td><input [(ngModel)]="obiektSprawy.calkowitaKwota" class="sprawaInput"></td>
         </tr>
         <tr>
           <td>Termin odpowiedzi</td>
-          <td><input [(ngModel)]="obiektSprawy.terminOdpowiedz"></td>
+          <td><input [(ngModel)]="obiektSprawy.terminOdpowiedz" class="sprawaInput"></td>
         </tr>    
 
       </table>
-
-      <div style="margin-top:20px; display: table; width:100%">       
-        <div class="button_head yes" style="margin-left:30px; float: left; position: relative;"(click)="windowSprawyOK()">Zapisz</div>  
-        <div class="button_head no" style="margin-left:30px;  float: left; position: relative;" (click)="windowSprawyCancel()">Anuluj</div>      
+      <!-- </div> -->
+      <div style="bottom: 20px;right:20px; display: table; width: 100%; position: absolute;">
+        <div class="button_head no" style="margin-left:30px;  float: right; position: relative;" (click)="windowSprawyCancel()">Anuluj</div>      
+        <div class="button_head yes" style="margin-left:30px; float: right; position: relative;"(click)="windowSprawyOK()">Zapisz</div>  
       </div>
     </div>
 </jqxWindow>
+
+<jqxWindow #questionWindow [auto-create]='false'
+          [width]="370" [height]="285"          
+          [isModal]="true" [modalOpacity]="0.3"
+          [okButton]="'.qok'" [cancelButton]="'.qcancel'" [resizable]="false">
+
+  <div style="height:240px;display: table; width: 100%;">
+    <div style="bottom: 40px;overflow: hidden; min-height: 220px;overflow: hidden;  font-size: 14px;" #windowContent>
+        <div [innerHTML]="questionWindowParams.message" >     </div>
+    </div>
+
+    <div style="float: right; bottom: 10px;">        
+          <jqxButton #okButton class="qok yes"  *ngIf="questionWindowParams.byes" 
+                    style="display: inline-block; margin-right: 10px;"
+                    [width]="80">
+            {{questionWindowParams.byesval}}
+          </jqxButton>
+          <jqxButton #cancelButton  class="qcancel no"  *ngIf="questionWindowParams.bno"
+                    style="display: inline-block;"
+                    [width]="80">               
+            {{questionWindowParams.bnoval}} 
+          </jqxButton>
+   
+    </div>  
+  </div>
+</jqxWindow>  
