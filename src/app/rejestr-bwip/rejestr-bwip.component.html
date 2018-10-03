@@ -14,8 +14,8 @@
 <jqxGrid id="jqxSprawyGrid" #gridSprawyReference [width]="'100%'"
 [columns]="columnsSprawy"  [auto-create]='false' [source]='dataAdapterSprawy'
 [autoheight]="true" [sortable]="true" [altrows]="true"
-[editable]="false"
-[selectionmode]="'multiplecellsadvanced'" (onCellclick)='gridSprawyCellClicked($event)'
+[editable]="false"  (onCellselect)='gridZdarzenia.updatebounddata()'
+[selectionmode]="'multiplecellsadvanced'" (onCellclick)='gridSprawyCellClicked($event)' 
 ></jqxGrid>
 
 <table style="width:100%">
@@ -44,8 +44,7 @@
         [columns]="columnsZdarzenia"  [auto-create]='false' [source]='dataAdapterZdarzenia'
         [height]="'300px'" [sortable]="true" 
         [editable]="false" 
-        [selectionmode]="'multiplecellsadvanced'" (onCellclick)='gridZdarzeniaCellClicked($event)'
-        ></jqxGrid>
+        [selectionmode]="'multiplecellsadvanced'" (onCellselect)='gridPliki.updatebounddata()'></jqxGrid>
     </td>
     <td>  
       <jqxGrid id="jqxPlikiGrid" #gridPlikiReference [width]="'100%'"

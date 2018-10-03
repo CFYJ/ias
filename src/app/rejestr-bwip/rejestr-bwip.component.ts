@@ -54,8 +54,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   //#region grid_sprawy */
 
-  selectedRowDataSprawy = null;
-
   sourceSprawy={
     datatype: 'json',
 
@@ -82,6 +80,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
     root: 'rows', 
     beforeprocessing: function(data){
+      console.log(data.rows)
       this.totalrecords= data.totalRows;
     },
 
@@ -163,9 +162,9 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   dataAdapterSprawy = new $.jqx.dataAdapter(this.sourceSprawy,
     {beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-    formatData: function (data: any) {
-      return data;
-    }
+    // formatData: function (data: any) {
+    //   return data;
+    // }
     }, 
   );
 
@@ -190,7 +189,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     altrows: true,
     enabletooltips: false,
     
-    columnsheight:30,
+    //columnsheight:30,
     theme: 'metro',
 
     source: this.dataAdapterSprawy,
@@ -206,7 +205,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   
   columnsSprawy: any[] =
   [
-   // { text: 'Data systemowa', datafield: 'sysdate',  width: 120},
+    { text: 'Id', datafield: 'id',  width: 120},
     { text: 'Nazwa', datafield: 'nazwa',  width: 150},
     { text: 'Identyfikator', datafield: 'identyfikator',  width: 120},
     { text: 'Adres', datafield: 'adres',  },
@@ -214,8 +213,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     { text: 'Do kogo', datafield: 'doKogo',  },
     { text: 'Typ', datafield: 'typ',  },
     { text: 'Rodzaj wniosku', datafield: 'rodzWniosku',  },
-    { text: 'Nr. BWIP', datafield: 'nrBwip',  },
-    { text: 'Nr. SZD', datafield: 'nrSzd',  },
+    { text: 'Nr BWIP', datafield: 'nrBwip',  },
+    { text: 'Nr SZD', datafield: 'nrSzd',  },
     { text: 'Rodzaj należności', datafield: 'rodzNaleznosci',  },
     { text: 'Całkowita kwota', datafield: 'calkowitaKwota',  },
     { text: 'Termin odpowiedzi', datafield: 'terminOdpowiedzi',  },
@@ -223,8 +222,9 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   ]
 
   gridSprawyCellClicked(event:any):void{
-    this.selectedRowDataSprawy = event.args.row.bounddata;  
-    this.createObiektSprawy(this.selectedRowDataSprawy);
+    //  this.selectedRowDataSprawy = event.args.row.bounddata;  
+    //  this.createObiektSprawy(this.selectedRowDataSprawy);
+     this.createObiektSprawy(event.args.row.bounddata)
   }
   //#endregion
 
@@ -333,7 +333,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   
       ],
       id:'id',
-      url: this.sg['SERVICE_URL']+'RejestrBWIP/GetZdarzenia',
+      url: this.sg['SERVICE_URL']+'RejestrBWIP/GetZdarzenia',      
 
       root: 'rows', 
       beforeprocessing: function(data){
@@ -343,8 +343,14 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     };
   
     dataAdapterZdarzenia = new $.jqx.dataAdapter(this.sourceZdarzenia,
-      {beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}}, 
-    );
+      {formatData: (data)=> {
+        $.extend(data, {
+          id: this.gridSprawy.getselectedcell()?this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['id']:0    
+        });
+        return data;
+      },
+        
+        beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}},     );
   
   
     gridoptionsZdarzenia: jqwidgets.GridOptions ={    
@@ -393,13 +399,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   
     ]
 
-    gridZdarzeniaCellClicked(event:any):void{
-
-      console.log(event.args.row.bounddata.id)
-        this.selectedZdarzenieID =  event.args.row.bounddata.id;
-        this.gridPliki.updatebounddata();
-   
-    }
   
     //#endregion
 
@@ -409,8 +408,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   //#endregion
 
   //#region grid_pliki */
-
-   selectedZdarzenieID:any =0;
 
    sourcePliki={
     datatype: 'json',
@@ -422,9 +419,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     ],
     id:'id',
     url: this.sg['SERVICE_URL']+'RejestrBWIP/GetPliki',
-    data:{
-      id:this.selectedZdarzenieID
-    },
 
     root: 'rows', 
     beforeprocessing: function(data){
@@ -435,7 +429,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   dataAdapterPliki = new $.jqx.dataAdapter(this.sourcePliki,
     {formatData: (data)=> {
       $.extend(data, {
-        id: this.selectedZdarzenieID
+        id: this.gridZdarzenia.getselectedcell()?this.gridZdarzenia.getrowdata(this.gridZdarzenia.getselectedcell().rowindex)['id']:0    
       });
       return data;
     },
@@ -603,34 +597,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
       });
     }
-  }
-
-  loadData(){
-
-    this.http.get(this.sg['SERVICE_URL'] + 'RejestrBWIP/GetRows')
-    .subscribe(
-      data => {
-        this.odpowiedz = data.toString();
-      },
-      err =>{
-        alert("Błąd programu, skontaktuj się z administratorem. \n"+err);  
-      } 
-    );
-
-    // $.ajax({
-    //   cache: false,
-    //   dataType: 'json',
-    //   contentType: 'application/json',
-    //   url: this.sg['SERVICE_URL'] + 'RejestrBWIP/GetRows/',
-    //   type: 'GET',
-    //   success: (data: any, status: any, xhr: any)=>{     
-    //      this.odpowiedz = data;
-    //     },
-    //     error: function (jqXHR: any, textStatus: any, errorThrown: any) {
-        
-    //       alert(textStatus + ' - ' + errorThrown);
-    //     }
-    //   });
   }
 
 }
