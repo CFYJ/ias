@@ -44,6 +44,9 @@ import * as $ from 'jquery'
 import {SimpleGlobal} from 'ng2-simple-global';
 import { UpowaznieniaComponent } from './upowaznienia/upowaznienia.component'
 
+//*********************** rozwiazanie problemu z odswiezaniem strony w przegladarce prze f5 */
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+
 
 //*******************google maps****************/
 import { CommonModule } from '@angular/common';
@@ -124,10 +127,11 @@ export const appRoutes: Routes = [
   ],
   providers: [
     {
-    provide: HTTP_INTERCEPTORS,
+    provide: HTTP_INTERCEPTORS,  
     useClass: AuthorizationHeaderInjector,
     multi: true
     },
+    {provide: LocationStrategy, useClass: HashLocationStrategy},
     JwtHelper, AuthGuardService, AuthenticationService, KontaktyService, MessageService, SimpleGlobal,UpowaznieniaService,    ],
   bootstrap: [AppComponent]
 })

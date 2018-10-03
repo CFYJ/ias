@@ -2,9 +2,10 @@
   border: 0 solid #e1e1e1;
   border-bottom-width: 1px;
   display: block;
-  height: 48px;
+
   padding: 0 16px;
 }
+/* height: 48px;*/
 
 nav a {
   color: #8f8f8f;
@@ -22,18 +23,21 @@ nav a.router-link-active {
   font-weight: bold;
 }
 
+
+
 div.well {
   font-family: 'Josefin Slab', 'Comfortaa', sans-serif;
   font-size: 1.0em;
   position: relative;
-  text-align: right;
-  //display: inline-block;
-  float: right;
+ // text-align: right;
+  display: inline-block;
+
   color: #09C;
+
 }
 
 .logo{
-  line-height: 48px;
+  //line-height: 48px;
   color: #4CAF50;
   font-family: 'Josefin Slab', 'Comfortaa', Sans-Serif;
   //font-family: 'sofia_probold','Trebuchet MS',Helvetica,Arial,sans-serif;
@@ -42,11 +46,14 @@ div.well {
   letter-spacing: 3px;
   //font-size: 1.5em;
   font-weight: bold;
-  position: relative;
+ // position: relative;
   text-align: right;
   //display: inline-block;
-  float: right;
+
   //color: #09C;
+  display: inline-block;
+
+
 }
 
 

@@ -17,6 +17,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   @ViewChild('gridSprawyReference') gridSprawy: jqxGridComponent;
   @ViewChild('gridZdarzeniaReference') gridZdarzenia: jqxGridComponent;
+  @ViewChild('gridPlikiReference') gridPliki: jqxGridComponent;
   @ViewChild('windowSprawy') windowSprawy: jqxWindowComponent;
   @ViewChild('questionWindow') questionWindow: jqxWindowComponent;
 
@@ -35,6 +36,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   ngAfterViewInit(): void {
     this.gridSprawy.createComponent(this.gridoptionsSprawy);
     this.gridZdarzenia.createComponent(this.gridoptionsZdarzenia);
+    this.gridPliki.createComponent(this.gridoptionsPliki);
 
     this.windowSprawy.createWidget({
       width: 500, height: 430, theme: 'metro',
@@ -116,6 +118,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     updaterow: (rowid: any, rowdata: any, commit: any) => {
     
       const t = JSON.stringify(rowdata);
+      console.log(t);
       $.ajax({
         cache: false,
         dataType: 'json',
@@ -364,7 +367,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       pagesize:10,
   
       autorowheight: true,
-      autoheight: true,
+      autoheight: false,
       altrows: true,
       enabletooltips: false,
       
@@ -386,12 +389,104 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     [
       { text: 'Data odebrania', datafield: 'dataWejscia',  width: 120},
       { text: 'Data wysłania', datafield: 'dataWyjscia',  width: 150},
-      { text: 'Odpowiedź', datafield: 'odpowiedz',  width: 120},
+      { text: 'Odpowiedź', datafield: 'odpowiedz'},
   
     ]
+
+    gridZdarzeniaCellClicked(event:any):void{
+
+      console.log(event.args.row.bounddata.id)
+        this.selectedZdarzenieID =  event.args.row.bounddata.id;
+        this.gridPliki.updatebounddata();
+   
+    }
   
     //#endregion
 
+  //#region zdarzenia 
+
+
+  //#endregion
+
+  //#region grid_pliki */
+
+   selectedZdarzenieID:any =0;
+
+   sourcePliki={
+    datatype: 'json',
+
+    datafields:[
+      {name: 'id'},     
+      {name: 'nazwa', type:'string'},
+
+    ],
+    id:'id',
+    url: this.sg['SERVICE_URL']+'RejestrBWIP/GetPliki',
+    data:{
+      id:this.selectedZdarzenieID
+    },
+
+    root: 'rows', 
+    beforeprocessing: function(data){
+      this.totalrecords= data.totalRows;    
+    },
+  };
+
+  dataAdapterPliki = new $.jqx.dataAdapter(this.sourcePliki,
+    {formatData: (data)=> {
+      $.extend(data, {
+        id: this.selectedZdarzenieID
+      });
+      return data;
+    },
+    beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}
+  });
+
+
+  gridoptionsPliki: jqwidgets.GridOptions ={    
+    localization: {
+      pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
+      pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
+      sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
+      sortremovestring: 'Wyczyść sortowanie', emptydatastring:'Brak danych',
+      filtershowrowdatestring: "Pokaż rekordy gdzie data jest:",
+      filtershowrowstring: "Pokaż rekordy spełniające warunek:",
+      filterdatecomparisonoperators: ['równa', 'różna', 'mniejsza', 'mniejsza lub równa', 'większa', 'większa lub równa', 'null', 'not null'],
+    },
+
+    columnsresize: true,
+    
+    filterable: true,
+    autoshowfiltericon: true,
+    filtermode: 'excel',
+    showfilterrow: true,
+    pagesize:10,
+
+    autorowheight: true,
+    autoheight: false,
+    altrows: true,
+    enabletooltips: false,
+    
+    columnsheight:30,
+    theme: 'metro',
+
+    source: this.dataAdapterPliki,
+    pageable: true,
+
+    virtualmode: true,
+    rendergridrows: function(data)
+    {
+        return data.data;
+    },
+  };
+
+  
+  columnsPliki: any[] =
+  [
+    { text: 'Nazwa', datafield: 'nazwa'},
+  ]
+
+  //#endregion
 
   questionWindowParams={'message':'', 'byes':true, 'byesval':'Tak', 'bno':true, 'bnoval':'Nie'};
   showquestionWindow(message: string='', byes:boolean=true, byesval:string='Tak', bno:boolean=true, bnoval:string='Nie', title:string="Pytanie" ){return new Promise((resolve, reject)=> {

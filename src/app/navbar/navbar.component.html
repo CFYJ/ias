@@ -12,15 +12,17 @@
   <!-- *ngIf="auth.checkIfUserIsInRole('Interpretacje')" -->
   <a  [routerLink]="['/rejestr-bwip']"  *ngIf="auth.checkIfUserIsInRole('rejestr-bwip')"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Rejestr BWIP</a>
 
-  <div  class="logo">WISKAS</div>
-  <a [routerLink]="['/login']" *ngIf="!auth.loggedIn(); else loggedIn" style="float:right;" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Logowanie</a>
+ 
+  <a [routerLink]="['/login']" *ngIf="!auth.loggedIn(); else loggedIn" style="float:right" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Logowanie</a>
   
 
   <ng-template #loggedIn>
-      <div class="well">Jesteś zalogowany jako <b>{{ auth.getUser() }}</b>
+      <div class="well"  >Jesteś zalogowany jako <b>{{ auth.getUser() }}</b>
         <a [routerLink]="['/kontakty']" (click)="logout()">Wyloguj</a>
       </div>
   </ng-template>
+
+  <div  class="logo">WISKAS</div>
   
 </nav>
 
