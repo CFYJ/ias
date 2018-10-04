@@ -1,6 +1,6 @@
 .header{
     width: 100%;
-    min-width: 600px;
+    min-width: 580px;
     height: 30px;
     background-color: #53daf1;
     /* #8ecdd8;   #1bd462*/
@@ -14,7 +14,8 @@
 }
 
 .header>label{
-float: left;
+    float: left;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .button_head{
