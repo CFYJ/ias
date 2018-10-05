@@ -25,6 +25,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   obiektSprawy: any;
   obiektZdarzenia: any;
+  obiektPliki: any;
   sprawaZPliku: boolean=false;
 
   constructor( private sg: SimpleGlobal, public http: HttpClient,) { }
@@ -78,8 +79,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       {name: 'nrBwip', type: 'string'},
       {name: 'nrSzd', type: 'string'},
       {name: 'rodzNaleznosci', type: 'string'},
-      {name: 'calkowitaKwota', type: 'string'},
-      {name: 'terminOdpowiedzi', type: 'string'},
+      {name: 'calkowitaKwota', type: 'number'},
+      {name: 'terminOdpowiedzi', type: 'date'},
       {name: 'sysdate', type: 'date'},
       // {name: '', type: ''},
 
@@ -111,12 +112,62 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         data: t,
         type: 'POST',
         beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-        success: function (data: any, status: any, xhr: any) {
+        success:  (data: any, status: any, xhr: any)=> {
           rowdata.id = data.id;
+       
+          if(this.tmpfile)         
+          {
+            this.createObiektZdarzenia();
+            this.obiektZdarzenia.idSprawy = data.id;  
+            this.obiektZdarzenia.odpowiedz="test";
+            $.ajax({
+              cache: false,
+              dataType: 'json',
+              contentType: 'application/json',
+              url: this.sg['SERVICE_URL'] + 'RejestrBWIP/AddZdarzenia',
+              data:JSON.stringify(this.obiektZdarzenia),
+              type: 'POST',
+              beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+              success:  (data: any, status: any, xhr: any)=>{
+                
+                
+                this.tmpfile.idZdarzenia = data.id;
+                // console.log(data.id);
+                // console.log(this.tmpfile);
+                 let xx = JSON.stringify(this.tmpfile);
+                $.ajax({
+                  cache: false,
+                  dataType: 'json',
+                  contentType: 'application/json',
+                  url: this.sg['SERVICE_URL'] + 'RejestrBWIP/UpdatePliki/'+this.tmpfile.id,
+                  data:xx,
+                  type: 'PUT',
+                  beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+                  success:  (data: any, status: any, xhr: any)=>{
+                    this.tmpfile = null;
+                                          
+                  },
+                  error: (jqXHR: any, textStatus: any, errorThrown: any)=> {
+                    alert(textStatus + ' - ' + errorThrown);
+                    this.tmpfile = null;
+                  }
+                })
+
+                                  
+              },
+              error: (jqXHR: any, textStatus: any, errorThrown: any) =>{
+                alert(textStatus + ' - ' + errorThrown);
+                this.tmpfile = null;
+              }
+            })
+
+          }            
+          
           commit(true);                  
         },
-        error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+        error:(jqXHR: any, textStatus: any, errorThrown: any)=> {
           alert(textStatus + ' - ' + errorThrown);
+          this.tmpfile = null;
           commit(false);
         }
       })
@@ -125,7 +176,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     updaterow: (rowid: any, rowdata: any, commit: any) => {
     
       const t = JSON.stringify(rowdata);
-      console.log(t);
       $.ajax({
         cache: false,
         dataType: 'json',
@@ -221,7 +271,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   l:'inne wierzytelności podatkowe',
   m:'opłaty rolne (kwoty objęte art 2 ust. 1 lit. b) i c) dyrektywy 2010/24/UE)'}]
 
-    rodzawnioskucellsrenderer = (row: number, columnfield: string, value: string , defaulthtml: string, columnproperties: any, rowdata: any): string => {
+  rodzawnioskucellsrenderer = (row: number, columnfield: string, value: string , defaulthtml: string, columnproperties: any, rowdata: any): string => {
  
     let content:string="";
     value.split(',').forEach(el=>{
@@ -247,7 +297,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     { text: 'Nr SZD', datafield: 'nrSzd',  },
     { text: 'Rodzaj należności', datafield: 'rodzNaleznosci',  },
     { text: 'Całkowita kwota', datafield: 'calkowitaKwota',  },
-    { text: 'Termin odpowiedzi', datafield: 'terminOdpowiedzi',  },
+    { text: 'Termin odpowiedzi', datafield: 'terminOdpowiedzi', cellsformat:'yyyy-MM-dd', filtertype: 'date' },
 
   ]
 
@@ -332,6 +382,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     this.showSprawyDitails = false;
     this.sprawaZPliku = false;
     this.gridSprawyEdycja = false;
+    this.tmpfile = null;
   }
 
   gridSprawyEdycja: boolean = false;
@@ -345,69 +396,72 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     this.windowSprawy.close();
     this.showSprawyDitails = false;
     this.sprawaZPliku = false;
-    this.gridSprawyEdycja = false;
+    this.gridSprawyEdycja = false;   
   }
 
-  
+  tmpfile: any =null;
   uploadFile(event) {
     let files = event.target.files;
     if (files.length > 0) {
     
       var formData = new FormData();
 
-      // $.each(files, function(key, value)
-      // {
-      //   // formData.append(key.toString(), value);
+      $.each(files, function(key, value)
+      {
+         formData.append(key.toString(), value);
 
-      //   console.log(value)
+         //console.log(value)
 
-      //    var fs = Xml.Parser();
-      //    fs.readFile(value,)
-      // });
+        //  var fs = Xml.Parser();
+        //  fs.readFile(value,)
+      });
 
 
-
-      let fileReader = new FileReader();
-      fileReader.onload = (e) => {
-        var fs = Xml.Parser();
-        fs.parseString(fileReader.result, (err, res)=>{
-          
-          this.obiektSprawy.nazwa=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:CompanyName'][0];
-          
-          this.obiektSprawy.identyfikator=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:TaxIdentificationNumberApplicantMs'][0];
-          
-          this.obiektSprawy.adres='ulica:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:StreetAndNumber'][0]+
-            ', miasto:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:PostcodeAndTown'][0];
-
-          this.obiektSprawy.odKogo=res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofApplicant'][0]['ns2:Identification'][0]['ns2:Country'][0]['ns2:ISOCode'][0];
-
-          this.obiektSprawy.doKogo=res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofRequested'][0]['ns2:Identification'][0]['ns2:Country'][0]['ns2:ISOCode'][0];
-
-          this.obiektSprawy.calkowitaKwota = Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:PrincipalAmount'][0]['ns2:InitiallyDue'][0])+
-            Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:Interests'][0]['ns2:InitiallyDue'][0]);
-        
-          // rodzaj wniosku
-          var taxlist = ['a','b','c','d','e','f','g','h','i','j','k','l','m'];
-
-          for(let a in taxlist)
-            this.obiektSprawy.rodzWniosku += res.RequestForRecoveryV2Message.Body[0].FormData[0].FormHeader[0].TaxList[0]['ns2:'+taxlist[a]][0]=='true'?taxlist[a]+",":"";
-  
+      if(files[0].name.toString().includes('xml')){
+        let fileReader = new FileReader();
+        fileReader.onload = (e) => {
+          var fs = Xml.Parser();
+          fs.parseString(fileReader.result, (err, res)=>{
             
-          
-        })
-        //console.log(fileReader.result);
-      }
-      fileReader.readAsText(files[0]);
+            this.obiektSprawy.nazwa=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:CompanyName'][0];
+            
+            this.obiektSprawy.identyfikator=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:TaxIdentificationNumberApplicantMs'][0];
+            
+            this.obiektSprawy.adres='ulica:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:StreetAndNumber'][0]+
+              ', miasto:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:PostcodeAndTown'][0];
 
+            this.obiektSprawy.odKogo=res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofApplicant'][0]['ns2:Identification'][0]['ns2:Country'][0]['ns2:ISOCode'][0];
+
+            this.obiektSprawy.doKogo=res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofRequested'][0]['ns2:Identification'][0]['ns2:Country'][0]['ns2:ISOCode'][0];
+
+            this.obiektSprawy.calkowitaKwota = Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:PrincipalAmount'][0]['ns2:InitiallyDue'][0])+
+              Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:Interests'][0]['ns2:InitiallyDue'][0]);
+          
+            let typ = res.RequestForRecoveryV2Message.Body[0].MetaData[0].Reference[0].Reference[0].split('_');
+            this.obiektSprawy.typ = typ[typ.length-1];
+            // rodzaj wniosku
+            var taxlist = ['a','b','c','d','e','f','g','h','i','j','k','l','m'];
+
+            for(let a in taxlist)
+              this.obiektSprawy.rodzWniosku += res.RequestForRecoveryV2Message.Body[0].FormData[0].FormHeader[0].TaxList[0]['ns2:'+taxlist[a]][0]=='true'?taxlist[a]+",":"";
+    
+            this.obiektSprawy.nrBwip = res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofRequested'][0]['ns2:Identification'][0]['ns2:FileReference'][0];
+              
+            
+          })
+          //console.log(fileReader.result);
+        }
+        fileReader.readAsText(files[0]);
+      }
 
 
       $("#fileuploadprogress").html("");
 
-      let z = false;
+      let z = true;
       if(z)
       $.ajax({
         context: this,
-        url: this.sg['SERVICE_URL'] + 'RejestrBWIP/FileUpload',
+        url: this.sg['SERVICE_URL'] + 'RejestrBWIP/AddPliki',
         type: 'POST',
         data: formData,
         processData: false,
@@ -438,16 +492,17 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
         success: function (data: any, status: any, xhr: any) {
 
-              let upid = this.selectedRowData['id']===0?0:this.selectedRowData['id']; 
-              var newplik = {"id":data.id,"id_upowaznienia":upid, "idPliku":data.idPliku , "nazwa":files[0].name};
+            this.tmpfile = data;
+              // let upid = this.selectedRowData['id']===0?0:this.selectedRowData['id']; 
+              // var newplik = {"id":data.id,"id_upowaznienia":upid, "idPliku":data.idPliku , "nazwa":files[0].name};
 
-              if(this.pliki!=null)
-                this.pliki.push(newplik); 
-              else 
-              {
-                this.pliki = new Array();
-                this.pliki.push(newplik);             
-              }
+              // if(this.pliki!=null)
+              //   this.pliki.push(newplik); 
+              // else 
+              // {
+              //   this.pliki = new Array();
+              //   this.pliki.push(newplik);             
+              // }
 
         },
         error: function(jqXHR, textStatus, errorThrown)
@@ -509,7 +564,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
           beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
           success: function (data: any, status: any, xhr: any) {
             rowdata.id = data.id;
-            commit(true);                  
+            commit(true);                     
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
             alert(textStatus + ' - ' + errorThrown);
@@ -689,6 +744,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   //#endregion
 
+  //#region pliki
   //#region grid_pliki */
 
    sourcePliki={
@@ -764,6 +820,19 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   //#endregion
 
+
+  createObiektPliki(row?:any){
+    this.obiektPliki={
+      id:row?row.id:0,
+      idZdarzenia:row?row.idZdarzenia:null,
+      nazwa:row?row.nazwa:null,
+      typ:row?row.typ:null,
+      dane:row?row.dane:null,
+      status:row?row.status:null,
+      sysdate:row?row.sysdate:"",
+    }
+  }
+  //#endregion
 
   questionWindowParams={'message':'', 'byes':true, 'byesval':'Tak', 'bno':true, 'bnoval':'Nie'};
   showquestionWindow(message: string='', byes:boolean=true, byesval:string='Tak', bno:boolean=true, bnoval:string='Nie', title:string="Pytanie" ){return new Promise((resolve, reject)=> {
