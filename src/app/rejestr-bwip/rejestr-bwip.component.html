@@ -40,7 +40,7 @@
           <Label>Pliki</Label>
           <div class="button_head" (click)="dodaj_plik()">Dodaj</div>
           <div class="button_head" (click)="usun_plik()">Usuń</div>
-          <div class="button_head" (click)="usun_plik()">Pobierz</div>
+          <div class="button_head" (click)="pobierz_plik()">Pobierz</div>
         </div>
     </td>
   </tr>
@@ -197,6 +197,28 @@
             {{questionWindowParams.bnoval}} 
           </jqxButton>
    
+    </div>  
+  </div>
+</jqxWindow>  
+
+<jqxWindow #jqxwindowPDF [auto-create]='false' [height]="'90%'" [width]="'70%'" style="padding-top:5px">
+  <div >
+   <iframe *ngIf="fileUrl!=null" style="width:98%; height:98%; margin: auto" [src]="fileUrl" frameborder="0"></iframe>
+  </div>
+</jqxWindow>  
+
+<jqxWindow #jqxwindowFileUpload [auto-create]='false'  [width]="470" [height]="185"   style="padding-top:5px" [cancelButton]="'.qcancel2'" >
+  <div>
+    <div style="width: 100%">
+      <input  class="button_head" style="margin-left:30px; float:left;min-width: 360px !important;" id="file-fieldUpload" name="file-field" (change)="zaladuj_plik($event)" type="file" >  
+      <div id="fileuploadprogresspliki"  style="margin-left:30px; float:left;"></div>
+    </div>
+    <div style="width: 100%; margin-top:100px;">         
+        <jqxButton #cancelButtonUpload  class="qcancel2 no"
+                  style="float:right; right:50px" (click)="closezaladujPliki()"
+                  [width]="80">               
+          Zakończ
+        </jqxButton> 
     </div>  
   </div>
 </jqxWindow>  

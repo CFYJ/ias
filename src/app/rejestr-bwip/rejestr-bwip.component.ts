@@ -5,6 +5,9 @@ import { HTTP_INTERCEPTORS, HttpClient,  } from '@angular/common/http';
 import { jqxGridComponent } from 'jqwidgets-ts/angular_jqxgrid';
 import { jqxWindowComponent } from 'jqwidgets-ts/angular_jqxwindow';
 
+import { DomSanitizer} from '@angular/platform-browser';
+
+
 
 import * as Xml from 'xml2js';
 
@@ -20,6 +23,9 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   @ViewChild('gridPlikiReference') gridPliki: jqxGridComponent;
   @ViewChild('windowSprawy') windowSprawy: jqxWindowComponent;
   @ViewChild('windowZdarzenia') windowZdarzenia: jqxWindowComponent;
+  @ViewChild('jqxwindowPDF') jqxwindowPDF: jqxWindowComponent;
+  @ViewChild('jqxwindowFileUpload') jqxwindowFileUpload: jqxWindowComponent;
+
 
   @ViewChild('questionWindow') questionWindow: jqxWindowComponent;
 
@@ -27,8 +33,9 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   obiektZdarzenia: any;
   obiektPliki: any;
   sprawaZPliku: boolean=false;
+  fileUrl:any=null
 
-  constructor( private sg: SimpleGlobal, public http: HttpClient,) { }
+  constructor( private sg: SimpleGlobal, public http: HttpClient,private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
   }
@@ -52,267 +59,279 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       
     });
 
-    this. questionWindow.createWidget({
+    this.questionWindow.createWidget({
       width: 350, height: 330, theme: 'metro',
       resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5,
       
     });
+
+    this.jqxwindowFileUpload.createWidget({
+      theme: 'metro', resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5,
+      
+    });
+
+    this.jqxwindowPDF.createWidget({
+      width: 450, height: 530, theme: 'metro',
+      resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5,
+      
+    });
+
     
   }
 
   //#region sprawy
 
-  //#region grid_sprawy */
+    //#region grid_sprawy */
 
-  sourceSprawy={
-    datatype: 'json',
+      sourceSprawy={
+        datatype: 'json',
 
-    datafields:[
-      {name: 'id'},
-      {name: 'nazwa', type:'string'},
-      {name: 'identyfikator', type:'string'},
-      {name: 'adres', type:'string'},
-      {name: 'odKogo', type: 'string'},
-      {name: 'doKogo', type: 'string'},
-      {name: 'typ', type: 'string'},
-      {name: 'rodzWniosku', type: 'string'},
-      {name: 'nrBwip', type: 'string'},
-      {name: 'nrSzd', type: 'string'},
-      {name: 'rodzNaleznosci', type: 'string'},
-      {name: 'calkowitaKwota', type: 'number'},
-      {name: 'terminOdpowiedzi', type: 'date'},
-      {name: 'sysdate', type: 'date'},
-      // {name: '', type: ''},
+        datafields:[
+          {name: 'id'},
+          {name: 'nazwa', type:'string'},
+          {name: 'identyfikator', type:'string'},
+          {name: 'adres', type:'string'},
+          {name: 'odKogo', type: 'string'},
+          {name: 'doKogo', type: 'string'},
+          {name: 'typ', type: 'string'},
+          {name: 'rodzWniosku', type: 'string'},
+          {name: 'nrBwip', type: 'string'},
+          {name: 'nrSzd', type: 'string'},
+          {name: 'rodzNaleznosci', type: 'string'},
+          {name: 'calkowitaKwota', type: 'number'},
+          {name: 'terminOdpowiedzi', type: 'date'},
+          {name: 'sysdate', type: 'date'},
+          // {name: '', type: ''},
 
-    ],
-    id:'id',
-    url: this.sg['SERVICE_URL']+'RejestrBWIP/GetSprawy',
+        ],
+        id:'id',
+        url: this.sg['SERVICE_URL']+'RejestrBWIP/GetSprawy',
 
-    root: 'rows', 
-    beforeprocessing: function(data){
-      this.totalrecords= data.totalRows;
-    },
+        root: 'rows', 
+        beforeprocessing: function(data){
+          this.totalrecords= data.totalRows;
+        },
 
-    filter: ()=>{
-      // update the grid and send a request to the server.
-      this.gridSprawy.updatebounddata();  
-    },
+        filter: ()=>{
+          // update the grid and send a request to the server.
+          this.gridSprawy.updatebounddata();  
+        },
 
-    sort: ()=>{
-      this.gridSprawy.updatebounddata();  
-    },  
+        sort: ()=>{
+          this.gridSprawy.updatebounddata();  
+        },  
 
-    addrow: (rowid: any, rowdata: any, position: any, commit: any) => {   
-      const t = JSON.stringify(rowdata);
-      $.ajax({
-        cache: false,
-        dataType: 'json',
-        contentType: 'application/json',
-        url: this.sg['SERVICE_URL'] + 'RejestrBWIP/AddSprawy',
-        data: t,
-        type: 'POST',
-        beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-        success:  (data: any, status: any, xhr: any)=> {
-          rowdata.id = data.id;
-       
-          if(this.tmpfile)         
-          {
-            this.createObiektZdarzenia();
-            this.obiektZdarzenia.idSprawy = data.id;  
-            this.obiektZdarzenia.odpowiedz="test";
-            $.ajax({
-              cache: false,
-              dataType: 'json',
-              contentType: 'application/json',
-              url: this.sg['SERVICE_URL'] + 'RejestrBWIP/AddZdarzenia',
-              data:JSON.stringify(this.obiektZdarzenia),
-              type: 'POST',
-              beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-              success:  (data: any, status: any, xhr: any)=>{
-                
-                
-                this.tmpfile.idZdarzenia = data.id;
-                // console.log(data.id);
-                // console.log(this.tmpfile);
-                 let xx = JSON.stringify(this.tmpfile);
+        addrow: (rowid: any, rowdata: any, position: any, commit: any) => {   
+          const t = JSON.stringify(rowdata);
+          $.ajax({
+            cache: false,
+            dataType: 'json',
+            contentType: 'application/json',
+            url: this.sg['SERVICE_URL'] + 'RejestrBWIP/AddSprawy',
+            data: t,
+            type: 'POST',
+            beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+            success:  (data: any, status: any, xhr: any)=> {
+              rowdata.id = data.id;
+          
+              if(this.tmpfile)         
+              {
+                this.createObiektZdarzenia();
+                this.obiektZdarzenia.idSprawy = data.id;  
+                this.obiektZdarzenia.odpowiedz="test";
                 $.ajax({
                   cache: false,
                   dataType: 'json',
                   contentType: 'application/json',
-                  url: this.sg['SERVICE_URL'] + 'RejestrBWIP/UpdatePliki/'+this.tmpfile.id,
-                  data:xx,
-                  type: 'PUT',
+                  url: this.sg['SERVICE_URL'] + 'RejestrBWIP/AddZdarzenia',
+                  data:JSON.stringify(this.obiektZdarzenia),
+                  type: 'POST',
                   beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
                   success:  (data: any, status: any, xhr: any)=>{
-                    this.tmpfile = null;
-                                          
+                    
+                    
+                    this.tmpfile.idZdarzenia = data.id;
+                    // console.log(data.id);
+                    // console.log(this.tmpfile);
+                    let xx = JSON.stringify(this.tmpfile);
+                    $.ajax({
+                      cache: false,
+                      dataType: 'json',
+                      contentType: 'application/json',
+                      url: this.sg['SERVICE_URL'] + 'RejestrBWIP/UpdatePliki/'+this.tmpfile.id,
+                      data:xx,
+                      type: 'PUT',
+                      beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+                      success:  (data: any, status: any, xhr: any)=>{
+                        this.tmpfile = null;
+                                              
+                      },
+                      error: (jqXHR: any, textStatus: any, errorThrown: any)=> {
+                        alert(textStatus + ' - ' + errorThrown);
+                        this.tmpfile = null;
+                      }
+                    })
+
+                                      
                   },
-                  error: (jqXHR: any, textStatus: any, errorThrown: any)=> {
+                  error: (jqXHR: any, textStatus: any, errorThrown: any) =>{
                     alert(textStatus + ' - ' + errorThrown);
                     this.tmpfile = null;
                   }
                 })
 
-                                  
-              },
-              error: (jqXHR: any, textStatus: any, errorThrown: any) =>{
-                alert(textStatus + ' - ' + errorThrown);
-                this.tmpfile = null;
-              }
-            })
-
-          }            
-          
-          commit(true);                  
+              }            
+              
+              commit(true);                  
+            },
+            error:(jqXHR: any, textStatus: any, errorThrown: any)=> {
+              alert(textStatus + ' - ' + errorThrown);
+              this.tmpfile = null;
+              commit(false);
+            }
+          })
         },
-        error:(jqXHR: any, textStatus: any, errorThrown: any)=> {
-          alert(textStatus + ' - ' + errorThrown);
-          this.tmpfile = null;
-          commit(false);
-        }
-      })
-    },
 
-    updaterow: (rowid: any, rowdata: any, commit: any) => {
+        updaterow: (rowid: any, rowdata: any, commit: any) => {
+        
+          const t = JSON.stringify(rowdata);
+          $.ajax({
+            cache: false,
+            dataType: 'json',
+            contentType: 'application/json',
+            url: this.sg['SERVICE_URL'] + 'RejestrBWIP/UpdateSprawy/' + rowdata.id,
+            data: t,
+            type: 'PUT',
+            beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+            success:  (data: any, status: any, xhr: any)=> {  
+              this.gridSprawyEdycja=false;         
+              commit(true);           
+            },
+            error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+              alert(textStatus + ' - ' + errorThrown);
+              commit(false);
+            }
+          });
+        },
+
+        deleterow: (rowindex: any, commit: any) => {
+          $.ajax({
+            cache: false,
+            dataType: 'json',
+            contentType: 'application/json',
+            url: this.sg['SERVICE_URL'] + 'RejestrBWIP/DeleteSprawy/' + rowindex,
+            //data: t,
+            type: 'POST',
+            beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+            success: function (data: any, status: any, xhr: any) {              
+              commit(true);     
+                
+            },
+            error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+              alert(textStatus + ' - ' + errorThrown);
+              commit(false);
+            }
+          });
+        },
+
+
+      };
+
+      dataAdapterSprawy = new $.jqx.dataAdapter(this.sourceSprawy,
+        {beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+        // formatData: function (data: any) {
+        //   return data;
+        // }
+        }, 
+      );
+
+      gridoptionsSprawy: jqwidgets.GridOptions ={    
+        localization: {
+          pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
+          pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
+          sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
+          sortremovestring: 'Wyczyść sortowanie'
+        },
+
+        columnsresize: true,    
+        filterable: true,
+        autoshowfiltericon: true,
+        filtermode: 'excel',
+        showfilterrow: true,
+        pagesize:10,
+        sortable: true,
+        autorowheight: true,
+        autoheight: true,
+        altrows: true,
+        enabletooltips: false,
+        theme: 'metro',
+
+        source: this.dataAdapterSprawy,
+        pageable: true,
+        virtualmode: true,
+        rendergridrows: function(data)
+        {
+            return data.data;
+        },
+      };
+
+      
+      rodzajeWniosku=[{a:'cło',
+      b:'podatek od wartości dodanej VAT',
+      c:'podatek akcyzowy',
+      d:'podatek od dochodu lub kapitału',
+      e:'podatek od składek ubezpieczeniowych',
+      f:'podatek od spadków i darowizn',
+      g:'krajowe podatki i należności od nieruchomości, inne niż wymienione powyżej',
+      h:'krajowe podatki i należności związane z użytkowaniem lub własnością środków transportu',
+      i:'inne podatki i należności pobierane przez (wnioskujące) państwo lub w jego imieniu',
+      j:'podatki i należności pobierane przez jednostki podziału terytorialnego lub administracyjnego (wnioskującego) państwa lub w ich imieniu, z wyjątkiem podatków i należności pobieranych przez organy lokalne',
+      k:'podatki i należności pobierane przez organy lokalne lub w ich imieniu',
+      l:'inne wierzytelności podatkowe',
+      m:'opłaty rolne (kwoty objęte art 2 ust. 1 lit. b) i c) dyrektywy 2010/24/UE)'}]
+
+      rodzawnioskucellsrenderer = (row: number, columnfield: string, value: string , defaulthtml: string, columnproperties: any, rowdata: any): string => {
     
-      const t = JSON.stringify(rowdata);
-      $.ajax({
-        cache: false,
-        dataType: 'json',
-        contentType: 'application/json',
-        url: this.sg['SERVICE_URL'] + 'RejestrBWIP/UpdateSprawy/' + rowdata.id,
-        data: t,
-        type: 'PUT',
-        beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-        success:  (data: any, status: any, xhr: any)=> {  
-          this.gridSprawyEdycja=false;         
-          commit(true);           
-        },
-        error: function (jqXHR: any, textStatus: any, errorThrown: any) {
-          alert(textStatus + ' - ' + errorThrown);
-          commit(false);
-        }
-      });
-    },
+        let content:string="";
+        value.split(',').forEach(el=>{
+          if(el.trim().toLowerCase().length>0)
+            content +=el.trim().toLowerCase()+" - "+this.rodzajeWniosku[0][el.trim().toLowerCase()]+'<br>';
+        })
 
-    deleterow: (rowindex: any, commit: any) => {
-      $.ajax({
-        cache: false,
-        dataType: 'json',
-        contentType: 'application/json',
-        url: this.sg['SERVICE_URL'] + 'RejestrBWIP/DeleteSprawy/' + rowindex,
-        //data: t,
-        type: 'POST',
-        beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-        success: function (data: any, status: any, xhr: any) {              
-          commit(true);     
-            
-        },
-        error: function (jqXHR: any, textStatus: any, errorThrown: any) {
-          alert(textStatus + ' - ' + errorThrown);
-          commit(false);
-        }
-      });
-    },
+        return '<div class="jqx-grid-cell-left-align" style="margin-top: 6px;">'+content+'</div>';
+        
+      };
 
+      columnsSprawy: any[] =
+      [
+        { text: 'Id', datafield: 'id',  width: 120},
+        { text: 'Nazwa', datafield: 'nazwa',  width: 150},
+        { text: 'Identyfikator', datafield: 'identyfikator',  width: 120},
+        { text: 'Adres', datafield: 'adres', width:200 },
+        { text: 'Od kogo', datafield: 'odKogo',  },
+        { text: 'Do kogo', datafield: 'doKogo',  },
+        { text: 'Typ', datafield: 'typ',  },
+        { text: 'Rodzaj wniosku', datafield: 'rodzWniosku', cellsrenderer: this.rodzawnioskucellsrenderer },
+        { text: 'Nr BWIP', datafield: 'nrBwip',  },
+        { text: 'Nr SZD', datafield: 'nrSzd',  },
+        { text: 'Rodzaj należności', datafield: 'rodzNaleznosci',  },
+        { text: 'Całkowita kwota', datafield: 'calkowitaKwota',  },
+        { text: 'Termin odpowiedzi', datafield: 'terminOdpowiedzi', cellsformat:'yyyy-MM-dd', filtertype: 'date' },
 
-  };
+      ]
 
-  dataAdapterSprawy = new $.jqx.dataAdapter(this.sourceSprawy,
-    {beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-    // formatData: function (data: any) {
-    //   return data;
-    // }
-    }, 
-  );
-
-  gridoptionsSprawy: jqwidgets.GridOptions ={    
-    localization: {
-      pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
-      pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
-      sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
-      sortremovestring: 'Wyczyść sortowanie'
-    },
-
-    columnsresize: true,    
-    filterable: true,
-    autoshowfiltericon: true,
-    filtermode: 'excel',
-    showfilterrow: true,
-    pagesize:10,
-    sortable: true,
-    autorowheight: true,
-    autoheight: true,
-    altrows: true,
-    enabletooltips: false,
-    theme: 'metro',
-
-    source: this.dataAdapterSprawy,
-    pageable: true,
-    virtualmode: true,
-    rendergridrows: function(data)
-    {
-        return data.data;
-    },
-  };
-
-  
-  rodzajeWniosku=[{a:'cło',
-  b:'podatek od wartości dodanej VAT',
-  c:'podatek akcyzowy',
-  d:'podatek od dochodu lub kapitału',
-  e:'podatek od składek ubezpieczeniowych',
-  f:'podatek od spadków i darowizn',
-  g:'krajowe podatki i należności od nieruchomości, inne niż wymienione powyżej',
-  h:'krajowe podatki i należności związane z użytkowaniem lub własnością środków transportu',
-  i:'inne podatki i należności pobierane przez (wnioskujące) państwo lub w jego imieniu',
-  j:'podatki i należności pobierane przez jednostki podziału terytorialnego lub administracyjnego (wnioskującego) państwa lub w ich imieniu, z wyjątkiem podatków i należności pobieranych przez organy lokalne',
-  k:'podatki i należności pobierane przez organy lokalne lub w ich imieniu',
-  l:'inne wierzytelności podatkowe',
-  m:'opłaty rolne (kwoty objęte art 2 ust. 1 lit. b) i c) dyrektywy 2010/24/UE)'}]
-
-  rodzawnioskucellsrenderer = (row: number, columnfield: string, value: string , defaulthtml: string, columnproperties: any, rowdata: any): string => {
- 
-    let content:string="";
-    value.split(',').forEach(el=>{
-      if(el.trim().toLowerCase().length>0)
-        content +=el.trim().toLowerCase()+" - "+this.rodzajeWniosku[0][el.trim().toLowerCase()]+'<br>';
-    })
-
-    return '<div class="jqx-grid-cell-left-align" style="margin-top: 6px;">'+content+'</div>';
-    
-  };
-
-  columnsSprawy: any[] =
-  [
-    { text: 'Id', datafield: 'id',  width: 120},
-    { text: 'Nazwa', datafield: 'nazwa',  width: 150},
-    { text: 'Identyfikator', datafield: 'identyfikator',  width: 120},
-    { text: 'Adres', datafield: 'adres', width:200 },
-    { text: 'Od kogo', datafield: 'odKogo',  },
-    { text: 'Do kogo', datafield: 'doKogo',  },
-    { text: 'Typ', datafield: 'typ',  },
-    { text: 'Rodzaj wniosku', datafield: 'rodzWniosku', cellsrenderer: this.rodzawnioskucellsrenderer },
-    { text: 'Nr BWIP', datafield: 'nrBwip',  },
-    { text: 'Nr SZD', datafield: 'nrSzd',  },
-    { text: 'Rodzaj należności', datafield: 'rodzNaleznosci',  },
-    { text: 'Całkowita kwota', datafield: 'calkowitaKwota',  },
-    { text: 'Termin odpowiedzi', datafield: 'terminOdpowiedzi', cellsformat:'yyyy-MM-dd', filtertype: 'date' },
-
-  ]
-
-  gridSprawyCellClicked(event:any):void{
-    //  this.selectedRowDataSprawy = event.args.row.bounddata;  
-    //  this.createObiektSprawy(this.selectedRowDataSprawy);
-     this.createObiektSprawy(event.args.row.bounddata)
-  }
-  //#endregion
+      gridSprawyCellClicked(event:any):void{
+        //  this.selectedRowDataSprawy = event.args.row.bounddata;  
+        //  this.createObiektSprawy(this.selectedRowDataSprawy);
+        this.createObiektSprawy(event.args.row.bounddata)
+      };
+    //#endregion
 
   displayFiltry: boolean =false;
 
   showFiltry(){
     this.displayFiltry = !this.displayFiltry;
-  }
+  };
 
   showSprawyDitails:boolean=false;
   gridSprawySelected:any;
@@ -416,6 +435,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         //  fs.readFile(value,)
       });
 
+      console.log(files[0]);
 
       if(files[0].name.toString().includes('xml')){
         let fileReader = new FileReader();
@@ -513,6 +533,9 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       });
     }
   }
+
+
+
   //#endregion
 
 
@@ -760,8 +783,30 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
     root: 'rows', 
     beforeprocessing: function(data){
-      this.totalrecords= data.totalRows;    
+      this.totalrecords= data.totalRows;          
     },
+
+
+    deleterow: (rowindex: any, commit: any) => {
+      $.ajax({
+        cache: false,
+        dataType: 'json',
+        contentType: 'application/json',
+        url: this.sg['SERVICE_URL'] + 'RejestrBWIP/DeletePliki/' + rowindex,
+        //data: t,
+        type: 'POST',
+        beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+        success: function (data: any, status: any, xhr: any) {              
+          commit(true);     
+            
+        },
+        error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+          alert(textStatus + ' - ' + errorThrown);
+          commit(false);
+        }
+      });
+    },
+
   };
 
   dataAdapterPliki = new $.jqx.dataAdapter(this.sourcePliki,
@@ -832,6 +877,201 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       sysdate:row?row.sysdate:"",
     }
   }
+
+  dodaj_plik(){
+    if(this.gridZdarzenia.getselectedcell()){
+
+      this.jqxwindowFileUpload.title("Dodaj plik");
+      this.jqxwindowFileUpload.open();
+    
+      this.createObiektPliki();
+      this.obiektPliki.idZdarzenia = this.gridZdarzenia.getrowdata(this.gridZdarzenia.getselectedcell().rowindex)['id']
+
+    }
+  }
+
+  usun_plik(){
+    if(this.gridPliki.getselectedcell()){
+      let msg = "<b>Czy napewno chcesz usunąć plik </b><br>" + 
+ 
+      "<br><b>nazwa: </b>"+this.gridPliki.getrowdata(this.gridPliki.getselectedcell().rowindex)['nazwa'];
+      this.showquestionWindow(msg, true,"Tak",true,"Nie", "Kasowanie pliku").then((result:any)=>{
+        if(result.OK)
+          this.gridPliki.deleterow(this.gridPliki.getrowdata(this.gridPliki.getselectedcell().rowindex)['id']);
+      });
+    }
+
+  }
+
+  pobierz_plik(){
+    
+
+    if(this.gridPliki.getselectedcell()){
+
+      console.log(this.gridPliki.getrowdata(this.gridPliki.getselectedcell().rowindex)['id'])
+    
+      if (this.gridPliki.getrowdata(this.gridPliki.getselectedcell().rowindex)['typ'] === 'pdf') {
+        const datarow = this.gridPliki.getrowdata(this.gridPliki.getselectedcell().rowindex);
+  
+        let basePlikiurl = this.sg['SERVICE_URL'] + 'RejestrBWIP/DownloadPliki/'+datarow.id;   
+  
+        var xhr = new XMLHttpRequest();      
+        xhr.open('GET', basePlikiurl);
+        xhr.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user')); 
+        xhr.onreadystatechange = ()=>{      
+          if (xhr.readyState ==4) {         
+            if (xhr.status === 200) {
+  
+              var file = new Blob([xhr.response], {type: "application/pdf"});
+         
+              if (window.navigator.msSaveOrOpenBlob) {
+                navigator.msSaveOrOpenBlob(file,datarow.nazwa);
+              } 
+              else {   
+                this.fileUrl =this.sanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(file));  
+                this.jqxwindowPDF.title(datarow.nazwa);
+                this.jqxwindowPDF.open();
+              }
+  
+            } else {
+              console.error("Błąd: "+xhr);
+            }
+          }
+          else if(xhr.readyState == 2) {    
+            if(xhr.status == 200) {
+              xhr.responseType = "blob";
+            } else {
+              xhr.responseType = "text";
+            }
+          }
+        }
+               
+        xhr.send();
+      }
+
+      else{
+        const datarow = this.gridPliki.getrowdata(this.gridPliki.getselectedcell().rowindex);
+  
+        let basePlikiurl = this.sg['SERVICE_URL'] + 'RejestrBWIP/DownloadPliki/'+datarow.id; 
+        
+        // var url= window.URL.createObjectURL(basePlikiurl);
+        // window.open(url);
+
+      //   $.ajax({
+      //     url: basePlikiurl,
+      //     method: 'GET',
+      //     xhrFields: {
+      //         responseType: 'blob'
+      //     },
+      //     success: (data)=> {
+      //         var a = document.createElement('a');
+      //         var url = window.URL.createObjectURL(data);
+      //         a.href = url;
+      //         a.download = datarow.name;
+      //         a.click();
+      //         window.URL.revokeObjectURL(url);
+      //     }
+      // });
+  
+        var xhr = new XMLHttpRequest();      
+        xhr.open('GET', basePlikiurl);
+        xhr.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user')); 
+        xhr.onreadystatechange = ()=>{      
+          if (xhr.readyState ==4) {         
+            if (xhr.status === 200) {
+              console.log(xhr.response);
+              var blob = new Blob([xhr.response], { type: 'text/'+datarow.typ });
+              var url= window.URL.createObjectURL(blob);
+              window.open(url);
+  
+            } else {
+              console.error("Błąd: "+xhr);
+            }
+          }
+          else if(xhr.readyState == 2) {    
+            if(xhr.status == 200) {
+              xhr.responseType = "blob";
+            } else {
+              xhr.responseType = "text";
+            }
+          }
+        }
+        xhr.send();
+      }
+    
+      
+    }
+
+  }
+
+  zaladuj_plik(event){
+    let files = event.target.files;
+    if (files.length > 0) {
+    
+      var formData = new FormData();
+
+      $.each(files, function(key, value)
+      {
+         formData.append(key.toString(), value);
+
+         //console.log(value)
+
+        //  var fs = Xml.Parser();
+        //  fs.readFile(value,)
+      });
+
+     
+
+
+      $("#fileuploadprogresspliki").html("");
+
+      $.ajax({
+        context: this,
+        url: this.sg['SERVICE_URL'] + 'RejestrBWIP/UploadPliki/'+this.obiektPliki.idZdarzenia,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,      
+        cache: false,        
+        dataType: 'json',
+        beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+        xhr: () =>{
+          var xhr = new XMLHttpRequest();
+      
+          xhr.upload.addEventListener("progress", (evt)=> {
+            if (evt.lengthComputable) {
+              var percentComplete = evt.loaded / evt.total;             
+              percentComplete = Math.trunc(percentComplete * 100);
+
+              $("#fileuploadprogresspliki").html('<div style="width:'+percentComplete+'%; background-color:skyblue; color:white"><center>'+percentComplete+'</center></div>');
+
+              if (percentComplete >= 100) {
+                $("#fileuploadprogresspliki").html("");
+              }
+      
+            }
+          }, false);
+      
+          return xhr;
+        },
+
+        success: function (data: any, status: any, xhr: any) {
+
+        },
+        error: function(jqXHR, textStatus, errorThrown)
+        {
+            alert('error ERRORS: ' + textStatus);
+        }
+
+      });
+    }
+  }
+
+  closezaladujPliki(){
+    $('#file-fieldUpload').val('');
+    this.jqxwindowFileUpload.close();    
+  }
+
   //#endregion
 
   questionWindowParams={'message':'', 'byes':true, 'byesval':'Tak', 'bno':true, 'bnoval':'Nie'};
