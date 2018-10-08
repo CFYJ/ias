@@ -275,7 +275,16 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         },
       };
 
-      
+      GroupschangedSprawy(event:any ){
+        console.log('dd')
+        if (event.args.groups.length > 0)
+          this.gridSprawy.pageable(false);
+        else
+          this.gridSprawy.pageable(true);
+        
+      }
+
+
       rodzajeWniosku=[{a:'cło',
       b:'podatek od wartości dodanej VAT',
       c:'podatek akcyzowy',
