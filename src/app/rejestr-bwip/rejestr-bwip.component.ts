@@ -304,19 +304,37 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
       columnsSprawy: any[] =
       [
-        { text: 'Id', datafield: 'id',  width: 120},
+        { text: 'Nr BWIP', datafield: 'nrBwip',  },
+        { text: 'Id', datafield: 'id',  width: 120, hidden: true},
         { text: 'Nazwa', datafield: 'nazwa',  width: 150},
         { text: 'Identyfikator', datafield: 'identyfikator',  width: 120},
         { text: 'Adres', datafield: 'adres', width:200 },
         { text: 'Od kogo', datafield: 'odKogo',  },
         { text: 'Do kogo', datafield: 'doKogo',  },
         { text: 'Typ', datafield: 'typ',  },
-        { text: 'Rodzaj wniosku', datafield: 'rodzWniosku', cellsrenderer: this.rodzawnioskucellsrenderer },
-        { text: 'Nr BWIP', datafield: 'nrBwip',  },
+        { text: 'Rodzaj wniosku', datafield: 'rodzWniosku', cellsrenderer: this.rodzawnioskucellsrenderer },       
         { text: 'Nr SZD', datafield: 'nrSzd',  },
         { text: 'Rodzaj należności', datafield: 'rodzNaleznosci',  },
         { text: 'Całkowita kwota', datafield: 'calkowitaKwota',  },
         { text: 'Termin odpowiedzi', datafield: 'terminOdpowiedzi', cellsformat:'yyyy-MM-dd', filtertype: 'date' },
+
+        // { text: 'Data wplywu' },
+        // { text: 'Od kogo', datafield: 'odKogo',  },
+        // { text: 'Do kogo', datafield: 'doKogo',  },
+        // { text: 'Urząd'  },
+        // { text: 'Rodzaj wniosku', datafield: 'rodzWniosku', cellsrenderer: this.rodzawnioskucellsrenderer },   
+        // { text: 'Nr BWIP', datafield: 'nrBwip',  },     
+        // { text: 'Nr SZD', datafield: 'nrSzd',  },
+        // { text: 'Id', datafield: 'id',  width: 120, hidden: true},
+        // { text: 'Nazwa', datafield: 'nazwa',  width: 150},
+        // { text: 'Rodzaj należności'  },       
+        // { text: 'Całkowita kwota', datafield: 'calkowitaKwota',  },
+        // { text: 'Termin odpowiedzi', datafield: 'terminOdpowiedzi', cellsformat:'yyyy-MM-dd', filtertype: 'date' },
+        
+  
+     ,
+
+   
 
       ]
 
@@ -435,39 +453,50 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         //  fs.readFile(value,)
       });
 
-      console.log(files[0]);
-
       if(files[0].name.toString().includes('xml')){
         let fileReader = new FileReader();
         fileReader.onload = (e) => {
           var fs = Xml.Parser();
           fs.parseString(fileReader.result, (err, res)=>{
+            if(res.RequestForRecoveryV2Message){
+              res = res.RequestForRecoveryV2Message;
+              //this.obiektSprawy.nazwa=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:CompanyName'][0];
+              this.obiektSprawy.nazwa=this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:CompanyName', res);
+              
+              //this.obiektSprawy.identyfikator=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:TaxIdentificationNumberApplicantMs'][0];
+              this.obiektSprawy.identyfikator=this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:TaxIdentificationNumberApplicantMs',res);
+              
+              // this.obiektSprawy.adres='ulica:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:StreetAndNumber'][0]+
+              //   ', miasto:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:PostcodeAndTown'][0];
+              this.obiektSprawy.adres='ulica:'+this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:Address;ns2:StreetAndNumber',res)+
+              ', miasto:'+this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:Address;ns2:PostcodeAndTown',res);
+
+
+              //this.obiektSprawy.odKogo=res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofApplicant'][0]['ns2:Identification'][0]['ns2:Country'][0]['ns2:ISOCode'][0];
+              this.obiektSprawy.odKogo=this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofApplicant;ns2:Identification;ns2:Country;ns2:ISOCode',res);
+
+
+              //this.obiektSprawy.doKogo=res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofRequested'][0]['ns2:Identification'][0]['ns2:Country'][0]['ns2:ISOCode'][0];
+              this.obiektSprawy.doKogo=this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofRequested;ns2:Identification;ns2:Country;ns2:ISOCode',res);
+
+              // this.obiektSprawy.calkowitaKwota = Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:PrincipalAmount'][0]['ns2:InitiallyDue'][0])+
+              //   Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:Interests'][0]['ns2:InitiallyDue'][0]);
+              this.obiektSprawy.calkowitaKwota = Number(this.readXMLVal('Body;FormData;Request;Claim;ClaimDescription;ns2:PrincipalAmount;ns2:InitiallyDue',res))+
+                Number(this.readXMLVal('Body;FormData;Request;Claim;ClaimDescription;ns2:Interests;ns2:InitiallyDue',res));
             
-            this.obiektSprawy.nazwa=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:CompanyName'][0];
-            
-            this.obiektSprawy.identyfikator=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:TaxIdentificationNumberApplicantMs'][0];
-            
-            this.obiektSprawy.adres='ulica:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:StreetAndNumber'][0]+
-              ', miasto:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:PostcodeAndTown'][0];
+              let typ = this.readXMLVal('Body;MetaData;Reference;Reference',res).split('_');
+              this.obiektSprawy.typ =typ.length>1? typ[typ.length-1]:'';
+              // rodzaj wniosku
+              var taxlist = ['a','b','c','d','e','f','g','h','i','j','k','l','m'];
 
-            this.obiektSprawy.odKogo=res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofApplicant'][0]['ns2:Identification'][0]['ns2:Country'][0]['ns2:ISOCode'][0];
-
-            this.obiektSprawy.doKogo=res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofRequested'][0]['ns2:Identification'][0]['ns2:Country'][0]['ns2:ISOCode'][0];
-
-            this.obiektSprawy.calkowitaKwota = Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:PrincipalAmount'][0]['ns2:InitiallyDue'][0])+
-              Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:Interests'][0]['ns2:InitiallyDue'][0]);
-          
-            let typ = res.RequestForRecoveryV2Message.Body[0].MetaData[0].Reference[0].Reference[0].split('_');
-            this.obiektSprawy.typ = typ[typ.length-1];
-            // rodzaj wniosku
-            var taxlist = ['a','b','c','d','e','f','g','h','i','j','k','l','m'];
-
-            for(let a in taxlist)
-              this.obiektSprawy.rodzWniosku += res.RequestForRecoveryV2Message.Body[0].FormData[0].FormHeader[0].TaxList[0]['ns2:'+taxlist[a]][0]=='true'?taxlist[a]+",":"";
-    
-            this.obiektSprawy.nrBwip = res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofRequested'][0]['ns2:Identification'][0]['ns2:FileReference'][0];
+              if(this.readXMLVal('Body;FormData;FormHeader;TaxList',res)!=null)
+              for(let a in taxlist)
+                this.obiektSprawy.rodzWniosku += res.Body[0].FormData[0].FormHeader[0].TaxList[0]['ns2:'+taxlist[a]][0]=='true'?taxlist[a]+",":"";
+      
+              this.obiektSprawy.nrBwip = this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofRequested;ns2:Identification;ns2:FileReference',res);
               
             
+            }
           })
           //console.log(fileReader.result);
         }
@@ -534,6 +563,26 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     }
   }
 
+  readXMLVal(path: string, file: any){
+
+    var node=file;
+    var rez=null;
+    try{
+    path.split(';').forEach((leaf)=>{      
+      node = node[leaf][0]; 
+    });
+    rez = node;
+    }
+
+    catch(ex){
+      console.log('Błąd przetawrzania pliku xml');
+      console.log(node);
+      console.log('Otrzymany błąd systemu:')
+      console.log(ex);
+    }
+
+    return rez;
+  }
 
 
   //#endregion
@@ -694,6 +743,12 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       { text: 'Data wysłania', datafield: 'dataWyjscia',  width: 120, type: 'date',cellsformat:'yyyy-MM-dd',filtertype: 'date'},
       { text: 'Odpowiedź', datafield: 'odpowiedz'},
   
+      // { text: 'Data wejscia', datafield: 'dataWejscia',  width: 120, type: 'date', cellsformat:'yyyy-MM-dd', filtertype: 'date'},
+      // { text: 'Data wyjscia', datafield: 'dataWyjscia',  width: 120, type: 'date',cellsformat:'yyyy-MM-dd',filtertype: 'date'},
+      // { text: 'Kwota całkowita'},
+      // { text: 'Informacje'},
+
+
     ]
 
   
@@ -775,17 +830,14 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
     datafields:[
       {name: 'id'},     
+      {name: 'idZdarzenia'},  
+      {name: 'dane'},  
       {name: 'nazwa', type:'string'},
+      {name: 'typ', type:'string'}
 
     ],
     id:'id',
     url: this.sg['SERVICE_URL']+'RejestrBWIP/GetPliki',
-
-    root: 'rows', 
-    beforeprocessing: function(data){
-      this.totalrecords= data.totalRows;          
-    },
-
 
     deleterow: (rowindex: any, commit: any) => {
       $.ajax({
@@ -833,34 +885,25 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
     columnsresize: true,
     
-    filterable: true,
-    autoshowfiltericon: true,
-    filtermode: 'excel',
-    showfilterrow: true,
-    pagesize:10,
-
+    filterable: false,
+    
     autorowheight: true,
     autoheight: false,
-    altrows: true,
+    //altrows: true,
     enabletooltips: false,
+    pageable:true,
     
     columnsheight:30,
     theme: 'metro',
 
     source: this.dataAdapterPliki,
-    pageable: true,
-
-    virtualmode: true,
-    rendergridrows: function(data)
-    {
-        return data.data;
-    },
   };
 
   
   columnsPliki: any[] =
   [
     { text: 'Nazwa', datafield: 'nazwa'},
+    { text: 'Typ', datafield: 'typ'},
   ]
 
   //#endregion
@@ -903,16 +946,14 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   }
 
-  pobierz_plik(){
-    
-
+  pobierz_plik(){       
     if(this.gridPliki.getselectedcell()){
-
-      console.log(this.gridPliki.getrowdata(this.gridPliki.getselectedcell().rowindex)['id'])
-    
-      if (this.gridPliki.getrowdata(this.gridPliki.getselectedcell().rowindex)['typ'] === 'pdf') {
         const datarow = this.gridPliki.getrowdata(this.gridPliki.getselectedcell().rowindex);
   
+        if(datarow==null)
+          return;
+
+
         let basePlikiurl = this.sg['SERVICE_URL'] + 'RejestrBWIP/DownloadPliki/'+datarow.id;   
   
         var xhr = new XMLHttpRequest();      
@@ -922,15 +963,25 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
           if (xhr.readyState ==4) {         
             if (xhr.status === 200) {
   
-              var file = new Blob([xhr.response], {type: "application/pdf"});
-         
+              var file = new Blob([xhr.response], {type: "application/"+datarow.typ});
+                      
               if (window.navigator.msSaveOrOpenBlob) {
                 navigator.msSaveOrOpenBlob(file,datarow.nazwa);
               } 
               else {   
-                this.fileUrl =this.sanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(file));  
-                this.jqxwindowPDF.title(datarow.nazwa);
-                this.jqxwindowPDF.open();
+                if(datarow.typ==='pdf'){
+                  this.fileUrl =this.sanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(file));  
+                  this.jqxwindowPDF.title(datarow.nazwa);
+                  this.jqxwindowPDF.open();         
+                }
+                else{
+                  var link = document.createElement('a');
+                  link.href = window.URL.createObjectURL(file);
+                  link.download = datarow.nazwa;    
+                  document.body.appendChild(link);    
+                  link.click();    
+                  document.body.removeChild(link);    
+                }
               }
   
             } else {
@@ -947,61 +998,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         }
                
         xhr.send();
-      }
-
-      else{
-        const datarow = this.gridPliki.getrowdata(this.gridPliki.getselectedcell().rowindex);
-  
-        let basePlikiurl = this.sg['SERVICE_URL'] + 'RejestrBWIP/DownloadPliki/'+datarow.id; 
-        
-        // var url= window.URL.createObjectURL(basePlikiurl);
-        // window.open(url);
-
-      //   $.ajax({
-      //     url: basePlikiurl,
-      //     method: 'GET',
-      //     xhrFields: {
-      //         responseType: 'blob'
-      //     },
-      //     success: (data)=> {
-      //         var a = document.createElement('a');
-      //         var url = window.URL.createObjectURL(data);
-      //         a.href = url;
-      //         a.download = datarow.name;
-      //         a.click();
-      //         window.URL.revokeObjectURL(url);
-      //     }
-      // });
-  
-        var xhr = new XMLHttpRequest();      
-        xhr.open('GET', basePlikiurl);
-        xhr.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user')); 
-        xhr.onreadystatechange = ()=>{      
-          if (xhr.readyState ==4) {         
-            if (xhr.status === 200) {
-              console.log(xhr.response);
-              var blob = new Blob([xhr.response], { type: 'text/'+datarow.typ });
-              var url= window.URL.createObjectURL(blob);
-              window.open(url);
-  
-            } else {
-              console.error("Błąd: "+xhr);
-            }
-          }
-          else if(xhr.readyState == 2) {    
-            if(xhr.status == 200) {
-              xhr.responseType = "blob";
-            } else {
-              xhr.responseType = "text";
-            }
-          }
-        }
-        xhr.send();
-      }
-    
-      
     }
-
   }
 
   zaladuj_plik(event){
@@ -1013,9 +1010,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       $.each(files, function(key, value)
       {
          formData.append(key.toString(), value);
-
-         //console.log(value)
-
         //  var fs = Xml.Parser();
         //  fs.readFile(value,)
       });
@@ -1043,12 +1037,10 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
               var percentComplete = evt.loaded / evt.total;             
               percentComplete = Math.trunc(percentComplete * 100);
 
-              $("#fileuploadprogresspliki").html('<div style="width:'+percentComplete+'%; background-color:skyblue; color:white"><center>'+percentComplete+'</center></div>');
+              $("#fileuploadprogresspliki").html('<div style="width:'+percentComplete+'%;height:20px; background-color:skyblue; color:white;text-align: center;font-size: 14px;">'+percentComplete+'</div>');
 
-              if (percentComplete >= 100) {
-                $("#fileuploadprogresspliki").html("");
-              }
-      
+           
+              this.gridPliki.updatebounddata();
             }
           }, false);
       
@@ -1056,7 +1048,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         },
 
         success: function (data: any, status: any, xhr: any) {
-
+          $("#fileuploadprogresspliki").html('<div style="width:100%;height:20px; background-color:#1bd462; color:white; text-align: center;font-size: 14px;">100</div>');          
+          this.gridPliki.updatebounddata();
         },
         error: function(jqXHR, textStatus, errorThrown)
         {
@@ -1069,6 +1062,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   closezaladujPliki(){
     $('#file-fieldUpload').val('');
+    $("#fileuploadprogresspliki").html("");
     this.jqxwindowFileUpload.close();    
   }
 

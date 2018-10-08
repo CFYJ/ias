@@ -146,10 +146,15 @@
 
     <div style="overflow: auto;">
 
-      <div *ngIf="zdarzenieZPliku" style="width: 100%; display:inline-block">
+      <div *ngIf="zdarzenieZPliku" style="width: 100%; display:block">
         <!-- <div class="button_head" style="margin-left:30px; float:left;">Wybierz plik xml</div>    -->
-        <input  class="button_head" style="margin-left:30px; float:left;min-width: 390px !important;" id="file-field" name="file-field" (change)="uploadFile($event)" type="file" >  
-        <div id="fileuploadprogress"  style="margin-left:30px; float:left;"></div>
+      
+          <input  class="button_head" style="margin-left:30px; float:left;min-width: 390px !important;" id="file-field" name="file-field" (change)="uploadFile($event)" type="file" >  
+
+          <div style="margin-left:30px;width:390px">
+            <div id="fileuploadprogress"  style="position: relative "></div>
+          </div>
+     
       </div>
 
       <!-- <div style="height: auto"> -->
@@ -211,7 +216,7 @@
   <div>
     <div style="width: 100%">
       <input  class="button_head" style="margin-left:30px; float:left;min-width: 360px !important;" id="file-fieldUpload" name="file-field" (change)="zaladuj_plik($event)" type="file" >  
-      <div id="fileuploadprogresspliki"  style="margin-left:30px; float:left;"></div>
+      <div id="fileuploadprogresspliki"  style="margin-left:30px;height: 40px;width:380px; top:50px; position:relative"></div>
     </div>
     <div style="width: 100%; margin-top:100px;">         
         <jqxButton #cancelButtonUpload  class="qcancel2 no"
