@@ -85,13 +85,13 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         datatype: 'json',
 
         datafields:[
-          {name: 'id'},
+          {name: 'id', type: 'number'},
           {name: 'nrBwip', type: 'string'},
           {name: 'nrSzd', type: 'string'},
           {name: 'nazwa', type:'string'},
           // {name: 'identyfikator', type:'string'},
           // {name: 'adres', type:'string'},
-          {name: 'dataPierwszegoWniosku', type: 'date', filtertype: 'date'},
+          {name: 'dataPierwszegoWniosku', type: 'date'},
           {name: 'dataOstatniegoWniosku', type: 'date', filtertype: 'date'},
           {name: 'odKogo', type: 'string'},
           {name: 'doKogo', type: 'string'},
@@ -258,8 +258,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         columnsresize: true,    
         filterable: true,
         autoshowfiltericon: true,
-        filtermode: 'excel',
-        showfilterrow: true,
+        //filtermode: 'excel',
+        //showfilterrow: true,
         pagesize:10,
         sortable: true,
         autorowheight: true,
@@ -337,7 +337,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
       columnsSprawy: any[] =
       [
-        { text: 'Id', datafield: 'id',  width: 120, hidden: true},
+        { text: 'Id', datafield: 'id',  width: 120, filtertype:'number'},
         { text: 'Nr BWIP', datafield: 'nrBwip',  },
         { text: 'Nr SZD', datafield: 'nrSzd',  },
         { text: 'Nazwa', datafield: 'nazwa',  width: 150},
@@ -345,7 +345,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         // { text: 'Adres', datafield: 'adres', width:200 },
         { text: 'Od kogo', datafield: 'odKogo',  },
         { text: 'Do kogo', datafield: 'doKogo',  },
-        { text: 'Data pierwszego wniosku', datafield: 'dataPierwszegoWniosku', cellsformat:'yyyy-MM-dd', filtertype: 'date' },
+        { text: 'Data pierwszego wniosku', datafield: 'dataPierwszegoWniosku', filtertype: 'date',cellsformat: 'dd-MMMM-yyyy' },
         { text: 'Data ostatniego wniosku', datafield: 'dataOstatniegoWniosku', cellsformat:'yyyy-MM-dd', filtertype: 'date' },
         // { text: 'Typ', datafield: 'typ',  },
         { text: 'Rodzaj wniosku', datafield: 'rodzWniosku' },              

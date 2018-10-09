@@ -19,7 +19,7 @@
 
 <jqxGrid id="jqxSprawyGrid" #gridSprawyReference [width]="'100%'"
 [columns]="columnsSprawy"  [auto-create]='false' [source]='dataAdapterSprawy'
-[autoheight]="true" [sortable]="true" [altrows]="true"
+[autoheight]="true" [sortable]="true" [altrows]="true" [filterable]="true"
 [editable]="false"  (onCellselect)='gridZdarzenia.updatebounddata()'
 [selectionmode]="'multiplecellsadvanced'" (onCellclick)='gridSprawyCellClicked($event)' 
 ></jqxGrid>
@@ -97,9 +97,17 @@
           <td><input [(ngModel)]="obiektSprawy.doKogo" class="sprawaInput"></td>
         </tr>
         <tr>
-          <td>Od kogo</td>
+          <td>Urząd</td>
           <td><input [(ngModel)]="obiektSprawy.urzad" class="sprawaInput"></td>
-        </tr>       
+        </tr> 
+        <tr>
+          <td>Data pierwszego Wniosku</td>
+          <td><input [(ngModel)]="obiektSprawy.dataPierwszegoWniosku" class="sprawaInput"></td>
+        </tr>
+        <tr>
+          <td>Data ostatniego wniosku</td>
+          <td><input [(ngModel)]="obiektSprawy.dataOstatniegoWniosku" class="sprawaInput"></td>
+        </tr>      
         <tr>
           <td>Rodzaj wniosku</td>
           <td><input [(ngModel)]="obiektSprawy.rodzWniosku" class="sprawaInput"></td>
