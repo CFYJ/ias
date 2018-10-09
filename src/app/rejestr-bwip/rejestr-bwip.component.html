@@ -89,14 +89,6 @@
           <td><input [(ngModel)]="obiektSprawy.nazwa" class="sprawaInput"></td>
         </tr>
         <tr>
-          <td>Identyfikator</td>
-          <td><input [(ngModel)]="obiektSprawy.identyfikator" class="sprawaInput"></td>
-        </tr>
-        <tr>
-          <td>Adres</td>
-          <td><input [(ngModel)]="obiektSprawy.adres" class="sprawaInput"></td>
-        </tr>
-        <tr>
           <td>Od kogo</td>
           <td><input [(ngModel)]="obiektSprawy.odKogo" class="sprawaInput"></td>
         </tr>
@@ -105,35 +97,34 @@
           <td><input [(ngModel)]="obiektSprawy.doKogo" class="sprawaInput"></td>
         </tr>
         <tr>
-          <td>Typ</td>
-          <td><input [(ngModel)]="obiektSprawy.typ" class="sprawaInput"></td>
-        </tr>
+          <td>Od kogo</td>
+          <td><input [(ngModel)]="obiektSprawy.urzad" class="sprawaInput"></td>
+        </tr>       
         <tr>
           <td>Rodzaj wniosku</td>
           <td><input [(ngModel)]="obiektSprawy.rodzWniosku" class="sprawaInput"></td>
-        </tr>
-        <tr>
-          <td>Numer BWIP</td>
-          <td><input [(ngModel)]="obiektSprawy.nrBwip" class="sprawaInput"></td>
-        </tr>
-
-        <tr>
-          <td>Numer SZD</td>
-          <td><input [(ngModel)]="obiektSprawy.nrSzd" class="sprawaInput"></td>
         </tr>
         <tr>
           <td>Rodzaj należności</td>
           <td><input [(ngModel)]="obiektSprawy.rodzNaleznosci" class="sprawaInput"></td>
         </tr>
         <tr>
-          <td>Całkowita kwota</td>
-          <td><input [(ngModel)]="obiektSprawy.calkowitaKwota" class="sprawaInput"></td>
+          <td>Numer BWIP</td>
+          <td><input [(ngModel)]="obiektSprawy.nrBwip" class="sprawaInput"></td>
         </tr>
         <tr>
-          <td>Termin odpowiedzi</td>
-          <td><input [(ngModel)]="obiektSprawy.terminOdpowiedz" class="sprawaInput"></td>
+          <td>Numer SZD</td>
+          <td><input [(ngModel)]="obiektSprawy.nrSzd" class="sprawaInput"></td>
+        </tr>        
+        <tr>
+          <td>Całkowita kwota</td>
+          <td><input [(ngModel)]="obiektSprawy.calkowitaKwota" class="sprawaInput"></td>
+        </tr>     
+        <tr>
+          <td>Zakończona</td>
+          <td ><input type="checkbox"  [ngModel]="obiektSprawy.status == 1 ? true : obiektSprawy.status == 0 ? false : null" (ngModelChange)="obiektSprawy.status = $event ? 1 : 0"></td>
+          <!-- [(ngModel)]="obiektSprawy.status"  -->
         </tr>    
-
       </table>
       <!-- </div> -->
       <div style="bottom: 20px;right:20px; display: table; width: 100%; position: absolute;">
@@ -169,8 +160,8 @@
           <td><input [(ngModel)]="obiektZdarzenia.dataWyjscia" class="sprawaInput"></td>
         </tr>
         <tr>
-          <td>Odpowiedź</td>
-          <td><input [(ngModel)]="obiektZdarzenia.odpowiedz" class="sprawaInput"></td>
+          <td>Informacje</td>
+          <td><textarea [(ngModel)]="obiektZdarzenia.informacja" class="sprawaInput" ></textarea></td>
         </tr> 
       </table>
       <!-- </div> -->
@@ -227,5 +218,4 @@
         </jqxButton> 
     </div>  
   </div>
-</jqxWindow>  
-
+</jqxWindow> 

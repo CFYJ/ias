@@ -86,18 +86,22 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
         datafields:[
           {name: 'id'},
-          {name: 'nazwa', type:'string'},
-          {name: 'identyfikator', type:'string'},
-          {name: 'adres', type:'string'},
-          {name: 'odKogo', type: 'string'},
-          {name: 'doKogo', type: 'string'},
-          {name: 'typ', type: 'string'},
-          {name: 'rodzWniosku', type: 'string'},
           {name: 'nrBwip', type: 'string'},
           {name: 'nrSzd', type: 'string'},
-          {name: 'rodzNaleznosci', type: 'string'},
+          {name: 'nazwa', type:'string'},
+          // {name: 'identyfikator', type:'string'},
+          // {name: 'adres', type:'string'},
+          {name: 'dataPierwszegoWniosku', type: 'date', filtertype: 'date'},
+          {name: 'dataOstatniegoWniosku', type: 'date', filtertype: 'date'},
+          {name: 'odKogo', type: 'string'},
+          {name: 'doKogo', type: 'string'},
+          {name: 'urzad', type: 'string'},
+          // {name: 'typ', type: 'string'},
+          {name: 'rodzWniosku', type: 'string'},
+          {name: 'rodzNaleznosci', type: 'string'},              
           {name: 'calkowitaKwota', type: 'number'},
-          {name: 'terminOdpowiedzi', type: 'date'},
+          {name: 'dataZakonczenia', type:'date'},
+          {name: 'status', type: 'boolean'},
           {name: 'sysdate', type: 'date'},
           // {name: '', type: ''},
 
@@ -191,7 +195,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         },
 
         updaterow: (rowid: any, rowdata: any, commit: any) => {
-        
+
           const t = JSON.stringify(rowdata);
           $.ajax({
             cache: false,
@@ -305,7 +309,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       }
 
 
-      rodzajeWniosku=[{a:'cło',
+      rodzajeNaleznosci=[{a:'cło',
       b:'podatek od wartości dodanej VAT',
       c:'podatek akcyzowy',
       d:'podatek od dochodu lub kapitału',
@@ -319,12 +323,12 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       l:'inne wierzytelności podatkowe',
       m:'opłaty rolne (kwoty objęte art 2 ust. 1 lit. b) i c) dyrektywy 2010/24/UE)'}]
 
-      rodzawnioskucellsrenderer = (row: number, columnfield: string, value: string , defaulthtml: string, columnproperties: any, rowdata: any): string => {
-    
+      rodzanaleznoscicellsrenderer = (row: number, columnfield: string, value: string , defaulthtml: string, columnproperties: any, rowdata: any): string => {
+
         let content:string="";
         value.split(',').forEach(el=>{
           if(el.trim().toLowerCase().length>0)
-            content +=el.trim().toLowerCase()+" - "+this.rodzajeWniosku[0][el.trim().toLowerCase()]+'<br>';
+            content +=el.trim().toLowerCase()+" - "+this.rodzajeNaleznosci[0][el.trim().toLowerCase()]+'<br>';
         })
 
         return '<div class="jqx-grid-cell-left-align" style="margin-top: 6px;">'+content+'</div>';
@@ -333,19 +337,23 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
       columnsSprawy: any[] =
       [
-        { text: 'Nr BWIP', datafield: 'nrBwip',  },
         { text: 'Id', datafield: 'id',  width: 120, hidden: true},
+        { text: 'Nr BWIP', datafield: 'nrBwip',  },
+        { text: 'Nr SZD', datafield: 'nrSzd',  },
         { text: 'Nazwa', datafield: 'nazwa',  width: 150},
-        { text: 'Identyfikator', datafield: 'identyfikator',  width: 120},
-        { text: 'Adres', datafield: 'adres', width:200 },
+        // { text: 'Identyfikator', datafield: 'identyfikator',  width: 120},
+        // { text: 'Adres', datafield: 'adres', width:200 },
         { text: 'Od kogo', datafield: 'odKogo',  },
         { text: 'Do kogo', datafield: 'doKogo',  },
-        { text: 'Typ', datafield: 'typ',  },
-        { text: 'Rodzaj wniosku', datafield: 'rodzWniosku', cellsrenderer: this.rodzawnioskucellsrenderer },       
-        { text: 'Nr SZD', datafield: 'nrSzd',  },
-        { text: 'Rodzaj należności', datafield: 'rodzNaleznosci',  },
+        { text: 'Data pierwszego wniosku', datafield: 'dataPierwszegoWniosku', cellsformat:'yyyy-MM-dd', filtertype: 'date' },
+        { text: 'Data ostatniego wniosku', datafield: 'dataOstatniegoWniosku', cellsformat:'yyyy-MM-dd', filtertype: 'date' },
+        // { text: 'Typ', datafield: 'typ',  },
+        { text: 'Rodzaj wniosku', datafield: 'rodzWniosku' },              
+        { text: 'Rodzaj należności', datafield: 'rodzNaleznosci',  cellsrenderer: this.rodzanaleznoscicellsrenderer },
         { text: 'Całkowita kwota', datafield: 'calkowitaKwota',  },
-        { text: 'Termin odpowiedzi', datafield: 'terminOdpowiedzi', cellsformat:'yyyy-MM-dd', filtertype: 'date' },
+        { text: 'Urząd', datafield: 'urzad' },
+        { text: 'Zakończona',datafield: 'status',  columntype: 'checkbox',type: 'bool'},
+        
 
         // { text: 'Data wplywu' },
         // { text: 'Od kogo', datafield: 'odKogo',  },
@@ -414,8 +422,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     if(this.gridSprawy.getselectedcell()){
       let msg = "<b>Czy napewno chcesz usunąć sprawę </b><br>" + 
       "<b>podmiot: </b>"+this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['nazwa']+
-      "<br><b>identyfikator: </b>"+this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['identyfikator'];
-      //"<br><b>numer: </b>"+this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['nazwa'];
+      "<br><b>numer BWIP: </b>"+this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['nrBWIP'];
       this.showquestionWindow(msg, true,"Tak",true,"Nie", "Kasowanie sprawy").then((result:any)=>{
         if(result.OK)
           this.gridSprawy.deleterow(this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['id']);
@@ -427,19 +434,39 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     this.obiektSprawy={
       id:row?row.id:0,
       nazwa:row?row.nazwa:"",
-      identyfikator:row?row.identyfikator:"",
-      adres:row?row.adres:"",
+      // identyfikator:row?row.identyfikator:"",
+      // adres:row?row.adres:"",
       odKogo:row?row.odKogo:"",
       doKogo:row?row.doKogo:"",
-      typ:row?row.typ:"",
+      // typ:row?row.typ:"",
+      dataPierwszegoWniosku:row?row.dataPierwszegoWniosku:"",
+      dataOstatniegoWniosku:row?row.dataOstatniegoWniosku:"",
       rodzWniosku:row?row.rodzWniosku:"",
-      nrBwip:row?row.nrBwpi:"",
-      nrSzd:row?row.nrSzd:"",
       rodzNaleznosci:row?row.rodzNaleznosci:"",
       calkowitaKwota:row?row.calkowitaKwota:"",
-      terminOdpowiedzi:row?row.terminOdpowiedzi:"",
+      nrBwip:row?row.nrBwpi:"",
+      nrSzd:row?row.nrSzd:"",
+      urzad:row?row.urzad:"",
+      dataZakonczenia:row?row.dataZakonczenia:"",
+      status:row?row.status:0,
       sysdate:row?row.sysdate:"",
     }
+    // this.obiektSprawy={
+    //   id:row?row.id:0,
+    //   nazwa:row?row.nazwa:"",
+    //   identyfikator:row?row.identyfikator:"",
+    //   adres:row?row.adres:"",
+    //   odKogo:row?row.odKogo:"",
+    //   doKogo:row?row.doKogo:"",
+    //   typ:row?row.typ:"",
+    //   rodzWniosku:row?row.rodzWniosku:"",
+    //   nrBwip:row?row.nrBwpi:"",
+    //   nrSzd:row?row.nrSzd:"",
+    //   rodzNaleznosci:row?row.rodzNaleznosci:"",
+    //   calkowitaKwota:row?row.calkowitaKwota:"",
+    //   terminOdpowiedzi:row?row.terminOdpowiedzi:"",
+    //   sysdate:row?row.sysdate:"",
+    // }
   }
 
   windowSprawyCancel(){
