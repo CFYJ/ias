@@ -7,8 +7,6 @@ import { jqxWindowComponent } from 'jqwidgets-ts/angular_jqxwindow';
 
 import { DomSanitizer} from '@angular/platform-browser';
 
-
-
 import * as Xml from 'xml2js';
 
 @Component({
@@ -275,12 +273,34 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         },
       };
 
-      GroupschangedSprawy(event:any ){
-        console.log('dd')
-        if (event.args.groups.length > 0)
-          this.gridSprawy.pageable(false);
+      FilterSprawy(event: any){
+        
+        if(event.args.filters.length>0)
+          this.gridSprawy.groupable(true);
+        else{
+          this.turnOnPagable(true);
+          this.gridSprawy.groupable(false);
+          
+        }
+      }
+
+      GroupschangedSprawy(event:any ){       
+        event.args.groups.length > 0?this.turnOnPagable(false): this.turnOnPagable(true);
+      }
+
+      turnOnPagable(turnON: boolean){
+
+        if(this.gridSprawy.isBindingCompleted())   
+          {
+            (!turnON)?this.gridSprawy.pageable(false):this.gridSprawy.pageable(true); 
+          }
         else
-          this.gridSprawy.pageable(true);
+        var sub= this.gridSprawy.onBindingcomplete.subscribe(()=>{
+          (!turnON)?this.gridSprawy.pageable(false):this.gridSprawy.pageable(true);       
+          sub.unsubscribe();
+        }) 
+        
+        this.gridSprawy.updatebounddata()
         
       }
 

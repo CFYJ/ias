@@ -19,10 +19,11 @@
 
 <jqxGrid id="jqxSprawyGrid" #gridSprawyReference [width]="'100%'"
 [columns]="columnsSprawy"  [auto-create]='false' [source]='dataAdapterSprawy'
-[autoheight]="true" [sortable]="true" [altrows]="true" [groupable]="true"
-[editable]="false"  (onCellselect)='gridZdarzenia.updatebounddata()' (onGroupschanged)="GroupschangedSprawy($event)"
+[autoheight]="true" [sortable]="true" [altrows]="true"
+[editable]="false"  (onCellselect)='gridZdarzenia.updatebounddata()'
 [selectionmode]="'multiplecellsadvanced'" (onCellclick)='gridSprawyCellClicked($event)' 
 ></jqxGrid>
+<!-- (onGroupschanged)="GroupschangedSprawy($event)" (onFilter)="FilterSprawy($event)" -->
 
 <table style="width:100%; overflow: auto">
   <tr>
