@@ -4,6 +4,7 @@ import { HTTP_INTERCEPTORS, HttpClient,  } from '@angular/common/http';
 
 import { jqxGridComponent } from 'jqwidgets-ts/angular_jqxgrid';
 import { jqxWindowComponent } from 'jqwidgets-ts/angular_jqxwindow';
+import { jqxDateTimeInputComponent } from 'jqwidgets-ts/angular_jqxdatetimeinput';
 
 import { DomSanitizer} from '@angular/platform-browser';
 
@@ -33,11 +34,49 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   sprawaZPliku: boolean=false;
   fileUrl:any=null
 
+  s_localization ={
+    pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
+    pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
+    sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
+    sortremovestring: 'Wyczyść sortowanie', emptydatastring:'Brak danych',
+    filtershowrowdatestring: "Pokaż rekordy gdzie data jest:",
+    filtershowrowstring: "Pokaż rekordy spełniające warunek:",
+    filterdatecomparisonoperators: ['równa', 'różna', 'mniejsza', 'mniejsza lub równa', 'większa', 'większa lub równa', 'puste', 'nie puste'],
+    filterstringcomparisonoperators: ['pusty', 'niepusty', 'zawiera', 'zawiera (Aa)',
+        'nie zawiera', 'nie zawiera (Aa)', 'zaczyna się na', 'zaczyna się na(Aa)',
+        'kończy się na', 'kończy się na(Aa)', 'równy', 'równy(Aa)', 'null', 'nie null'],
+    filternumericcomparisonoperators: ['=', '<>', '<', '<=', '>', '>=', 'null', 'nie null'],
+    filterbooleancomparisonoperators: ['=', '<>'],
+    filterselectstring: "Wybierz filtr",
+    days: {
+      // full day names
+      names: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
+      // abbreviated day names
+      namesAbbr: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+      // shortest day names
+      namesShort: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+    },
+    months: {
+        // full month names (13 months for lunar calendards -- 13th month should be "" if not lunar)
+        names: ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień", ""],
+        // abbreviated month names
+        namesAbbr: ["Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru", ""]
+    },
+    todaystring: "Dziś",  
+    pagerpreviousbuttonstring: "poprzednia",
+    pagernextbuttonstring: "następna",
+    groupsheaderstring: "Przeciągnij tutaj kolumny, po których chcesz pogrupować",
+    filterclearstring: "Wyczyść",
+    filterstring: "Filtruj",
+    filterorconditionstring: "Lub",
+    filterandconditionstring: "I",
+  };
+  
+
   constructor( private sg: SimpleGlobal, public http: HttpClient,private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
   }
-
   
   ngAfterViewInit(): void {
     this.gridSprawy.createComponent(this.gridoptionsSprawy);
@@ -49,7 +88,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5,
       
     });
-
     
     this.windowZdarzenia.createWidget({
       width: 500, height: 230, theme: 'metro',
@@ -89,22 +127,17 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
           {name: 'nrBwip', type: 'string'},
           {name: 'nrSzd', type: 'string'},
           {name: 'nazwa', type:'string'},
-          // {name: 'identyfikator', type:'string'},
-          // {name: 'adres', type:'string'},
           {name: 'dataPierwszegoWniosku', type: 'date'},
           {name: 'dataOstatniegoWniosku', type: 'date', filtertype: 'date'},
           {name: 'odKogo', type: 'string'},
           {name: 'doKogo', type: 'string'},
-          {name: 'urzad', type: 'string'},
-          // {name: 'typ', type: 'string'},
+          {name: 'urzad', type: 'string'},      
           {name: 'rodzWniosku', type: 'string'},
           {name: 'rodzNaleznosci', type: 'string'},              
           {name: 'calkowitaKwota', type: 'number'},
           {name: 'dataZakonczenia', type:'date'},
           {name: 'status', type: 'boolean'},
           {name: 'sysdate', type: 'date'},
-          // {name: '', type: ''},
-
         ],
         id:'id',
         url: this.sg['SERVICE_URL']+'RejestrBWIP/GetSprawy',
@@ -114,8 +147,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
           this.totalrecords= data.totalRows;
         },
 
-        filter: ()=>{
-          // update the grid and send a request to the server.
+        filter: ()=>{ 
           this.gridSprawy.updatebounddata();  
         },
 
@@ -241,20 +273,11 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
       dataAdapterSprawy = new $.jqx.dataAdapter(this.sourceSprawy,
         {beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-        // formatData: function (data: any) {
-        //   return data;
-        // }
         }, 
       );
 
       gridoptionsSprawy: jqwidgets.GridOptions ={    
-        localization: {
-          pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
-          pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
-          sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
-          sortremovestring: 'Wyczyść sortowanie'
-        },
-
+        localization: this.s_localization,
         columnsresize: true,    
         filterable: true,
         autoshowfiltericon: true,
@@ -341,43 +364,19 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         { text: 'Nr BWIP', datafield: 'nrBwip',  },
         { text: 'Nr SZD', datafield: 'nrSzd',  },
         { text: 'Nazwa', datafield: 'nazwa',  width: 150},
-        // { text: 'Identyfikator', datafield: 'identyfikator',  width: 120},
-        // { text: 'Adres', datafield: 'adres', width:200 },
         { text: 'Od kogo', datafield: 'odKogo',  },
         { text: 'Do kogo', datafield: 'doKogo',  },
         { text: 'Data pierwszego wniosku', datafield: 'dataPierwszegoWniosku', filtertype: 'date',cellsformat: 'dd-MMMM-yyyy' },
-        { text: 'Data ostatniego wniosku', datafield: 'dataOstatniegoWniosku', cellsformat:'yyyy-MM-dd', filtertype: 'date' },
-        // { text: 'Typ', datafield: 'typ',  },
+        { text: 'Data ostatniego wniosku', datafield: 'dataOstatniegoWniosku', cellsformat:'yyyy-MM-dd', filtertype: 'date' },    
         { text: 'Rodzaj wniosku', datafield: 'rodzWniosku' },              
         { text: 'Rodzaj należności', datafield: 'rodzNaleznosci',  cellsrenderer: this.rodzanaleznoscicellsrenderer },
         { text: 'Całkowita kwota', datafield: 'calkowitaKwota',  },
         { text: 'Urząd', datafield: 'urzad' },
-        { text: 'Zakończona',datafield: 'status',  columntype: 'checkbox',type: 'bool'},
-        
-
-        // { text: 'Data wplywu' },
-        // { text: 'Od kogo', datafield: 'odKogo',  },
-        // { text: 'Do kogo', datafield: 'doKogo',  },
-        // { text: 'Urząd'  },
-        // { text: 'Rodzaj wniosku', datafield: 'rodzWniosku', cellsrenderer: this.rodzawnioskucellsrenderer },   
-        // { text: 'Nr BWIP', datafield: 'nrBwip',  },     
-        // { text: 'Nr SZD', datafield: 'nrSzd',  },
-        // { text: 'Id', datafield: 'id',  width: 120, hidden: true},
-        // { text: 'Nazwa', datafield: 'nazwa',  width: 150},
-        // { text: 'Rodzaj należności'  },       
-        // { text: 'Całkowita kwota', datafield: 'calkowitaKwota',  },
-        // { text: 'Termin odpowiedzi', datafield: 'terminOdpowiedzi', cellsformat:'yyyy-MM-dd', filtertype: 'date' },
-        
-  
-     ,
-
+        { text: 'Zakończona',datafield: 'status',  columntype: 'checkbox',type: 'bool', filtertype:'boolean'},      
    
-
       ]
 
-      gridSprawyCellClicked(event:any):void{
-        //  this.selectedRowDataSprawy = event.args.row.bounddata;  
-        //  this.createObiektSprawy(this.selectedRowDataSprawy);
+      gridSprawyCellClicked(event:any):void{          
         this.createObiektSprawy(event.args.row.bounddata)
       };
     //#endregion
@@ -434,11 +433,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     this.obiektSprawy={
       id:row?row.id:0,
       nazwa:row?row.nazwa:"",
-      // identyfikator:row?row.identyfikator:"",
-      // adres:row?row.adres:"",
       odKogo:row?row.odKogo:"",
       doKogo:row?row.doKogo:"",
-      // typ:row?row.typ:"",
       dataPierwszegoWniosku:row?row.dataPierwszegoWniosku:"",
       dataOstatniegoWniosku:row?row.dataOstatniegoWniosku:"",
       rodzWniosku:row?row.rodzWniosku:"",
@@ -451,22 +447,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       status:row?row.status:0,
       sysdate:row?row.sysdate:"",
     }
-    // this.obiektSprawy={
-    //   id:row?row.id:0,
-    //   nazwa:row?row.nazwa:"",
-    //   identyfikator:row?row.identyfikator:"",
-    //   adres:row?row.adres:"",
-    //   odKogo:row?row.odKogo:"",
-    //   doKogo:row?row.doKogo:"",
-    //   typ:row?row.typ:"",
-    //   rodzWniosku:row?row.rodzWniosku:"",
-    //   nrBwip:row?row.nrBwpi:"",
-    //   nrSzd:row?row.nrSzd:"",
-    //   rodzNaleznosci:row?row.rodzNaleznosci:"",
-    //   calkowitaKwota:row?row.calkowitaKwota:"",
-    //   terminOdpowiedzi:row?row.terminOdpowiedzi:"",
-    //   sysdate:row?row.sysdate:"",
-    // }
   }
 
   windowSprawyCancel(){
@@ -643,7 +623,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   //#endregion
 
-
   //#region zdarzenia 
 
   //#region grid_zdarzenia */
@@ -655,10 +634,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         {name: 'idSprawy', type:'string'},
         {name: 'dataWejscia', type:'date'},
         {name: 'dataWyjscia', type:'date'},
-        {name: 'odpowiedz', type: 'string'},
+        {name: 'informacja', type: 'string'},
         {name: 'sysdate', type: 'date'},
-   
-        // {name: '', type: ''},
   
       ],
       id:'id',
@@ -666,13 +643,11 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
       root: 'rows', 
       beforeprocessing: function(data){
-        this.totalrecords= data.totalRows;
-      
+        this.totalrecords= data.totalRows;      
       },
 
 
-      filter: ()=>{
-        // update the grid and send a request to the server.
+      filter: ()=>{    
         this.gridZdarzenia.updatebounddata();  
       },
   
@@ -752,26 +727,17 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         return data;
       },
         
-        beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}},     );
-  
-  
+        beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}},     );       
+
     gridoptionsZdarzenia: jqwidgets.GridOptions ={    
-      localization: {
-        pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
-        pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
-        sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
-        sortremovestring: 'Wyczyść sortowanie', emptydatastring:'Brak danych',
-        filtershowrowdatestring: "Pokaż rekordy gdzie data jest:",
-        filtershowrowstring: "Pokaż rekordy spełniające warunek:",
-        filterdatecomparisonoperators: ['równa', 'różna', 'mniejsza', 'mniejsza lub równa', 'większa', 'większa lub równa', 'null', 'not null'],
-      },
-  
+      localization: this.s_localization,
+    
       columnsresize: true,
       
       filterable: true,
       autoshowfiltericon: true,
-      filtermode: 'excel',
-      showfilterrow: true,
+      //filtermode: 'excel',
+      //showfilterrow: true,
       pagesize:10,
   
       autorowheight: true,
@@ -791,20 +757,13 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
           return data.data;
       },
     };
-  
-    
+      
     columnsZdarzenia: any[] =
     [
       { text: 'Data odebrania', datafield: 'dataWejscia',  width: 120, type: 'date', cellsformat:'yyyy-MM-dd', filtertype: 'date'},
       { text: 'Data wysłania', datafield: 'dataWyjscia',  width: 120, type: 'date',cellsformat:'yyyy-MM-dd',filtertype: 'date'},
-      { text: 'Odpowiedź', datafield: 'odpowiedz'},
-  
-      // { text: 'Data wejscia', datafield: 'dataWejscia',  width: 120, type: 'date', cellsformat:'yyyy-MM-dd', filtertype: 'date'},
-      // { text: 'Data wyjscia', datafield: 'dataWyjscia',  width: 120, type: 'date',cellsformat:'yyyy-MM-dd',filtertype: 'date'},
-      // { text: 'Kwota całkowita'},
-      // { text: 'Informacje'},
-
-
+      { text: 'Informacja', datafield: 'informacja'},
+      { text: 'Kwota całkowita'},
     ]
 
   
@@ -929,15 +888,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
 
   gridoptionsPliki: jqwidgets.GridOptions ={    
-    localization: {
-      pagergotopagestring: 'Idź do', pagerrangestring: ' z ',
-      pagershowrowsstring: 'Liczba wierszy', loadtext: 'Wczytywanie...',
-      sortascendingstring: 'Sortuj rosnąco', sortdescendingstring: 'Sortuj malejąco',
-      sortremovestring: 'Wyczyść sortowanie', emptydatastring:'Brak danych',
-      filtershowrowdatestring: "Pokaż rekordy gdzie data jest:",
-      filtershowrowstring: "Pokaż rekordy spełniające warunek:",
-      filterdatecomparisonoperators: ['równa', 'różna', 'mniejsza', 'mniejsza lub równa', 'większa', 'większa lub równa', 'null', 'not null'],
-    },
+    localization: this.s_localization,
 
     columnsresize: true,
     
@@ -1009,7 +960,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         if(datarow==null)
           return;
 
-
         let basePlikiurl = this.sg['SERVICE_URL'] + 'RejestrBWIP/DownloadPliki/'+datarow.id;   
   
         var xhr = new XMLHttpRequest();      
@@ -1069,10 +1019,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         //  var fs = Xml.Parser();
         //  fs.readFile(value,)
       });
-
      
-
-
       $("#fileuploadprogresspliki").html("");
 
       $.ajax({

@@ -1,21 +1,13 @@
 <div style=" display: block; width:100%; overflow:auto;" >
 
-
-
-<!-- <button (click)="loadData()">dawaj</button> -->
 <div class="header">
   <Label>Sprawy</Label>
   <div class="button_head" (click)="dodaj_sprawe()">Dodaj nową</div>
   <div class="button_head" (click)="dodaj_spraweZPliku()">Utwórz z pliku</div>
   <div class="button_head" (click)="edytuj_sprawe()">Edytuj</div>
   <div class="button_head" (click)="usun_sprawe()">Usuń</div>
-  <!-- <div class="button_head" (click)="showFiltry()" *ngIf="!displayFiltry; else hideFiltry">Pokaż filtry</div> -->
 </div>
-<!-- <div style="display: block; width:100%" *ngIf="displayFiltry"> test</div>
 
-<ng-template #hideFiltry>
-    <div class="button_head" (click)="showFiltry()">Ukryj filtry</div>
-</ng-template> -->
 
 <jqxGrid id="jqxSprawyGrid" #gridSprawyReference [width]="'100%'"
 [columns]="columnsSprawy"  [auto-create]='false' [source]='dataAdapterSprawy'
