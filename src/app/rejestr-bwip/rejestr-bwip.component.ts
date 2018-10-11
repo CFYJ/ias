@@ -614,6 +614,30 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
               this.obiektSprawy.rodzWniosku = this.getRodzWniosku(this.readXMLVal('Body;MetaData;Reference;Reference',res));
               
+
+
+              if(this.obiektSprawy){
+                console.log(this.obiektSprawy.nrBwip)
+                $.ajax({
+                  cache: false,
+                  dataType: 'json',
+                  contentType: 'application/json',
+                  url: this.sg['SERVICE_URL'] + 'RejestrBWIP/GetSprawyByID/'+this.obiektSprawy.nrBwip, 
+                  type: 'GET',
+                  beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+                  success: (data: any, status: any, xhr: any) =>{
+                              try{        
+                                console.log(data)              
+                                this.czyDuplikatSrawy=data.nrBwip==this.obiektSprawy.nrBwip?true:false;                                                  
+                              }catch(err){alert(err)}
+                  },
+                  error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+                    alert(textStatus + ' - ' + errorThrown);
+                  
+                  }
+                })
+              }
+        
             
             }
           })
@@ -622,26 +646,9 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         fileReader.readAsText(files[0]);
       }
 
-      if(this.obiektSprawy.nrBWIP){
-        $.ajax({
-          cache: false,
-          dataType: 'json',
-          contentType: 'application/json',
-          url: this.sg['SERVICE_URL'] + 'RejestrBWIP/GetSprawyByID/'+this.obiektSprawy.nrBWIP, 
-          type: 'GET',
-          beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-          success: (data: any, status: any, xhr: any) =>{
-                      try{                      
-                        this.czyDuplikatSrawy=data.nrBWIP==this.obiektSprawy.nrBWIP?true:false;                                                  
-                      }catch(err){alert(err)}
-          },
-          error: function (jqXHR: any, textStatus: any, errorThrown: any) {
-            alert(textStatus + ' - ' + errorThrown);
-          
-          }
-        })
-      }
+    
 
+     
 
       $("#fileuploadprogress").html("");
 
@@ -719,10 +726,10 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     }
 
     catch(ex){
-      console.log('Błąd przetawrzania pliku xml');
-      console.log(node);
-      console.log('Otrzymany błąd systemu:')
-      console.log(ex);
+      // console.log('Błąd przetawrzania pliku xml');
+      // console.log(node);
+      // console.log('Otrzymany błąd systemu:')
+      // console.log(ex);
     }
 
     return rez;
