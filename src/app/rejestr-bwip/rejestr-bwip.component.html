@@ -2,8 +2,8 @@
 
 <div class="header">
   <Label>Sprawy</Label>
-  <div class="button_head" (click)="dodaj_sprawe()">Dodaj nową</div>
-  <div class="button_head" (click)="dodaj_spraweZPliku()">Utwórz z pliku</div>
+  <div class="button_head" (click)="dodaj_sprawe()">Dodaj</div>
+  <!-- <div class="button_head" (click)="dodaj_spraweZPliku()">Utwórz z pliku</div> -->
   <div class="button_head" (click)="edytuj_sprawe()">Edytuj</div>
   <div class="button_head" (click)="usun_sprawe()">Usuń</div>
 </div>
@@ -13,7 +13,8 @@
 [columns]="columnsSprawy"  [auto-create]='false' [source]='dataAdapterSprawy'
 [autoheight]="true" [sortable]="true" [altrows]="true" [filterable]="true"
 [editable]="false"  (onCellselect)='gridZdarzenia.updatebounddata()'
-[selectionmode]="'multiplecellsadvanced'" (onCellclick)='gridSprawyCellClicked($event)' 
+[selectionmode]="'multiplecellsadvanced'" (onCellclick)='gridSprawyCellClicked($event)' (onBindingcomplete)="gridZdarzenia.updatebounddata()"
+(onGroupschanged)="GroupschangedSprawy($event)" (onFilter)="FilterSprawy($event)"
 ></jqxGrid>
 <!-- (onGroupschanged)="GroupschangedSprawy($event)" (onFilter)="FilterSprawy($event)" -->
 
@@ -21,8 +22,8 @@
   <tr>
     <td style="width:50%">
       <div class="header">
-        <Label>Odpowiedzi</Label>
-        <div class="button_head" (click)="dodaj_zdarzenie()">Dodaj nowe</div>
+        <Label>Zdarzenia</Label>
+        <div class="button_head" (click)="dodaj_zdarzenie()">Dodaj</div>
         <div class="button_head" (click)="edytuj_zdarzenie()">Edytuj</div>
         <div class="button_head" (click)="usun_zdarzenie()">Usuń</div>
       </div>
@@ -63,14 +64,15 @@
 <!-- (onCellclick)='editCellclick($event)' -->
 
 
-<jqxWindow #windowSprawy [auto-create]='false' >
+<jqxWindow #windowSprawy [auto-create]='false' [showCloseButton]="false" >
 
     <div style="overflow: auto;">
 
-      <div *ngIf="sprawaZPliku" style="width: 100%; display:inline-block">
+      <div *ngIf="sprawaZPliku" style="width: 100%; display:block;">
         <!-- <div class="button_head" style="margin-left:30px; float:left;">Wybierz plik xml</div>    -->
-        <input  class="button_head" style="margin-left:30px; float:left;min-width: 390px !important;" id="file-field" name="file-field" (change)="uploadFile($event)" type="file" >  
-        <div id="fileuploadprogress"  style="margin-left:30px; float:left;"></div>
+        <input  class="button_head" style="margin-left:30px; float:left;width:80%" id="file-field" name="file-field" (change)="uploadFile($event)" type="file" >
+        <!-- <div id="fileuploadprogress"  style="margin-left:30px; float:left;width:80%; height:40px;"></div> -->
+        <div *ngIf="czyDuplikatSprawy" class="infoMessage" style="width:100%">Wystemie istnieje sprawa o podanym numerze. Wybrany plik zostanie zarejestrowany jako nowe zdarzenie w isniejącej sprawie.</div>
       </div>
 
       <!-- <div style="height: auto"> -->
@@ -92,21 +94,22 @@
           <td><input [(ngModel)]="obiektSprawy.urzad" class="sprawaInput"></td>
         </tr> 
         <tr>
-          <td>Data pierwszego Wniosku</td>
+          <td>Data wniosku</td>
           <td>
               <jqxDateTimeInput #jqxDateTimeWejscieSpr  [(ngModel)]="obiektSprawy.dataPierwszegoWniosku"  class="sprawaInput"
-              [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"></jqxDateTimeInput>
+              [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"
+              [culture]="'pl-PL'"></jqxDateTimeInput>
             <!-- <input [(ngModel)]="obiektSprawy.dataPierwszegoWniosku" class="sprawaInput"> -->
           </td>
         </tr>
-        <tr>
+        <!-- <tr>
           <td>Data ostatniego wniosku</td>
           <td>
-            <!-- <input [(ngModel)]="obiektSprawy.dataOstatniegoWniosku" class="sprawaInput"> -->
+ 
             <jqxDateTimeInput #jqxDateTimeWyjscieSpr  [(ngModel)]="obiektSprawy.dataPOstatniegoWniosku"  class="sprawaInput"
             [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"></jqxDateTimeInput>
           </td>
-        </tr>      
+        </tr>       -->
         <tr>
           <td>Rodzaj wniosku</td>
           <td><input [(ngModel)]="obiektSprawy.rodzWniosku" class="sprawaInput"></td>
@@ -162,15 +165,15 @@
           <td>Data wejścia</td>
           <td>
             <!-- <input [(ngModel)]="obiektZdarzenia.dataWejscia" class="sprawaInput"> -->
-            <jqxDateTimeInput #jqxDateTimeWejscieZd  [(ngModel)]="obiektZdarzenia.dataWejscia"  class="sprawaInput"
-              [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"></jqxDateTimeInput>
+            <jqxDateTimeInput #jqxDateTimeWejscieZd  [(ngModel)]="obiektZdarzenia.dataWejscia"  class="sprawaInput" [culture]="'pl-PL'"
+              [formatString]= "'yyyy-MM-dd HH:mm'"   [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"></jqxDateTimeInput>
           </td>
         </tr>
         <tr>
           <td>Data wyjścia</td>
           <td>
             <!-- <input [(ngModel)]="obiektZdarzenia.dataWyjscia" class="sprawaInput"> -->
-            <jqxDateTimeInput #jqxDateTimeWyjscieZd  [(ngModel)]="obiektZdarzenia.dataWyjscia"  class="sprawaInput"
+            <jqxDateTimeInput #jqxDateTimeWyjscieZd  [(ngModel)]="obiektZdarzenia.dataWyjscia"  class="sprawaInput" [culture]="'pl-PL'"
               [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"></jqxDateTimeInput>
           </td>
         </tr>

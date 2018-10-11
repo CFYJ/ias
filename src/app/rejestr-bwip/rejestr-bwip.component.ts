@@ -170,7 +170,9 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
               {
                 this.createObiektZdarzenia();
                 this.obiektZdarzenia.idSprawy = data.id;  
-                this.obiektZdarzenia.odpowiedz="test";
+                this.obiektZdarzenia.dataWejscia = data.dataPierwszegoWniosku;
+                this.obiektZdarzenia.calkowitaKwota = data.calkowitaKwota;
+                this.obiektZdarzenia.odpowiedz="test";                
                 $.ajax({
                   cache: false,
                   dataType: 'json',
@@ -180,11 +182,10 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
                   type: 'POST',
                   beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
                   success:  (data: any, status: any, xhr: any)=>{
-                    
-                    
+                                        
                     this.tmpfile.idZdarzenia = data.id;
-                    // console.log(data.id);
-                    // console.log(this.tmpfile);
+                    this.tmpfile.status = true;
+      
                     let xx = JSON.stringify(this.tmpfile);
                     $.ajax({
                       cache: false,
@@ -276,6 +277,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
       gridoptionsSprawy: jqwidgets.GridOptions ={    
         localization: this.s_localization,
+        columnsheight:30,        
         columnsresize: true,    
         filterable: true,
         autoshowfiltericon: true,
@@ -358,19 +360,19 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
       columnsSprawy: any[] =
       [
-        { text: 'Id', datafield: 'id',  width: 120, filtertype:'number'},
-        { text: 'Nr BWIP', datafield: 'nrBwip',  },
-        { text: 'Nr SZD', datafield: 'nrSzd',  },
+        //{ text: 'Id', datafield: 'id',  width: 120, filtertype:'number'},
+        { text: 'Nr BWIP', datafield: 'nrBwip', width: 70 },
+        { text: 'Nr SZD', datafield: 'nrSzd',  width: 70},
         { text: 'Nazwa', datafield: 'nazwa',  width: 150},
-        { text: 'Od kogo', datafield: 'odKogo',  },
-        { text: 'Do kogo', datafield: 'doKogo',  },
-        { text: 'Data pierwszego wniosku', datafield: 'dataPierwszegoWniosku', cellsformat: 'yyyy-MM-dd HH:mm', filtertype: 'date'},
-        { text: 'Data ostatniego wniosku', datafield: 'dataOstatniegoWniosku', cellsformat:'yyyy-MM-dd HH:mm', filtertype: 'date' },    
-        { text: 'Rodzaj wniosku', datafield: 'rodzWniosku' },              
-        { text: 'Rodzaj należności', datafield: 'rodzNaleznosci',  cellsrenderer: this.rodzanaleznoscicellsrenderer },
-        { text: 'Całkowita kwota', datafield: 'calkowitaKwota',  },
+        { text: 'Od kogo', datafield: 'odKogo',  width: 60},
+        { text: 'Do kogo', datafield: 'doKogo',  width: 60},
+        { text: 'Data pierwszego wniosku', datafield: 'dataPierwszegoWniosku', cellsformat: 'yyyy-MM-dd HH:mm', filtertype: 'date', width:120},
+        { text: 'Data ostatniego wniosku', datafield: 'dataOstatniegoWniosku', cellsformat:'yyyy-MM-dd HH:mm', filtertype: 'date' , width:120},    
+        { text: 'Rodzaj wniosku', datafield: 'rodzWniosku', width: 70},              
+        { text: 'Rodzaj należności', datafield: 'rodzNaleznosci',  cellsrenderer: this.rodzanaleznoscicellsrenderer, width: 140},
+        { text: 'Kwota', datafield: 'calkowitaKwota',  width:70 },
         { text: 'Urząd', datafield: 'urzad' },
-        { text: 'Zakończona',datafield: 'status',  columntype: 'checkbox',type: 'bool', filtertype:'boolean'},      
+        { text: 'Zakończona',datafield: 'status',  columntype: 'checkbox',type: 'bool', filtertype:'boolean',width: 80},      
    
       ]
 
@@ -387,22 +389,25 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   showSprawyDitails:boolean=false;
   gridSprawySelected:any;
+  czyDuplikatSrawy: boolean=false;
+
 
   dodaj_sprawe(){  
     this.createObiektSprawy();
-    this.sprawaZPliku = false;
+    this.sprawaZPliku = true;
     this.showSprawyDitails = true;
     this.windowSprawy.title("Dodaj sprawę");
     this.windowSprawy.open();
+    this.czyDuplikatSrawy = false;
   }
 
-  dodaj_spraweZPliku(){
-    this.createObiektSprawy()
-    this.sprawaZPliku = true;
-    this.showSprawyDitails = true;
-    this.windowSprawy.title("Dodaj sprawę z pliku");
-    this.windowSprawy.open();
-  }
+  // dodaj_spraweZPliku(){
+  //   this.createObiektSprawy()
+  //   //this.sprawaZPliku = true;
+  //   this.showSprawyDitails = true;
+  //   this.windowSprawy.title("Dodaj sprawę");
+  //   this.windowSprawy.open();
+  // }
 
   edytuj_sprawe(){
    if(this.gridSprawy.getselectedcell()){
@@ -453,7 +458,36 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     this.showSprawyDitails = false;
     this.sprawaZPliku = false;
     this.gridSprawyEdycja = false;
+    if(this.tmpfile)
+    this.deleteTmpPliki(this.tmpfile.id);
     this.tmpfile = null;
+  }
+
+  deleteTmpPliki(id:any){
+    try{
+      if(id){
+        $.ajax({
+          context: this,
+          url: this.sg['SERVICE_URL'] + 'RejestrBWIP/DeletePliki/'+id,
+          type: 'POST',     
+          processData: false,
+          contentType: false,      
+          cache: false,        
+          dataType: 'json',
+          beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},        
+          success: function (data: any, status: any, xhr: any) {
+              this.tmpfile = null
+          },
+          error: function(jqXHR, textStatus, errorThrown)
+          {
+              alert('error ERRORS: ' + textStatus);
+          }
+
+        });
+      }
+    }catch(err){
+      
+    }
   }
 
   gridSprawyEdycja: boolean = false;
@@ -462,7 +496,54 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     if(this.gridSprawyEdycja)
       this.gridSprawy.updaterow(this.gridSprawy.getrowid(this.gridSprawy.getselectedcell().rowindex), this.obiektSprawy);      
     else
-      this.gridSprawy.addrow(0,this.obiektSprawy,'top');  
+      if(!this.czyDuplikatSrawy)
+        this.gridSprawy.addrow(0,this.obiektSprawy,'top');  
+      else{
+        let data = this.obiektSprawy;
+        this.createObiektZdarzenia();
+        this.obiektZdarzenia.idSprawy = data.id;  
+        this.obiektZdarzenia.dataWejscia = data.dataPierwszegoWniosku;
+        this.obiektZdarzenia.calkowitaKwota = data.calkowitaKwota;              
+        $.ajax({
+          cache: false,
+          dataType: 'json',
+          contentType: 'application/json',
+          url: this.sg['SERVICE_URL'] + 'RejestrBWIP/AddZdarzenia',
+          data:JSON.stringify(this.obiektZdarzenia),
+          type: 'POST',
+          beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+          success:  (data: any, status: any, xhr: any)=>{
+                                
+            this.tmpfile.idZdarzenia = data.id;
+            this.tmpfile.status = true;
+
+            let xx = JSON.stringify(this.tmpfile);
+            $.ajax({
+              cache: false,
+              dataType: 'json',
+              contentType: 'application/json',
+              url: this.sg['SERVICE_URL'] + 'RejestrBWIP/UpdatePliki/'+this.tmpfile.id,
+              data:xx,
+              type: 'PUT',
+              beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+              success:  (data: any, status: any, xhr: any)=>{
+                this.tmpfile = null;
+                                      
+              },
+              error: (jqXHR: any, textStatus: any, errorThrown: any)=> {
+                alert(textStatus + ' - ' + errorThrown);
+                this.tmpfile = null;
+              }
+            })
+
+                              
+          },
+          error: (jqXHR: any, textStatus: any, errorThrown: any) =>{
+            alert(textStatus + ' - ' + errorThrown);
+            this.tmpfile = null;
+          }
+        })
+      }
 
     this.windowSprawy.close();
     this.showSprawyDitails = false;
@@ -497,13 +578,13 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
               //this.obiektSprawy.nazwa=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:CompanyName'][0];
               this.obiektSprawy.nazwa=this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:CompanyName', res);
               
-              //this.obiektSprawy.identyfikator=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:TaxIdentificationNumberApplicantMs'][0];
-              this.obiektSprawy.identyfikator=this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:TaxIdentificationNumberApplicantMs',res);
+              // //this.obiektSprawy.identyfikator=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:TaxIdentificationNumberApplicantMs'][0];
+              // this.obiektSprawy.identyfikator=this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:TaxIdentificationNumberApplicantMs',res);
               
-              // this.obiektSprawy.adres='ulica:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:StreetAndNumber'][0]+
-              //   ', miasto:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:PostcodeAndTown'][0];
-              this.obiektSprawy.adres='ulica:'+this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:Address;ns2:StreetAndNumber',res)+
-              ', miasto:'+this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:Address;ns2:PostcodeAndTown',res);
+              // // this.obiektSprawy.adres='ulica:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:StreetAndNumber'][0]+
+              // //   ', miasto:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:PostcodeAndTown'][0];
+              // this.obiektSprawy.adres='ulica:'+this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:Address;ns2:StreetAndNumber',res)+
+              // ', miasto:'+this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:Address;ns2:PostcodeAndTown',res);
 
 
               //this.obiektSprawy.odKogo=res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofApplicant'][0]['ns2:Identification'][0]['ns2:Country'][0]['ns2:ISOCode'][0];
@@ -517,17 +598,21 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
               //   Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:Interests'][0]['ns2:InitiallyDue'][0]);
               this.obiektSprawy.calkowitaKwota = Number(this.readXMLVal('Body;FormData;Request;Claim;ClaimDescription;ns2:PrincipalAmount;ns2:InitiallyDue',res))+
                 Number(this.readXMLVal('Body;FormData;Request;Claim;ClaimDescription;ns2:Interests;ns2:InitiallyDue',res));
+
+              this.obiektSprawy.urzad = (this.obiektSprawy.odKogo.toString()!='PL')?this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofRequested;ns2:Office;ns2:Name',res):this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofApplicant;ns2:Office;ns2:Name',res);
             
               let typ = this.readXMLVal('Body;MetaData;Reference;Reference',res).split('_');
               this.obiektSprawy.typ =typ.length>1? typ[typ.length-1]:'';
-              // rodzaj wniosku
+              
+              // rodzaj naleznosci
               var taxlist = ['a','b','c','d','e','f','g','h','i','j','k','l','m'];
-
               if(this.readXMLVal('Body;FormData;FormHeader;TaxList',res)!=null)
               for(let a in taxlist)
-                this.obiektSprawy.rodzWniosku += res.Body[0].FormData[0].FormHeader[0].TaxList[0]['ns2:'+taxlist[a]][0]=='true'?taxlist[a]+",":"";
+                this.obiektSprawy.rodzNaleznosci += res.Body[0].FormData[0].FormHeader[0].TaxList[0]['ns2:'+taxlist[a]][0]=='true'?taxlist[a]+",":"";
       
               this.obiektSprawy.nrBwip = this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofRequested;ns2:Identification;ns2:FileReference',res);
+
+              this.obiektSprawy.rodzWniosku = this.getRodzWniosku(this.readXMLVal('Body;MetaData;Reference;Reference',res));
               
             
             }
@@ -535,6 +620,26 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
           //console.log(fileReader.result);
         }
         fileReader.readAsText(files[0]);
+      }
+
+      if(this.obiektSprawy.nrBWIP){
+        $.ajax({
+          cache: false,
+          dataType: 'json',
+          contentType: 'application/json',
+          url: this.sg['SERVICE_URL'] + 'RejestrBWIP/GetSprawyByID/'+this.obiektSprawy.nrBWIP, 
+          type: 'GET',
+          beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+          success: (data: any, status: any, xhr: any) =>{
+                      try{                      
+                        this.czyDuplikatSrawy=data.nrBWIP==this.obiektSprawy.nrBWIP?true:false;                                                  
+                      }catch(err){alert(err)}
+          },
+          error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+            alert(textStatus + ' - ' + errorThrown);
+          
+          }
+        })
       }
 
 
@@ -555,20 +660,21 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         xhr: function() {
           var xhr = new XMLHttpRequest();
       
-          xhr.upload.addEventListener("progress", function(evt) {
-            if (evt.lengthComputable) {
-              var percentComplete = evt.loaded / evt.total;             
-              percentComplete = Math.trunc(percentComplete * 100);
+          // xhr.upload.addEventListener("progress", function(evt) {
+          //   if (evt.lengthComputable) {
+          //     var percentComplete = evt.loaded / evt.total;             
+          //     percentComplete = Math.trunc(percentComplete * 100);
          
-              //console.log(percentComplete);
-              $("#fileuploadprogress").html('<div style="width:'+percentComplete+'%; background-color:skyblue; color:white"><center>'+percentComplete+'</center></div>');
+          //     //console.log(percentComplete);
+          //     $("#fileuploadprogress").html('<div style="width:'+percentComplete+'%;height:20px; background-color:skyblue; color:white;text-align: center;font-size: 14px;">'+percentComplete+'</div>');
+          //     //.html('<div style="width:'+percentComplete+'%; background-color:skyblue; color:white"><center>'+percentComplete+'</center></div>');
 
-              if (percentComplete >= 100) {
-                $("#fileuploadprogress").html("");
-              }
+          //     // if (percentComplete >= 100) {
+          //     //   $("#fileuploadprogress").html("");
+          //     // }
       
-            }
-          }, false);
+          //   }
+          // }, false);
       
           return xhr;
         },
@@ -595,6 +701,10 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
       });
     }
+  }
+
+  getRodzWniosku(parts: string){
+    try{ let fileparts = parts.split('_'); return fileparts[fileparts.length-1]; }catch(err){return '';}
   }
 
   readXMLVal(path: string, file: any){
@@ -632,6 +742,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         {name: 'idSprawy', type:'string'},
         {name: 'dataWejscia', type:'date'},
         {name: 'dataWyjscia', type:'date'},
+        {name: 'calkowitaKwota', type:'string'},
         {name: 'informacja', type: 'string'},
         {name: 'sysdate', type: 'date'},
   
@@ -677,7 +788,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       updaterow: (rowid: any, rowdata: any, commit: any) => {
       
         const t = JSON.stringify(rowdata);
-        console.log(t);
+        //console.log(t);
         $.ajax({
           cache: false,
           dataType: 'json',
@@ -761,9 +872,9 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     columnsZdarzenia: any[] =
     [
       { text: 'Data odebrania', datafield: 'dataWejscia',  width: 120, type: 'date', cellsformat:'yyyy-MM-dd HH:mm', filtertype: 'date'},
-      { text: 'Data wysłania', datafield: 'dataWyjscia',  width: 120, type: 'date',cellsformat:'yyyy-MM-dd HH:mm',filtertype: 'date'},
+      { text: 'Data wysłania', datafield: 'dataWyjscia',  width: 120, type: 'date',cellsformat:'yyyy-MM-dd HH:mm',filtertype: 'date'},      
+      { text: 'Kwota całkowita', datafield: 'calkowitaKwota', width: 100, type: 'date'},
       { text: 'Informacja', datafield: 'informacja'},
-      { text: 'Kwota całkowita', datafield: 'calkowitaKwota'},
     ]
 
   
@@ -794,7 +905,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   usun_zdarzenie(){
     if(this.gridZdarzenia.getselectedcell()){
       let msg = "<b>Czy napewno chcesz usunąć zdarzenie wraz z dołączonymi dokumentami?</b><br><br><br>" + 
-      "<b>odpowiedź: </b>"+this.gridZdarzenia.getrowdata(this.gridZdarzenia.getselectedcell().rowindex)['odpowiedz'];
+      "<b>informacja: </b>"+this.gridZdarzenia.getrowdata(this.gridZdarzenia.getselectedcell().rowindex)['informacja'];
       this.showquestionWindow(msg, true,"Tak",true,"Nie", "Kasowanie zdarzenia").then((result:any)=>{
         if(result.OK)
           this.gridZdarzenia.deleterow(this.gridZdarzenia.getrowdata(this.gridZdarzenia.getselectedcell().rowindex)['id']);
@@ -808,6 +919,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       idSprawy:row?row.idSprawy:null,
       dataWejscia:row?row.dataWejscia:null,
       dataWyjscia:row?row.dataWyjscia:null,
+      calkowitaKwota:row?row.calkowitaKwota:null,
       informacja:row?row.informacja:null,
       sysdate:row?row.sysdate:null,
     }
