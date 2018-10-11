@@ -23,7 +23,6 @@
       <div class="header">
         <Label>Odpowiedzi</Label>
         <div class="button_head" (click)="dodaj_zdarzenie()">Dodaj nowe</div>
-        <div class="button_head" (click)="dodaj_zdarzenieZPliku()">Utwórz z pliku</div>
         <div class="button_head" (click)="edytuj_zdarzenie()">Edytuj</div>
         <div class="button_head" (click)="usun_zdarzenie()">Usuń</div>
       </div>
@@ -94,11 +93,19 @@
         </tr> 
         <tr>
           <td>Data pierwszego Wniosku</td>
-          <td><input [(ngModel)]="obiektSprawy.dataPierwszegoWniosku" class="sprawaInput"></td>
+          <td>
+              <jqxDateTimeInput #jqxDateTimeWejscieSpr  [(ngModel)]="obiektSprawy.dataPierwszegoWniosku"  class="sprawaInput"
+              [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"></jqxDateTimeInput>
+            <!-- <input [(ngModel)]="obiektSprawy.dataPierwszegoWniosku" class="sprawaInput"> -->
+          </td>
         </tr>
         <tr>
           <td>Data ostatniego wniosku</td>
-          <td><input [(ngModel)]="obiektSprawy.dataOstatniegoWniosku" class="sprawaInput"></td>
+          <td>
+            <!-- <input [(ngModel)]="obiektSprawy.dataOstatniegoWniosku" class="sprawaInput"> -->
+            <jqxDateTimeInput #jqxDateTimeWyjscieSpr  [(ngModel)]="obiektSprawy.dataPOstatniegoWniosku"  class="sprawaInput"
+            [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"></jqxDateTimeInput>
+          </td>
         </tr>      
         <tr>
           <td>Rodzaj wniosku</td>
@@ -153,12 +160,24 @@
       <table style="margin: 0 auto; display: table; font-size:14px" *ngIf="obiektZdarzenia" >
         <tr>
           <td>Data wejścia</td>
-          <td><input [(ngModel)]="obiektZdarzenia.dataWejscia" class="sprawaInput"></td>
+          <td>
+            <!-- <input [(ngModel)]="obiektZdarzenia.dataWejscia" class="sprawaInput"> -->
+            <jqxDateTimeInput #jqxDateTimeWejscieZd  [(ngModel)]="obiektZdarzenia.dataWejscia"  class="sprawaInput"
+              [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"></jqxDateTimeInput>
+          </td>
         </tr>
         <tr>
           <td>Data wyjścia</td>
-          <td><input [(ngModel)]="obiektZdarzenia.dataWyjscia" class="sprawaInput"></td>
+          <td>
+            <!-- <input [(ngModel)]="obiektZdarzenia.dataWyjscia" class="sprawaInput"> -->
+            <jqxDateTimeInput #jqxDateTimeWyjscieZd  [(ngModel)]="obiektZdarzenia.dataWyjscia"  class="sprawaInput"
+              [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"></jqxDateTimeInput>
+          </td>
         </tr>
+        <tr>
+            <td>Kwota całkowita</td>
+            <td><input [(ngModel)]="obiektZdarzenia.calkowitaKwota" class="sprawaInput"></td>
+          </tr>
         <tr>
           <td>Informacje</td>
           <td><textarea [(ngModel)]="obiektZdarzenia.informacja" class="sprawaInput" ></textarea></td>

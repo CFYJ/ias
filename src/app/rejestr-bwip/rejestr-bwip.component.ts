@@ -4,7 +4,6 @@ import { HTTP_INTERCEPTORS, HttpClient,  } from '@angular/common/http';
 
 import { jqxGridComponent } from 'jqwidgets-ts/angular_jqxgrid';
 import { jqxWindowComponent } from 'jqwidgets-ts/angular_jqxwindow';
-import { jqxDateTimeInputComponent } from 'jqwidgets-ts/angular_jqxdatetimeinput';
 
 import { DomSanitizer} from '@angular/platform-browser';
 
@@ -24,8 +23,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   @ViewChild('windowZdarzenia') windowZdarzenia: jqxWindowComponent;
   @ViewChild('jqxwindowPDF') jqxwindowPDF: jqxWindowComponent;
   @ViewChild('jqxwindowFileUpload') jqxwindowFileUpload: jqxWindowComponent;
-
-
   @ViewChild('questionWindow') questionWindow: jqxWindowComponent;
 
   obiektSprawy: any;
@@ -112,8 +109,9 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       
     });
 
-    
   }
+
+
 
   //#region sprawy
 
@@ -366,8 +364,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         { text: 'Nazwa', datafield: 'nazwa',  width: 150},
         { text: 'Od kogo', datafield: 'odKogo',  },
         { text: 'Do kogo', datafield: 'doKogo',  },
-        { text: 'Data pierwszego wniosku', datafield: 'dataPierwszegoWniosku', filtertype: 'date',cellsformat: 'dd-MMMM-yyyy' },
-        { text: 'Data ostatniego wniosku', datafield: 'dataOstatniegoWniosku', cellsformat:'yyyy-MM-dd', filtertype: 'date' },    
+        { text: 'Data pierwszego wniosku', datafield: 'dataPierwszegoWniosku', cellsformat: 'yyyy-MM-dd HH:mm', filtertype: 'date'},
+        { text: 'Data ostatniego wniosku', datafield: 'dataOstatniegoWniosku', cellsformat:'yyyy-MM-dd HH:mm', filtertype: 'date' },    
         { text: 'Rodzaj wniosku', datafield: 'rodzWniosku' },              
         { text: 'Rodzaj należności', datafield: 'rodzNaleznosci',  cellsrenderer: this.rodzanaleznoscicellsrenderer },
         { text: 'Całkowita kwota', datafield: 'calkowitaKwota',  },
@@ -719,15 +717,17 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       },
     };
   
-    dataAdapterZdarzenia = new $.jqx.dataAdapter(this.sourceZdarzenia,
-      {formatData: (data)=> {
+    dataAdapterZdarzenia = new $.jqx.dataAdapter(this.sourceZdarzenia,{
+      formatData: (data)=> {
         $.extend(data, {
-          id: this.gridSprawy.getselectedcell()?this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['id']:0    
+          id: ()=>{try{ return parseInt(this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['id']);}catch(err){ return 0}}
+          //this.gridSprawy.getselectedcell()?this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['id']:0    
         });
         return data;
       },
         
-        beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}},     );       
+        beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}
+    });       
 
     gridoptionsZdarzenia: jqwidgets.GridOptions ={    
       localization: this.s_localization,
@@ -760,10 +760,10 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       
     columnsZdarzenia: any[] =
     [
-      { text: 'Data odebrania', datafield: 'dataWejscia',  width: 120, type: 'date', cellsformat:'yyyy-MM-dd', filtertype: 'date'},
-      { text: 'Data wysłania', datafield: 'dataWyjscia',  width: 120, type: 'date',cellsformat:'yyyy-MM-dd',filtertype: 'date'},
+      { text: 'Data odebrania', datafield: 'dataWejscia',  width: 120, type: 'date', cellsformat:'yyyy-MM-dd HH:mm', filtertype: 'date'},
+      { text: 'Data wysłania', datafield: 'dataWyjscia',  width: 120, type: 'date',cellsformat:'yyyy-MM-dd HH:mm',filtertype: 'date'},
       { text: 'Informacja', datafield: 'informacja'},
-      { text: 'Kwota całkowita'},
+      { text: 'Kwota całkowita', datafield: 'calkowitaKwota'},
     ]
 
   
@@ -808,7 +808,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       idSprawy:row?row.idSprawy:null,
       dataWejscia:row?row.dataWejscia:null,
       dataWyjscia:row?row.dataWyjscia:null,
-      odpowiedz:row?row.odpowiedz:null,
+      informacja:row?row.informacja:null,
       sysdate:row?row.sysdate:null,
     }
   }
