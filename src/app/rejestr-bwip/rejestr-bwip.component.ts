@@ -389,7 +389,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   showSprawyDitails:boolean=false;
   gridSprawySelected:any;
-  czyDuplikatSrawy: boolean=false;
+  czyDuplikatSprawy: boolean=false;
 
 
   dodaj_sprawe(){  
@@ -398,7 +398,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     this.showSprawyDitails = true;
     this.windowSprawy.title("Dodaj sprawę");
     this.windowSprawy.open();
-    this.czyDuplikatSrawy = false;
+    this.czyDuplikatSprawy = false;
   }
 
   // dodaj_spraweZPliku(){
@@ -496,7 +496,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     if(this.gridSprawyEdycja)
       this.gridSprawy.updaterow(this.gridSprawy.getrowid(this.gridSprawy.getselectedcell().rowindex), this.obiektSprawy);      
     else
-      if(!this.czyDuplikatSrawy)
+      if(!this.czyDuplikatSprawy)
         this.gridSprawy.addrow(0,this.obiektSprawy,'top');  
       else{
         let data = this.obiektSprawy;
@@ -625,11 +625,12 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
                   url: this.sg['SERVICE_URL'] + 'RejestrBWIP/GetSprawyByID/'+this.obiektSprawy.nrBwip, 
                   type: 'GET',
                   beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-                  success: (data: any, status: any, xhr: any) =>{
-                              try{        
-                                console.log(data)              
-                                this.czyDuplikatSrawy=data.nrBwip==this.obiektSprawy.nrBwip?true:false;                                                  
-                              }catch(err){alert(err)}
+                  success: (data: any, status: any, xhr: any) =>{                      
+                    // console.log(data)      
+                    if(data)        
+                    this.czyDuplikatSprawy=this.obiektSprawy.nrBwip===data.nrBwip?true:false;         
+                    console.log(this.czyDuplikatSprawy);                                         
+                            
                   },
                   error: function (jqXHR: any, textStatus: any, errorThrown: any) {
                     alert(textStatus + ' - ' + errorThrown);
