@@ -9,6 +9,8 @@ import { DomSanitizer} from '@angular/platform-browser';
 
 import * as Xml from 'xml2js';
 
+import { AuthenticationService } from 'app/authentication.service';
+
 @Component({
   selector: 'app-rejestr-bwip',
   templateUrl: './rejestr-bwip.component.html',
@@ -69,8 +71,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     filterandconditionstring: "I",
   };
   
-
-  constructor( private sg: SimpleGlobal, public http: HttpClient,private sanitizer: DomSanitizer) { }
+  authService: any;
+  constructor( private sg: SimpleGlobal, public http: HttpClient,private sanitizer: DomSanitizer, private auth: AuthenticationService) {   }
 
   ngOnInit() {
   }
@@ -153,7 +155,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
           this.gridSprawy.updatebounddata();  
         },  
 
-        addrow: (rowid: any, rowdata: any, position: any, commit: any) => {   
+        addrow: (rowid: any, rowdata: any, position: any, commit: any) => {  
+     
           const t = JSON.stringify(rowdata);
           $.ajax({
             cache: false,
@@ -165,7 +168,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
             beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
             success:  (data: any, status: any, xhr: any)=> {
               rowdata.id = data.id;
-          
+                                     
+
               if(this.tmpfile)         
               {
                 this.createObiektZdarzenia();
@@ -212,10 +216,11 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
                     this.tmpfile = null;
                   }
                 })
-
               }            
               
-              commit(true);                  
+              commit(true);   
+              this.gridSprawy.updatebounddata();
+                              
             },
             error:(jqXHR: any, textStatus: any, errorThrown: any)=> {
               alert(textStatus + ' - ' + errorThrown);
@@ -290,6 +295,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         altrows: true,
         enabletooltips: false,
         theme: 'metro',
+        
 
         source: this.dataAdapterSprawy,
         pageable: true,
@@ -330,7 +336,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         this.gridSprawy.updatebounddata()
         
       }
-
 
       rodzajeNaleznosci=[{a:'cło',
       b:'podatek od wartości dodanej VAT',
@@ -393,6 +398,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
 
   dodaj_sprawe(){  
+   
     this.createObiektSprawy();
     this.sprawaZPliku = true;
     this.showSprawyDitails = true;
@@ -424,7 +430,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     if(this.gridSprawy.getselectedcell()){
       let msg = "<b>Czy napewno chcesz usunąć sprawę </b><br>" + 
       "<b>podmiot: </b>"+this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['nazwa']+
-      "<br><b>numer BWIP: </b>"+this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['nrBWIP'];
+      "<br><b>numer BWIP: </b>"+this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['nrBwip'];
       this.showquestionWindow(msg, true,"Tak",true,"Nie", "Kasowanie sprawy").then((result:any)=>{
         if(result.OK)
           this.gridSprawy.deleterow(this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['id']);
@@ -492,12 +498,15 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
   gridSprawyEdycja: boolean = false;
 
-  windowSprawyOK(){    
-    if(this.gridSprawyEdycja)
-      this.gridSprawy.updaterow(this.gridSprawy.getrowid(this.gridSprawy.getselectedcell().rowindex), this.obiektSprawy);      
+  windowSprawyOK(){   
+    
+    if(this.gridSprawyEdycja){
+      this.gridSprawy.updaterow(this.gridSprawy.getrowid(this.gridSprawy.getselectedcell().rowindex), this.obiektSprawy);   
+    }   
     else
-      if(!this.czyDuplikatSprawy)
-        this.gridSprawy.addrow(0,this.obiektSprawy,'top');  
+      if(!this.czyDuplikatSprawy){    
+        this.gridSprawy.addrow(null,this.obiektSprawy,'top');  
+      }        
       else{
         let data = this.obiektSprawy;
         this.createObiektZdarzenia();
@@ -528,13 +537,15 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
               beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
               success:  (data: any, status: any, xhr: any)=>{
                 this.tmpfile = null;
-                                      
+                this.gridPliki.updatebounddata();                
               },
               error: (jqXHR: any, textStatus: any, errorThrown: any)=> {
                 alert(textStatus + ' - ' + errorThrown);
                 this.tmpfile = null;
               }
             })
+
+            this.gridZdarzenia.updatebounddata();
 
                               
           },

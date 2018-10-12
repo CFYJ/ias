@@ -1,68 +1,83 @@
-<!-- <table style="width:100%"> -->
-<div style=" display: block; width:100%; overflow:auto;" >
-
-<div class="header">
-  <Label>Sprawy</Label>
-  <div class="button_head" (click)="dodaj_sprawe()">Dodaj</div>
-  <!-- <div class="button_head" (click)="dodaj_spraweZPliku()">Utwórz z pliku</div> -->
-  <div class="button_head" (click)="edytuj_sprawe()">Edytuj</div>
-  <div class="button_head" (click)="usun_sprawe()">Usuń</div>
-</div>
-
-
-<jqxGrid id="jqxSprawyGrid" #gridSprawyReference [width]="'100%'"
-[columns]="columnsSprawy"  [auto-create]='false' [source]='dataAdapterSprawy'
-[autoheight]="true" [sortable]="true" [altrows]="true" [filterable]="true"
-[editable]="false"  (onCellselect)='gridZdarzenia.updatebounddata()'
-[selectionmode]="'multiplecellsadvanced'" (onCellclick)='gridSprawyCellClicked($event)' (onBindingcomplete)="gridZdarzenia.updatebounddata()"
-(onGroupschanged)="GroupschangedSprawy($event)" (onFilter)="FilterSprawy($event)"
-></jqxGrid>
-<!-- (onGroupschanged)="GroupschangedSprawy($event)" (onFilter)="FilterSprawy($event)" -->
-
-<table style="width:100%; overflow: auto">
+<table style="width:100%">
   <tr>
-    <td style="width:50%">
-      <div class="header">
-        <Label>Zdarzenia</Label>
-        <div class="button_head" (click)="dodaj_zdarzenie()">Dodaj</div>
-        <div class="button_head" (click)="edytuj_zdarzenie()">Edytuj</div>
-        <div class="button_head" (click)="usun_zdarzenie()">Usuń</div>
+    <td>
+      <div style="width:100%;">
+        <div class="header">
+          <Label style="margin-left: 30px">Sprawy</Label>
+          <div *ngIf="auth.checkIfUserIsInRole('rejestr-bwip-edycja')">
+            <div class="button_head" (click)="dodaj_sprawe()">Dodaj</div>
+            <!-- <div class="button_head" (click)="dodaj_spraweZPliku()">Utwórz z pliku</div> -->
+            <div class="button_head" (click)="edytuj_sprawe()">Edytuj</div>
+            <div class="button_head" (click)="usun_sprawe()">Usuń</div>
+          </div>
+        </div>
       </div>
     </td>
-    <td>
-        <div class="header">
-          <Label>Pliki</Label>
-          <div class="button_head" (click)="dodaj_plik()">Dodaj</div>
-          <div class="button_head" (click)="usun_plik()">Usuń</div>
-          <div class="button_head" (click)="pobierz_plik()">Pobierz</div>
-        </div>
-    </td>
   </tr>
-  <tr>
-    <td>
-        <jqxGrid id="jqxZdarzeniaGrid" #gridZdarzeniaReference [width]="'100%'"
-        [columns]="columnsZdarzenia"  [auto-create]='false' [source]='dataAdapterZdarzenia'
-        [height]="'300px'" [sortable]="true" 
-        [editable]="false" (onBindingcomplete)='gridPliki.updatebounddata()'
-        [selectionmode]="'multiplecellsadvanced'" (onCellselect)='gridPliki.updatebounddata()'></jqxGrid>
-    </td>
-    <td>  
-      <jqxGrid id="jqxPlikiGrid" #gridPlikiReference [width]="'100%'"
-      [columns]="columnsPliki"  [auto-create]='false' [source]='dataAdapterPliki'
-      [height]="'300px'" [sortable]="true"
-      [editable]="false" 
-      [selectionmode]="'multiplecellsadvanced'"
+
+
+<tr>
+  <td>
+
+      <jqxGrid id="jqxSprawyGrid" #gridSprawyReference [width]="'100%'"
+      [columns]="columnsSprawy"  [auto-create]='false' [source]='dataAdapterSprawy'
+      [autoheight]="true" [sortable]="true" [altrows]="true" [filterable]="true"
+      [editable]="false"  
+      [selectionmode]="'multiplecellsadvanced'" 
       ></jqxGrid>
-    </td>
-  </tr>
+      <!-- (onCellselect)='gridZdarzenia.updatebounddata()'
+      (onCellclick)='gridSprawyCellClicked($event)' (onBindingcomplete)="gridZdarzenia.updatebounddata()"
+      (onGroupschanged)="GroupschangedSprawy($event)" (onFilter)="FilterSprawy($event)" -->
+  </td>
+</tr>
+
+<tr>
+  <td>
+      <table style="width:100%; overflow: auto">
+          <tr>
+            <td style="width:50%">
+              <div class="header">
+                <Label style="margin-left: 30px">Zdarzenia</Label>
+                <div *ngIf="auth.checkIfUserIsInRole('rejestr-bwip-edycja')">
+                  <div class="button_head" (click)="dodaj_zdarzenie()">Dodaj</div>
+                  <div class="button_head" (click)="edytuj_zdarzenie()">Edytuj</div>
+                  <div class="button_head" (click)="usun_zdarzenie()">Usuń</div>
+                </div>  
+              </div>
+            </td>
+            <td>
+                <div class="header">
+                  <Label style="margin-left: 30px">Pliki</Label>
+                  <div *ngIf="auth.checkIfUserIsInRole('rejestr-bwip-edycja')">
+                    <div class="button_head" (click)="dodaj_plik()">Dodaj</div>
+                    <div class="button_head" (click)="usun_plik()">Usuń</div>
+                    <div class="button_head" (click)="pobierz_plik()">Pobierz</div>
+                  </div>  
+                </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+                <jqxGrid id="jqxZdarzeniaGrid" #gridZdarzeniaReference [width]="'100%'"
+                [columns]="columnsZdarzenia"  [auto-create]='false' [source]='dataAdapterZdarzenia'
+                [height]="'300px'" [sortable]="true" 
+                [editable]="false" (onBindingcomplete)='gridPliki.updatebounddata()'
+                [selectionmode]="'multiplecellsadvanced'" (onCellselect)='gridPliki.updatebounddata()'></jqxGrid>
+            </td>
+            <td>  
+              <jqxGrid id="jqxPlikiGrid" #gridPlikiReference [width]="'100%'"
+              [columns]="columnsPliki"  [auto-create]='false' [source]='dataAdapterPliki'
+              [height]="'300px'" [sortable]="true"
+              [editable]="false" 
+              [selectionmode]="'multiplecellsadvanced'"
+              ></jqxGrid>
+            </td>
+          </tr>
+        </table>
+  </td>
+</tr>
+
 </table>
-
-
-</div>
-<!-- </table> -->
-
-
-<!-- (onCellclick)='editCellclick($event)' -->
 
 
 <jqxWindow #windowSprawy [auto-create]='false' [showCloseButton]="false" >
