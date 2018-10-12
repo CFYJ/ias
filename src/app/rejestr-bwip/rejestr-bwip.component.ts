@@ -81,7 +81,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     this.gridPliki.createComponent(this.gridoptionsPliki);
 
     this.windowSprawy.createWidget({
-      width: 500, height: 430, theme: 'metro',
+      width: 500, height: 460, theme: 'metro',
       resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5,
       
     });
@@ -616,8 +616,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
               
 
 
-              if(this.obiektSprawy){
-                console.log(this.obiektSprawy.nrBwip)
+              if(this.obiektSprawy){            
                 $.ajax({
                   cache: false,
                   dataType: 'json',
@@ -625,34 +624,28 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
                   url: this.sg['SERVICE_URL'] + 'RejestrBWIP/GetSprawyByID/'+this.obiektSprawy.nrBwip, 
                   type: 'GET',
                   beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-                  success: (data: any, status: any, xhr: any) =>{                      
-                    // console.log(data)      
-                    if(data)        
-                    this.czyDuplikatSprawy=this.obiektSprawy.nrBwip===data.nrBwip?true:false;         
-                    console.log(this.czyDuplikatSprawy);                                         
-                            
+                  success: (data: any, status: any, xhr: any) =>{                              
+                    if(data){        
+                      this.obiektSprawy = data;
+                      this.czyDuplikatSprawy=this.obiektSprawy.nrBwip===this.obiektSprawy.nrBwip?true:false;                      
+                    }
                   },
                   error: function (jqXHR: any, textStatus: any, errorThrown: any) {
                     alert(textStatus + ' - ' + errorThrown);
                   
                   }
                 })
-              }
-        
-            
+              }                    
             }
-          })
-          //console.log(fileReader.result);
+          })  
         }
         fileReader.readAsText(files[0]);
       }
+         
 
-    
-
-     
-
+ 
+      //***************** dodawanie pliku */
       $("#fileuploadprogress").html("");
-
       let z = true;
       if(z)
       $.ajax({
@@ -1160,7 +1153,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
               var percentComplete = evt.loaded / evt.total;             
               percentComplete = Math.trunc(percentComplete * 100);
 
-              $("#fileuploadprogresspliki").html('<div style="width:'+percentComplete+'%;height:20px; background-color:skyblue; color:white;text-align: center;font-size: 14px;">'+percentComplete+'</div>');
+              $("#fileuploadprogresspliki").html('<div style="width:'+percentComplete+'%;height:20px; background-color:skyblue; color:white;text-align: center;font-size: 14px;border-radius:4px;">'+percentComplete+'%</div>');
 
            
               this.gridPliki.updatebounddata();

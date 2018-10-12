@@ -34,7 +34,19 @@
     text-decoration: none;
 }
 
-.button_head:hover{
+
+
+.button_head_w{
+    font-size: 14px;
+    text-align: center;
+    color:#fff;
+    background-color: #31b0d5; 
+    padding:6px 8px;
+    border-radius:4px;
+    text-decoration: none;
+}
+
+.button_head:hover, .button_head_w:hover{
     box-shadow: 5px 5px 3px  #537b8d;
 }
 
