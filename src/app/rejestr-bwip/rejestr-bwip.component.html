@@ -9,6 +9,7 @@
             <!-- <div class="button_head" (click)="dodaj_spraweZPliku()">Utwórz z pliku</div> -->
             <div class="button_head" (click)="edytuj_sprawe()">Edytuj</div>
             <div class="button_head" (click)="usun_sprawe()">Usuń</div>
+            <div class="button_head" (click)="poTerminie_sprawe()">Starsze niż 6 miesięcy</div>
           </div>
         </div>
       </div>
@@ -18,16 +19,17 @@
 
 <tr>
   <td>
-
+      <!-- [showfilterrow]="true" -->
       <jqxGrid id="jqxSprawyGrid" #gridSprawyReference [width]="'100%'"
       [columns]="columnsSprawy"  [auto-create]='false' [source]='dataAdapterSprawy'
       [autoheight]="true" [sortable]="true" [altrows]="true" [filterable]="true"
       [editable]="false"  
       [selectionmode]="'multiplecellsadvanced'" 
-      ></jqxGrid>
-      <!-- (onCellselect)='gridZdarzenia.updatebounddata()'
+      (onCellselect)='gridZdarzenia.updatebounddata()'
       (onCellclick)='gridSprawyCellClicked($event)' (onBindingcomplete)="gridZdarzenia.updatebounddata()"
-      (onGroupschanged)="GroupschangedSprawy($event)" (onFilter)="FilterSprawy($event)" -->
+      (onGroupschanged)="GroupschangedSprawy($event)" (onFilter)="FilterSprawy($event)"
+      ></jqxGrid>
+      <!--  -->
   </td>
 </tr>
 
@@ -60,14 +62,14 @@
             <td>
                 <jqxGrid id="jqxZdarzeniaGrid" #gridZdarzeniaReference [width]="'100%'"
                 [columns]="columnsZdarzenia"  [auto-create]='false' [source]='dataAdapterZdarzenia'
-                [height]="'300px'" [sortable]="true" 
+                [height]="'350px'" [sortable]="true" 
                 [editable]="false" (onBindingcomplete)='gridPliki.updatebounddata()'
                 [selectionmode]="'multiplecellsadvanced'" (onCellselect)='gridPliki.updatebounddata()'></jqxGrid>
             </td>
             <td>  
               <jqxGrid id="jqxPlikiGrid" #gridPlikiReference [width]="'100%'"
               [columns]="columnsPliki"  [auto-create]='false' [source]='dataAdapterPliki'
-              [height]="'300px'" [sortable]="true"
+              [height]="'350px'" [sortable]="true"
               [editable]="false" 
               [selectionmode]="'multiplecellsadvanced'"
               ></jqxGrid>
@@ -159,7 +161,7 @@
         </tr>        
         <tr>
           <td>Całkowita kwota</td>
-          <td><input [(ngModel)]="obiektSprawy.calkowitaKwota" class="sprawaInput" [disabled]="czyDuplikatSprawy"></td>
+          <td><input [(ngModel)]="obiektSprawy.calkowitaKwota" class="sprawaInput" [disabled]="czyDuplikatSprawy" type="number"></td>
         </tr>     
         <tr>
           <td>Zakończona</td>
@@ -210,7 +212,7 @@
         </tr>
         <tr>
             <td>Kwota całkowita</td>
-            <td><input [(ngModel)]="obiektZdarzenia.calkowitaKwota" class="sprawaInput"></td>
+            <td><input [(ngModel)]="obiektZdarzenia.calkowitaKwota" class="sprawaInput" type="number"></td>
           </tr>
         <tr>
           <td>Informacje</td>

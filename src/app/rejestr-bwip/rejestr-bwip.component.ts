@@ -167,8 +167,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
             type: 'POST',
             beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
             success:  (data: any, status: any, xhr: any)=> {
-              rowdata.id = data.id;
-                                     
+              rowdata.id = data.id;                            
 
               if(this.tmpfile)         
               {
@@ -375,9 +374,9 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         { text: 'Data ostatniego wniosku', datafield: 'dataOstatniegoWniosku', cellsformat:'yyyy-MM-dd HH:mm', filtertype: 'date' , width:120},    
         { text: 'Rodzaj wniosku', datafield: 'rodzWniosku', width: 70},              
         { text: 'Rodzaj należności', datafield: 'rodzNaleznosci',  cellsrenderer: this.rodzanaleznoscicellsrenderer, width: 140},
-        { text: 'Kwota', datafield: 'calkowitaKwota',  width:70 },
+        { text: 'Kwota', datafield: 'calkowitaKwota',  width:70 , filtertype:'number'},
         { text: 'Urząd', datafield: 'urzad' },
-        { text: 'Zakończona',datafield: 'status',  columntype: 'checkbox',type: 'bool', filtertype:'boolean',width: 80},      
+        { text: 'Zakończona',datafield: 'status',  columntype: 'checkbox',type: 'bool',filteritems:['0','1'],filtertype: 'checkedlist', width: 80},      
    
       ]
 
@@ -419,6 +418,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
    if(this.gridSprawy.getselectedcell()){
       this.createObiektSprawy(this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex))
       this.gridSprawyEdycja = true;
+      this.czyDuplikatSprawy = false;
       this.sprawaZPliku = false;
       this.showSprawyDitails = true;
       this.windowSprawy.title("Edytuj sprawę");
@@ -438,6 +438,21 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     }
   }
 
+  poTerminie_sprawe(){
+    
+    var date = new Date();
+    date.setMonth(date.getMonth()+(-6));
+
+    let filtergroup = new jqx.filter();
+    let filter_or_operator = 1;
+    let filtervalue = date;
+    let filtercondition = 'less_than';
+    let filter = filtergroup.createfilter('datefilter', filtervalue, filtercondition);
+    filtergroup.addfilter(filter_or_operator, filter);
+    this.gridSprawy.addfilter('dataOstatniegoWniosku', filtergroup);
+    this.gridSprawy.applyfilters();
+  }
+
   createObiektSprawy(row?:any){
     this.obiektSprawy={
       id:row?row.id:0,
@@ -448,8 +463,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       dataOstatniegoWniosku:row?row.dataOstatniegoWniosku:"",
       rodzWniosku:row?row.rodzWniosku:"",
       rodzNaleznosci:row?row.rodzNaleznosci:"",
-      calkowitaKwota:row?row.calkowitaKwota:"",
-      nrBwip:row?row.nrBwpi:"",
+      calkowitaKwota:row?row.calkowitaKwota:0,
+      nrBwip:row?row.nrBwip:"",
       nrSzd:row?row.nrSzd:"",
       urzad:row?row.urzad:"",
       dataZakonczenia:row?row.dataZakonczenia:"",
@@ -587,7 +602,10 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
             if(res.RequestForRecoveryV2Message){
               res = res.RequestForRecoveryV2Message;
               //this.obiektSprawy.nazwa=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:CompanyName'][0];
-              this.obiektSprawy.nazwa=this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:CompanyName', res);
+              this.obiektSprawy.nazwa=this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:CompanyName', res)!==null?
+                this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:CompanyName', res):
+                this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:NaturalPerson;ns2:FirstName', res)+' '+
+                this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:NaturalPerson;ns2:Surname', res)
               
               // //this.obiektSprawy.identyfikator=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:TaxIdentificationNumberApplicantMs'][0];
               // this.obiektSprawy.identyfikator=this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:TaxIdentificationNumberApplicantMs',res);
@@ -607,8 +625,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
               // this.obiektSprawy.calkowitaKwota = Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:PrincipalAmount'][0]['ns2:InitiallyDue'][0])+
               //   Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:Interests'][0]['ns2:InitiallyDue'][0]);
-              this.obiektSprawy.calkowitaKwota = Number(this.readXMLVal('Body;FormData;Request;Claim;ClaimDescription;ns2:PrincipalAmount;ns2:InitiallyDue',res))+
-                Number(this.readXMLVal('Body;FormData;Request;Claim;ClaimDescription;ns2:Interests;ns2:InitiallyDue',res));
+              this.obiektSprawy.calkowitaKwota = parseFloat(this.readXMLVal('Body;FormData;Request;Claim;ClaimDescription;ns2:PrincipalAmount;ns2:InitiallyDue',res))+
+              parseFloat(this.readXMLVal('Body;FormData;Request;Claim;ClaimDescription;ns2:Interests;ns2:InitiallyDue',res));
 
               this.obiektSprawy.urzad = (this.obiektSprawy.odKogo.toString()!='PL')?this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofRequested;ns2:Office;ns2:Name',res):this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofApplicant;ns2:Office;ns2:Name',res);
             
@@ -754,7 +772,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         {name: 'idSprawy', type:'string'},
         {name: 'dataWejscia', type:'date'},
         {name: 'dataWyjscia', type:'date'},
-        {name: 'calkowitaKwota', type:'string'},
+        {name: 'calkowitaKwota', type:'number'},
         {name: 'informacja', type: 'string'},
         {name: 'sysdate', type: 'date'},
   
@@ -786,9 +804,11 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
           data: t,
           type: 'POST',
           beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-          success: function (data: any, status: any, xhr: any) {
-            rowdata.id = data.id;
-            commit(true);                     
+          success:  (data: any, status: any, xhr: any)=> {        
+            rowdata.id = data.id;  
+            this.obiektZdarzenia.id = data.id;   
+            commit(true);      
+            this.gridZdarzenia.updatebounddata();          
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
             alert(textStatus + ' - ' + errorThrown);
@@ -841,6 +861,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     };
   
     dataAdapterZdarzenia = new $.jqx.dataAdapter(this.sourceZdarzenia,{
+      beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
       formatData: (data)=> {
         $.extend(data, {
           id: ()=>{try{ return parseInt(this.gridSprawy.getrowdata(this.gridSprawy.getselectedcell().rowindex)['id']);}catch(err){ return 0}}
@@ -849,7 +870,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         return data;
       },
         
-        beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));}
+       
     });       
 
     gridoptionsZdarzenia: jqwidgets.GridOptions ={    
@@ -885,7 +906,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     [
       { text: 'Data odebrania', datafield: 'dataWejscia',  width: 120, type: 'date', cellsformat:'yyyy-MM-dd HH:mm', filtertype: 'date'},
       { text: 'Data wysłania', datafield: 'dataWyjscia',  width: 120, type: 'date',cellsformat:'yyyy-MM-dd HH:mm',filtertype: 'date'},      
-      { text: 'Kwota całkowita', datafield: 'calkowitaKwota', width: 100, type: 'date'},
+      { text: 'Kwota całkowita', datafield: 'calkowitaKwota', width: 100, type: 'number', filtertype:'number'},
       { text: 'Informacja', datafield: 'informacja'},
     ]
 
@@ -931,7 +952,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       idSprawy:row?row.idSprawy:null,
       dataWejscia:row?row.dataWejscia:null,
       dataWyjscia:row?row.dataWyjscia:null,
-      calkowitaKwota:row?row.calkowitaKwota:null,
+      calkowitaKwota:row?row.calkowitaKwota:0,
       informacja:row?row.informacja:null,
       sysdate:row?row.sysdate:null,
     }
@@ -943,7 +964,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     if(this.gridZdarzeniaEdycja)
       this.gridZdarzenia.updaterow(this.gridZdarzenia.getrowid(this.gridZdarzenia.getselectedcell().rowindex), this.obiektZdarzenia);      
     else
-      this.gridZdarzenia.addrow(0,this.obiektZdarzenia,'top');  
+      this.gridZdarzenia.addrow(null,this.obiektZdarzenia,'top');  
 
     this.windowZdarzenia.close();
     // this.showSprawyDitails = false;
