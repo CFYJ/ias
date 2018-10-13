@@ -9,7 +9,7 @@
             <!-- <div class="button_head" (click)="dodaj_spraweZPliku()">Utwórz z pliku</div> -->
             <div class="button_head" (click)="edytuj_sprawe()">Edytuj</div>
             <div class="button_head" (click)="usun_sprawe()">Usuń</div>
-            <div class="button_head" (click)="poTerminie_sprawe()">Starsze niż 6 miesięcy</div>
+            <div class="button_head" (click)="poTerminie_sprawe()">Starsze niż 6 miesięcy - {{licznikStarychSpraw}}</div>
           </div>
         </div>
       </div>
@@ -22,9 +22,8 @@
       <!-- [showfilterrow]="true" -->
       <jqxGrid id="jqxSprawyGrid" #gridSprawyReference [width]="'100%'"
       [columns]="columnsSprawy"  [auto-create]='false' [source]='dataAdapterSprawy'
-      [autoheight]="true" [sortable]="true" [altrows]="true" [filterable]="true"
-      [editable]="false"  
-      [selectionmode]="'multiplecellsadvanced'" 
+      [sortable]="true" [altrows]="true" [filterable]="true"
+      [editable]="false"  [selectionmode]="'multiplecellsadvanced'" 
       (onCellselect)='gridZdarzenia.updatebounddata()'
       (onCellclick)='gridSprawyCellClicked($event)' (onBindingcomplete)="gridZdarzenia.updatebounddata()"
       (onGroupschanged)="GroupschangedSprawy($event)" (onFilter)="FilterSprawy($event)"
@@ -139,14 +138,14 @@
             <!-- <input [(ngModel)]="obiektSprawy.dataPierwszegoWniosku" class="sprawaInput"> -->
           </td>
         </tr>
-        <!-- <tr>
+        <tr>
           <td>Data ostatniego wniosku</td>
-          <td>
- 
-            <jqxDateTimeInput #jqxDateTimeWyjscieSpr  [(ngModel)]="obiektSprawy.dataPOstatniegoWniosku"  class="sprawaInput"
-            [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"></jqxDateTimeInput>
+          <td> 
+            <jqxDateTimeInput #jqxDateTimeWyjscieSpr  [(ngModel)]="obiektSprawy.dataOstatniegoWniosku"  class="sprawaInput"
+            [formatString]= "'yyyy-MM-dd HH:mm'"  [width]= '300' [height]= '25' [showTimeButton]="true" showCalendarButton="true"
+            [culture]="'pl-PL'" [disabled]="czyDuplikatSprawy"></jqxDateTimeInput>
           </td>
-        </tr>       -->
+        </tr>      
         <tr>
           <td>Rodzaj wniosku</td>
           <td><input [(ngModel)]="obiektSprawy.rodzWniosku" class="sprawaInput" [disabled]="czyDuplikatSprawy"></td>

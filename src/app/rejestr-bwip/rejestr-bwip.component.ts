@@ -1,4 +1,5 @@
 import { Component, OnInit , ViewChild,AfterViewInit} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { SimpleGlobal } from 'ng2-simple-global';
 import { HTTP_INTERCEPTORS, HttpClient,  } from '@angular/common/http';
 
@@ -110,6 +111,10 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.5,
       
     });
+
+    this.gridSprawy.onBindingcomplete.subscribe(()=>{    
+      this.policzStareSprawy();
+    }); 
 
   }
 
@@ -241,8 +246,16 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
             type: 'PUT',
             beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
             success:  (data: any, status: any, xhr: any)=> {  
-              this.gridSprawyEdycja=false;         
+ 
               commit(true);           
+
+              let sub: any;
+              this.gridSprawy.isBindingCompleted()?this.gridSprawy.updatebounddata():
+              sub =this.gridSprawy.onBindingcomplete.subscribe((event)=>{
+                this.gridSprawy.updatebounddata();
+                sub.unsubscribe();
+              })
+         
             },
             error: function (jqXHR: any, textStatus: any, errorThrown: any) {
               alert(textStatus + ' - ' + errorThrown);
@@ -293,9 +306,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         autoheight: true,
         altrows: true,
         enabletooltips: false,
-        theme: 'metro',
-        
-
+        theme: 'metro',  
         source: this.dataAdapterSprawy,
         pageable: true,
         virtualmode: true,
@@ -305,14 +316,12 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         },
       };
 
-      FilterSprawy(event: any){
-        
+      FilterSprawy(event: any){        
         if(event.args.filters.length>0)
           this.gridSprawy.groupable(true);
         else{
           this.turnOnPagable(true);
-          this.gridSprawy.groupable(false);
-          
+          this.gridSprawy.groupable(false);          
         }
       }
 
@@ -321,7 +330,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       }
 
       turnOnPagable(turnON: boolean){
-
         if(this.gridSprawy.isBindingCompleted())   
           {
             (!turnON)?this.gridSprawy.pageable(false):this.gridSprawy.pageable(true); 
@@ -351,7 +359,6 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       m:'opłaty rolne (kwoty objęte art 2 ust. 1 lit. b) i c) dyrektywy 2010/24/UE)'}]
 
       rodzanaleznoscicellsrenderer = (row: number, columnfield: string, value: string , defaulthtml: string, columnproperties: any, rowdata: any): string => {
-
         let content:string="";
         value.split(',').forEach(el=>{
           if(el.trim().toLowerCase().length>0)
@@ -380,7 +387,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
    
       ]
 
-      gridSprawyCellClicked(event:any):void{          
+      gridSprawyCellClicked(event:any):void{ 
+        //console.log(event.args.row.bounddata);    
         this.createObiektSprawy(event.args.row.bounddata)
       };
     //#endregion
@@ -399,6 +407,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
   dodaj_sprawe(){  
    
     this.createObiektSprawy();
+    this.gridSprawyEdycja = false;
     this.sprawaZPliku = true;
     this.showSprawyDitails = true;
     this.windowSprawy.title("Dodaj sprawę");
@@ -459,17 +468,17 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       nazwa:row?row.nazwa:"",
       odKogo:row?row.odKogo:"",
       doKogo:row?row.doKogo:"",
-      dataPierwszegoWniosku:row?row.dataPierwszegoWniosku:"",
-      dataOstatniegoWniosku:row?row.dataOstatniegoWniosku:"",
+      dataPierwszegoWniosku:row?row.dataPierwszegoWniosku:null,
+      dataOstatniegoWniosku:row?row.dataOstatniegoWniosku:null,
       rodzWniosku:row?row.rodzWniosku:"",
       rodzNaleznosci:row?row.rodzNaleznosci:"",
       calkowitaKwota:row?row.calkowitaKwota:0,
       nrBwip:row?row.nrBwip:"",
       nrSzd:row?row.nrSzd:"",
       urzad:row?row.urzad:"",
-      dataZakonczenia:row?row.dataZakonczenia:"",
+      dataZakonczenia:row?row.dataZakonczenia:null,
       status:row?row.status:0,
-      sysdate:row?row.sysdate:"",
+      sysdate:row?row.sysdate:null,
     }
   }
 
@@ -518,7 +527,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     if(this.gridSprawyEdycja){
       this.gridSprawy.updaterow(this.gridSprawy.getrowid(this.gridSprawy.getselectedcell().rowindex), this.obiektSprawy);   
     }   
-    else
+    else{
       if(!this.czyDuplikatSprawy){    
         this.gridSprawy.addrow(null,this.obiektSprawy,'top');  
       }        
@@ -552,7 +561,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
               beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
               success:  (data: any, status: any, xhr: any)=>{
                 this.tmpfile = null;
-                this.gridPliki.updatebounddata();                
+                //this.gridPliki.updatebounddata();    
+                this.gridSprawy.updatebounddata();            
               },
               error: (jqXHR: any, textStatus: any, errorThrown: any)=> {
                 alert(textStatus + ' - ' + errorThrown);
@@ -560,7 +570,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
               }
             })
 
-            this.gridZdarzenia.updatebounddata();
+            //this.gridZdarzenia.updatebounddata();
 
                               
           },
@@ -570,11 +580,12 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
           }
         })
       }
+    }
 
     this.windowSprawy.close();
     this.showSprawyDitails = false;
     this.sprawaZPliku = false;
-    this.gridSprawyEdycja = false;   
+    this.gridSprawyEdycja = false;       
   }
 
   tmpfile: any =null;
@@ -654,9 +665,12 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
                   type: 'GET',
                   beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
                   success: (data: any, status: any, xhr: any) =>{                              
-                    if(data){        
-                      this.obiektSprawy = data;
-                      this.czyDuplikatSprawy=this.obiektSprawy.nrBwip===this.obiektSprawy.nrBwip?true:false;                      
+                    if(data!=null){        
+                      //this.obiektSprawy = data;
+                      this.czyDuplikatSprawy=this.obiektSprawy.nrBwip===data.nrBwip?true:false;  
+                      if(this.czyDuplikatSprawy)
+                        this.obiektSprawy.id = data.id;    
+                                 
                     }
                   },
                   error: function (jqXHR: any, textStatus: any, errorThrown: any) {
@@ -758,6 +772,27 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     return rez;
   }
 
+  
+  licznikStarychSpraw:any = "0";
+  policzStareSprawy(){
+    $.ajax({
+      cache: false,
+      dataType: 'json',
+      contentType: 'application/json',
+      url: this.sg['SERVICE_URL'] + 'RejestrBWIP/GetSprawyStare', 
+      type: 'GET',
+      beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+      success: (data: any, status: any, xhr: any)=>{                                 
+        if(data!=null){               
+          this.licznikStarychSpraw =data;     
+        }
+      },
+      error: function (jqXHR: any, textStatus: any, errorThrown: any) {
+        alert(textStatus + ' - ' + errorThrown);
+      
+      }
+    })
+  }
 
   //#endregion
 
@@ -829,8 +864,16 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
           data: t,
           type: 'PUT',
           beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
-          success:  (data: any, status: any, xhr: any)=> {              
-            commit(true);           
+          success:  (data: any, status: any, xhr: any)=> {    
+            commit(true);  
+
+            let sub: any;
+            this.gridZdarzenia.isBindingCompleted()?this.gridZdarzenia.updatebounddata():
+            sub =this.gridZdarzenia.onBindingcomplete.subscribe((event)=>{
+              this.gridZdarzenia.updatebounddata();
+              sub.unsubscribe();
+            })          
+                     
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
             alert(textStatus + ' - ' + errorThrown);
@@ -1185,10 +1228,10 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
               var percentComplete = evt.loaded / evt.total;             
               percentComplete = Math.trunc(percentComplete * 100);
 
-              $("#fileuploadprogresspliki").html('<div style="width:'+percentComplete+'%;height:20px; background-color:skyblue; color:white;text-align: center;font-size: 14px;border-radius:4px;">'+percentComplete+'%</div>');
+              $("#fileuploadprogresspliki").html('<div style="width:'+percentComplete+'%;height:20px; background-color:skyblue; color:white;text-align: center;font-size: 14px;border-radius:4px;">'+(percentComplete-1)+'%</div>');
 
            
-              this.gridPliki.updatebounddata();
+              //this.gridPliki.updatebounddata();
             }
           }, false);
       
@@ -1229,6 +1272,7 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       })    
     });
   }
+
 
 
 }
