@@ -114,7 +114,10 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
     this.gridSprawy.onBindingcomplete.subscribe(()=>{    
       this.policzStareSprawy();
+     // this.gridZdarzenia.updatebounddata();
     }); 
+
+
 
   }
 
@@ -843,7 +846,8 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
             rowdata.id = data.id;  
             this.obiektZdarzenia.id = data.id;   
             commit(true);      
-            this.gridZdarzenia.updatebounddata();          
+            this.gridSprawy.updatebounddata();
+            //this.gridZdarzenia.updatebounddata();          
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
             alert(textStatus + ' - ' + errorThrown);
@@ -867,12 +871,12 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
           success:  (data: any, status: any, xhr: any)=> {    
             commit(true);  
 
-            let sub: any;
-            this.gridZdarzenia.isBindingCompleted()?this.gridZdarzenia.updatebounddata():
-            sub =this.gridZdarzenia.onBindingcomplete.subscribe((event)=>{
-              this.gridZdarzenia.updatebounddata();
-              sub.unsubscribe();
-            })          
+            // let sub: any;
+            // this.gridZdarzenia.isBindingCompleted()?this.gridZdarzenia.updatebounddata():
+            // sub =this.gridZdarzenia.onBindingcomplete.subscribe((event)=>{
+            //   this.gridZdarzenia.updatebounddata();
+            //   sub.unsubscribe();
+            // })          
                      
           },
           error: function (jqXHR: any, textStatus: any, errorThrown: any) {
