@@ -19,14 +19,14 @@
 
 <tr>
   <td>
-      <!-- [showfilterrow]="true" -->
+      <!-- [showfilterrow]="true"   (onGroupschanged)="GroupschangedSprawy($event)" (onFilter)="FilterSprawy($event)"-->
       <jqxGrid id="jqxSprawyGrid" #gridSprawyReference [width]="'100%'"
       [columns]="columnsSprawy"  [auto-create]='false' [source]='dataAdapterSprawy'
       [sortable]="true" [altrows]="true" [filterable]="true"
       [editable]="false"  [selectionmode]="'multiplecellsadvanced'" 
       (onCellselect)='gridZdarzenia.updatebounddata()'
       (onCellclick)='gridSprawyCellClicked($event)' (onBindingcomplete)="gridZdarzenia.updatebounddata()"
-      (onGroupschanged)="GroupschangedSprawy($event)" (onFilter)="FilterSprawy($event)"
+     
       ></jqxGrid>
       <!--  -->
   </td>

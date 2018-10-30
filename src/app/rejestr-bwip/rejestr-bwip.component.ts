@@ -293,6 +293,12 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
 
       dataAdapterSprawy = new $.jqx.dataAdapter(this.sourceSprawy,
         {beforeSend: function (jqXHR, settings) {jqXHR.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
+        // formatData: (data)=> {
+        //   $.extend(data, {
+        //     ispageable: this.gridoptionsSprawy.pageable,
+        //   });
+        //   return data;
+        // },
         }, 
       );
 
@@ -336,15 +342,37 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       turnOnPagable(turnON: boolean){
         if(this.gridSprawy.isBindingCompleted())   
           {
+            // let subpagesize= this.gridSprawy.onBindingcomplete.subscribe(()=>{
+            //   subpagesize.unsubscribe();
+            //   (!turnON)?this.gridSprawy.pagesize(10):this.gridSprawy.pagesize(0);  
+            //   (!turnON)?this.gridoptionsSprawy.pagesize =10:this.gridoptionsSprawy.pagesize =0; 
+            //   this.gridSprawy.updatebounddata(); 
+            
+            // });
             (!turnON)?this.gridSprawy.pageable(false):this.gridSprawy.pageable(true); 
+            (!turnON)?this.gridoptionsSprawy.pageable=false:this.gridoptionsSprawy.pageable=false;
+            //console.log('bindingcomplited');
+            //(!turnON)?this.gridSprawy.pagesize(0):this.gridSprawy.pagesize(10);         
+            this.gridSprawy.updatebounddata();
           }
         else
         var sub= this.gridSprawy.onBindingcomplete.subscribe(()=>{
+
+
+          // let subpagesize= this.gridSprawy.onBindingcomplete.subscribe(()=>{
+          //   (!turnON)?this.gridSprawy.pagesize(0):this.gridSprawy.pagesize(10);   
+          //   subpagesize.unsubscribe();
+          // });
+
           (!turnON)?this.gridSprawy.pageable(false):this.gridSprawy.pageable(true);       
+          (!turnON)?this.gridoptionsSprawy.pageable=false:this.gridoptionsSprawy.pageable=false;
           sub.unsubscribe();
+          console.log('ednsubscribsion');
+       
+          this.gridSprawy.updatebounddata();
         }) 
         
-        this.gridSprawy.updatebounddata()
+        // this.gridSprawy.updatebounddata()
         
       }
 
@@ -592,13 +620,15 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     this.gridSprawyEdycja = false;       
   }
 
+
+
   tmpfile: any =null;
   uploadFile(event) {
     let files = event.target.files;
     if (files.length > 0) {
     
       var formData = new FormData();
-
+      this.createObiektSprawy();
       $.each(files, function(key, value)
       {
          formData.append(key.toString(), value);
@@ -609,63 +639,115 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
         //  fs.readFile(value,)
       });
 
+      var wnioskirr ={
+        CompanyName: 'Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;LegalEntity;CompanyName',
+        FirstName: 'Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;NaturalPerson;FirstName',
+        surname: 'Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;NaturalPerson;Surname',
+        odKogo: 'Body;FormData;CompetentAuthorities;MSofApplicant;Identification;Country;ISOCode',
+        doKogo: 'Body;FormData;CompetentAuthorities;MSofRequested;Identification;Country;ISOCode',
+        kwotapodstawowa: 'Body;FormData;Request;Claim;ClaimDescription;PrincipalAmount;InitiallyDue',
+        odsetki: 'Body;FormData;Request;Claim;ClaimDescription;Interests;InitiallyDue',
+        pytanyUS: 'Body;FormData;CompetentAuthorities;MSofRequested;Office;Name',
+        pytajacyUS: 'Body;FormData;CompetentAuthorities;MSofApplicant;Office;Name',
+        typ: 'Body;MetaData;Reference;Reference',
+        taxlist: 'Body;FormData;FormHeader;TaxList',
+        nrbwip: 'Body;FormData;CompetentAuthorities;MSofRequested;Identification;FileReference',
+        rodzwniosku: 'Body;MetaData;Reference;Reference'
+      };
+
+      var wnioskiri={
+        CompanyName: 'Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;LegalEntity;CompanyName',
+        FirstName: 'Body;FormData;Request;SectionInformationRelatingPerson;IsNaturalPersonOrLegalEntity;NaturalPerson;FirstName',
+        surname: 'Body;FormData;Request;SectionInformationRelatingPerson;IsNaturalPersonOrLegalEntity;NaturalPerson;Surname',
+        odKogo: 'Body;FormData;CompetentAuthorities;MSofApplicant;Identification;Country;ISOCode',
+        doKogo: 'Body;FormData;CompetentAuthorities;MSofRequested;Identification;Country;ISOCode',
+        kwotapodstawowa: '',
+        odsetki: '',
+        pytanyUS: 'Body;FormData;CompetentAuthorities;MSofRequested;Office;Name',
+        pytajacyUS: 'Body;FormData;CompetentAuthorities;MSofApplicant;Office;Name',
+        typ: 'Body;MetaData;Reference;Reference',
+        taxlist: 'Body;FormData;FormHeader;TaxList',
+        nrbwip: 'Body;FormData;CompetentAuthorities;MSofRequested;Identification;FileReference',
+        rodzwniosku: 'Body;MetaData;Reference;Reference'
+      };
+
+      var wnioskirn={
+        CompanyName: 'Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;LegalEntity;CompanyName',
+        FirstName: 'Body;FormData;Request;SectionInformationRelatingPerson;IsNaturalPersonOrLegalEntity;NaturalPerson;FirstName',
+        surname: 'Body;FormData;Request;SectionInformationRelatingPerson;IsNaturalPersonOrLegalEntity;NaturalPerson;Surname',
+        odKogo: 'Body;FormData;CompetentAuthorities;MSofApplicant;Identification;Country;ISOCode',
+        doKogo: 'Body;FormData;CompetentAuthorities;MSofRequested;Identification;Country;ISOCode',
+        kwotapodstawowa: 'Body;FormData;Request;Claim;ClaimDescription;PrincipalAmount;InitiallyDue',
+        odsetki: 'Body;FormData;Request;Claim;ClaimDescription;Interests;InitiallyDue',
+        pytanyUS: 'Body;FormData;CompetentAuthorities;MSofRequested;Office;Name',
+        pytajacyUS: 'Body;FormData;CompetentAuthorities;MSofApplicant;Office;Name',
+        typ: 'Body;MetaData;Reference;Reference',
+        taxlist: 'Body;FormData;FormHeader;TaxList',
+        nrbwip: 'Body;FormData;CompetentAuthorities;MSofApplicant;Office;FileReference',
+        rodzwniosku: 'Body;MetaData;Reference;Reference'
+      };
+
       if(files[0].name.toString().includes('xml')){
         let fileReader = new FileReader();
         fileReader.onload = (e) => {
           var fs = Xml.Parser();
-          fs.parseString(fileReader.result, (err, res)=>{
-            if(res.RequestForRecoveryV2Message){
-              res = res.RequestForRecoveryV2Message;
-              //this.obiektSprawy.nazwa=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:CompanyName'][0];
-              this.obiektSprawy.nazwa=this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:CompanyName', res)!==null?
-                this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:CompanyName', res):
-                this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:NaturalPerson;ns2:FirstName', res)+' '+
-                this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:NaturalPerson;ns2:Surname', res)
-              
-              // //this.obiektSprawy.identyfikator=res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:TaxIdentificationNumberApplicantMs'][0];
-              // this.obiektSprawy.identyfikator=this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:TaxIdentificationNumberApplicantMs',res);
-              
-              // // this.obiektSprawy.adres='ulica:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:StreetAndNumber'][0]+
-              // //   ', miasto:'+res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].SectionInformationAboutPersonConcerned[0].IsNaturalPersonOrLegalEntity[0]['ns2:LegalEntity'][0]['ns2:Address'][0]['ns2:PostcodeAndTown'][0];
-              // this.obiektSprawy.adres='ulica:'+this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:Address;ns2:StreetAndNumber',res)+
-              // ', miasto:'+this.readXMLVal('Body;FormData;Request;SectionInformationAboutPersonConcerned;IsNaturalPersonOrLegalEntity;ns2:LegalEntity;ns2:Address;ns2:PostcodeAndTown',res);
+          fs.parseString(fileReader.result, (err, res)=>{            
 
+            var root =null;
+            try{
+              for(var z in Object.keys(res)){            
+                root = (Object.keys(res)[z].indexOf('RequestForRecovery')>-1 || Object.keys(res)[z].indexOf('RequestForNotification')>-1 || Object.keys(res)[z].indexOf('RequestForInformation')>-1)?Object.keys(res)[z]:null;
+              }
+            }catch(ex){}
 
-              //this.obiektSprawy.odKogo=res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofApplicant'][0]['ns2:Identification'][0]['ns2:Country'][0]['ns2:ISOCode'][0];
-              this.obiektSprawy.odKogo=this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofApplicant;ns2:Identification;ns2:Country;ns2:ISOCode',res);
+            if(root){
+              res = res[root];
 
+              let xmltype = wnioskirr;
 
-              //this.obiektSprawy.doKogo=res.RequestForRecoveryV2Message.Body[0].FormData[0].CompetentAuthorities[0]['ns2:MSofRequested'][0]['ns2:Identification'][0]['ns2:Country'][0]['ns2:ISOCode'][0];
-              this.obiektSprawy.doKogo=this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofRequested;ns2:Identification;ns2:Country;ns2:ISOCode',res);
+              this.obiektSprawy.rodzWniosku = this.getRodzWniosku(this.readXMLVal(xmltype.rodzwniosku,res));
 
-              // this.obiektSprawy.calkowitaKwota = Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:PrincipalAmount'][0]['ns2:InitiallyDue'][0])+
-              //   Number(res.RequestForRecoveryV2Message.Body[0].FormData[0].Request[0].Claim[0].ClaimDescription[0]['ns2:Interests'][0]['ns2:InitiallyDue'][0]);
-              // this.obiektSprawy.calkowitaKwota = parseFloat(this.readXMLVal('Body;FormData;Request;Claim;ClaimDescription;ns2:PrincipalAmount;ns2:InitiallyDue',res))+parseFloat(this.readXMLVal('Body;FormData;Request;Claim;ClaimDescription;ns2:Interests;ns2:InitiallyDue',res));
-              this.obiektSprawy.calkowitaKwota = this.getNumber(this.readXMLVal('Body;FormData;Request;Claim;ClaimDescription;ns2:PrincipalAmount;ns2:InitiallyDue',res))+this.getNumber(this.readXMLVal('Body;FormData;Request;Claim;ClaimDescription;ns2:Interests;ns2:InitiallyDue',res));
+              switch(this.obiektSprawy.rodzWniosku.toString().toLowerCase()){
+                case 'rr':
+                  xmltype = wnioskirr;
+                  break;
+                case 'ri':
+                  xmltype = wnioskiri;
+                  break;
+                case 'rn':
+                  xmltype = wnioskirn;
+                  break;
+              }
 
-              this.obiektSprawy.urzad = (this.obiektSprawy.odKogo.toString()!='PL')?this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofRequested;ns2:Office;ns2:Name',res):this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofApplicant;ns2:Office;ns2:Name',res);
-            
-              let typ = this.readXMLVal('Body;MetaData;Reference;Reference',res).split('_');
-              this.obiektSprawy.typ =typ.length>1? typ[typ.length-1]:'';
-              
+              this.obiektSprawy.nazwa=this.readXMLVal(xmltype.CompanyName, res)!==''?
+                this.readXMLVal(xmltype.CompanyName, res):
+                this.readXMLVal(xmltype.FirstName, res)+' '+
+                this.readXMLVal(xmltype.surname, res)
+ 
+              this.obiektSprawy.odKogo=this.readXMLVal(xmltype.odKogo,res);
+              this.obiektSprawy.doKogo=this.readXMLVal(xmltype.doKogo,res);
+              this.obiektSprawy.calkowitaKwota = this.getNumber(this.readXMLVal(xmltype.kwotapodstawowa,res))+this.getNumber(this.readXMLVal(xmltype.odsetki,res));
+              this.obiektSprawy.urzad = this.null2string(this.obiektSprawy.odKogo).toLowerCase()=='pl'?this.readXMLVal(xmltype.pytajacyUS,res):this.readXMLVal(xmltype.pytanyUS,res);
+                              
               // rodzaj naleznosci
               var taxlist = ['a','b','c','d','e','f','g','h','i','j','k','l','m'];
-              if(this.readXMLVal('Body;FormData;FormHeader;TaxList',res)!=null)
-              for(let a in taxlist)
-                this.obiektSprawy.rodzNaleznosci += res.Body[0].FormData[0].FormHeader[0].TaxList[0]['ns2:'+taxlist[a]][0]=='true'?taxlist[a]+",":"";
+              //if(this.readXMLVal(xmltype.taxlist,res)!='')
+              for(let a in taxlist)               
+                this.obiektSprawy.rodzNaleznosci +=this.readXMLVal(xmltype.taxlist+';'+taxlist[a],res)=='true'?taxlist[a]+",":"";     
       
-              this.obiektSprawy.nrBwip = this.readXMLVal('Body;FormData;CompetentAuthorities;ns2:MSofRequested;ns2:Identification;ns2:FileReference',res);
+                let nr = this.readXMLVal(xmltype.nrbwip,res);
+               
+              this.obiektSprawy.nrBwip =  nr!==''?nr:this.readXMLVal(xmltype.nrbwip.replace('MSofRequested;Identification','MSofApplicant;Office'),res);          
+           
 
-              this.obiektSprawy.rodzWniosku = this.getRodzWniosku(this.readXMLVal('Body;MetaData;Reference;Reference',res));
-              
+            
 
-
-              if(this.obiektSprawy){            
+              if(this.obiektSprawy && this.obiektSprawy.nrBwip.length>0){            
                 $.ajax({
                   cache: false,
                   dataType: 'json',
                   contentType: 'application/json',
-                  url: this.sg['SERVICE_URL'] + 'RejestrBWIP/GetSprawyByID/'+this.obiektSprawy.nrBwip, 
+                  url: this.sg['SERVICE_URL'] + 'RejestrBWIP/GetSprawyByID/'+encodeURIComponent(this.obiektSprawy.nrBwip), 
                   type: 'GET',
                   beforeSend: function(request) {request.setRequestHeader('Authorization','Bearer '+localStorage.getItem('user'));},
                   success: (data: any, status: any, xhr: any) =>{                              
@@ -751,17 +833,19 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
     }
   }
 
+  //#region helpery xml
   getRodzWniosku(parts: string){
     try{ let fileparts = parts.split('_'); return fileparts[fileparts.length-1]; }catch(err){return '';}
   }
 
-  readXMLVal(path: string, file: any){
+  readXMLVal(path: string, xml: any){
 
-    var node=file;
-    var rez=null;
+    var node=xml;
+    var rez='';
     try{
-    path.split(';').forEach((leaf)=>{      
-      node = node[leaf][0]; 
+    path.split(';').forEach((leaf)=>{  
+      leaf = this.findXMLNode(node, leaf);    
+      node = node[leaf][0];   
     });
     rez = node;
     }
@@ -773,15 +857,41 @@ export class RejestrBwipComponent implements OnInit,AfterViewInit {
       // console.log(ex);
     }
 
-    return rez;
+    return typeof(rez)==="string"?rez:'';
+    //return rez;
+  }
+
+  findXMLNode(data: any, node:string){
+    try{
+      for(var z in Object.keys(data)){
+        if(Object.keys(data)[z].indexOf(node)>-1)
+          return Object.keys(data)[z];
+      }
+    }catch(ex){
+      return '';
+    }
+
+    return '';
+  }
+
+  null2string(val: any){
+
+    if(val ==null)
+      return "";
+    return val;
   }
 
   getNumber(val: any){
     
+      if(val==null || isNaN(val))
+        return 0;
+
       let rez  =  parseFloat(val.toString());
 
       return  isNaN(rez)?0:rez;
   }
+
+  //#endregion
 
   
   licznikStarychSpraw:any = "0";
