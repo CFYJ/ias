@@ -61,6 +61,7 @@ import { InterpretacjeComponent } from './interpretacje/interpretacje.component'
 import { HelpdeskComponent } from './helpdesk/helpdesk.component';
 import { jqxDragDropComponent } from 'jqwidgets-ts/angular_jqxdragdrop';
 import { RejestrBwipComponent } from './rejestr-bwip/rejestr-bwip.component';
+import { AmortyzacjaComponent } from './amortyzacja/amortyzacja.component';
 
 //**********************************************/
 
@@ -77,6 +78,7 @@ export const appRoutes: Routes = [
   { path: 'interpretacje', component: InterpretacjeComponent, canActivate: [AuthGuardService], data:{role: ['interpretacje']}},
   { path: 'helpdesk', component: HelpdeskComponent, canActivate: [AuthGuardService], data:{role: ['helpdesk']}},
   { path: 'rejestr-bwip', component: RejestrBwipComponent, canActivate: [AuthGuardService], data:{role: ['rejestr-bwip']}},
+  { path: 'amortyzacja', component: AmortyzacjaComponent, canActivate: [AuthGuardService], data:{role: ['amortyzacja']}},
 ];
 
 @NgModule({
@@ -110,6 +112,7 @@ export const appRoutes: Routes = [
     HelpdeskComponent,
     jqxDragDropComponent,
     RejestrBwipComponent,
+    AmortyzacjaComponent,
   ],
   imports: [
     HttpClientModule,
