@@ -11,7 +11,7 @@
   <a  [routerLink]="['/helpdesk']"  *ngIf="auth.checkIfUserIsInRole('helpdesk')"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">HelpDesk</a>  
   <!-- *ngIf="auth.checkIfUserIsInRole('Interpretacje')" -->
   <a  [routerLink]="['/rejestr-bwip']"  *ngIf="auth.checkIfUserIsInRole('rejestr-bwip')"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Rejestr BWIP</a>
-  <a  [routerLink]="['/amortyzacja']"  *ngIf="auth.checkIfUserIsInRole('amortyzacja')"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Amortyzacja</a>
+  <a  [routerLink]="['/amortyzacja']"  *ngIf="auth.checkIfUserIsInRole('dofinansowaniepops')"  [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Dofinansowanie POPS</a>
  
   <a [routerLink]="['/login']" *ngIf="!auth.loggedIn(); else loggedIn" style="float:right" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">Logowanie</a>
   

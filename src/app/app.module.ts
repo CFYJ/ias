@@ -78,7 +78,7 @@ export const appRoutes: Routes = [
   { path: 'interpretacje', component: InterpretacjeComponent, canActivate: [AuthGuardService], data:{role: ['interpretacje']}},
   { path: 'helpdesk', component: HelpdeskComponent, canActivate: [AuthGuardService], data:{role: ['helpdesk']}},
   { path: 'rejestr-bwip', component: RejestrBwipComponent, canActivate: [AuthGuardService], data:{role: ['rejestr-bwip']}},
-  { path: 'amortyzacja', component: AmortyzacjaComponent, canActivate: [AuthGuardService], data:{role: ['amortyzacja']}},
+  { path: 'amortyzacja', component: AmortyzacjaComponent, canActivate: [AuthGuardService], data:{role: ['dofinansowaniepops']}},
 ];
 
 @NgModule({
